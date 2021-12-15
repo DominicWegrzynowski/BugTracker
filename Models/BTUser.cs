@@ -18,7 +18,5 @@ namespace BugTracker.Models
         [Display(Name = "Full Name")]
         public string FullName { get { return $"{FirstName} {LastName}"; } }
         
-        
-
     }
 }
