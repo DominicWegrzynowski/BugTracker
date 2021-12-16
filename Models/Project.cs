@@ -13,7 +13,7 @@ namespace BugTracker.Models
         public int Id { get; set; }
 
         [DisplayName("Company")]
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
 
         [DisplayName("Priority")]
         public int ProjectPriorityId { get; set; }
