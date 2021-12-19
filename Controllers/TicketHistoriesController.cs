@@ -10,22 +10,23 @@ using BugTracker.Models;
 
 namespace BugTracker.Controllers
 {
-    public class CompaniesController : Controller
+    public class TicketHistoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CompaniesController(ApplicationDbContext context)
+        public TicketHistoriesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Companies
+        // GET: TicketHistories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Companies.ToListAsync());
+            var applicationDbContext = _context.TicketHistories.Include(t => t.Ticket).Include(t => t.User);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Companies/Details/5
+        // GET: TicketHistories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +34,45 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
 
-            var company = await _context.Companies
+            var ticketHistory = await _context.TicketHistories
+                .Include(t => t.Ticket)
+                .Include(t => t.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (company == null)
+            if (ticketHistory == null)
             {
                 return NotFound();
             }
 
-            return View(company);
+            return View(ticketHistory);
         }
 
-        // GET: Companies/Create
+        // GET: TicketHistories/Create
         public IActionResult Create()
         {
+            ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description");
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
-        // POST: Companies/Create
+        // POST: TicketHistories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,CompanyDescription")] Company company)
+        public async Task<IActionResult> Create([Bind("Id,TicketId,UserId,Property,OldValue,NewValue,Created,Description")] TicketHistory ticketHistory)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(company);
+                _context.Add(ticketHistory);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(company);
+            ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketHistory.TicketId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketHistory.UserId);
+            return View(ticketHistory);
         }
 
-        // GET: Companies/Edit/5
+        // GET: TicketHistories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +80,24 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
 
-            Company company = await _context.Companies.FindAsync(id);
-            if (company == null)
+            var ticketHistory = await _context.TicketHistories.FindAsync(id);
+            if (ticketHistory == null)
             {
                 return NotFound();
             }
-            return View(company);
+            ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketHistory.TicketId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketHistory.UserId);
+            return View(ticketHistory);
         }
 
-        // POST: Companies/Edit/5
+        // POST: TicketHistories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,CompanyDescription")] Company company)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,TicketId,UserId,Property,OldValue,NewValue,Created,Description")] TicketHistory ticketHistory)
         {
-            if (id != company.Id)
+            if (id != ticketHistory.Id)
             {
                 return NotFound();
             }
@@ -97,12 +106,12 @@ namespace BugTracker.Controllers
             {
                 try
                 {
-                    _context.Update(company);
+                    _context.Update(ticketHistory);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CompanyExists(company.Id))
+                    if (!TicketHistoryExists(ticketHistory.Id))
                     {
                         return NotFound();
                     }
@@ -113,10 +122,12 @@ namespace BugTracker.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(company);
+            ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketHistory.TicketId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketHistory.UserId);
+            return View(ticketHistory);
         }
 
-        // GET: Companies/Delete/5
+        // GET: TicketHistories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +135,32 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
 
-            var company = await _context.Companies
+            var ticketHistory = await _context.TicketHistories
+                .Include(t => t.Ticket)
+                .Include(t => t.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (company == null)
+            if (ticketHistory == null)
             {
                 return NotFound();
             }
 
-            return View(company);
+            return View(ticketHistory);
         }
 
-        // POST: Companies/Delete/5
+        // POST: TicketHistories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var company = await _context.Companies.FindAsync(id);
-            _context.Companies.Remove(company);
+            var ticketHistory = await _context.TicketHistories.FindAsync(id);
+            _context.TicketHistories.Remove(ticketHistory);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CompanyExists(int id)
+        private bool TicketHistoryExists(int id)
         {
-            return _context.Companies.Any(e => e.Id == id);
+            return _context.TicketHistories.Any(e => e.Id == id);
         }
     }
 }
