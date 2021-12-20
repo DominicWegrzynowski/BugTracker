@@ -12,8 +12,8 @@ namespace BugTracker.Services.Interfaces
         Task<bool> RemoveUserFromRoleAsync(BTUser user, string roleName);
         Task<bool> RemoveUserFromRolesASync(BTUser user, IEnumerable<string> roles);
         Task<List<BTUser>> GetUsersInRoleAsync(string roleName, int companyId);
-        Task<List<BTUser>> GetUsersNotInRoleAsync(string RoleName, int companyId);
-        Task<string> GetRoleNameById(string RoleId);
+        Task<List<BTUser>> GetUsersNotInRoleAsync(string roleName, int companyId);
+        Task<string> GetRoleNameByIdAsync(string roleId);
         
     }
 }
