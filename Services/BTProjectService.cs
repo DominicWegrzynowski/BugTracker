@@ -3,6 +3,7 @@ using BugTracker.Models;
 using BugTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,25 +30,27 @@ namespace BugTracker.Services
 
         public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
         {
-            //Instantiate projectManager BTUser
-            BTUser projectManager = new()
+            //Find project
+            Project project = await _context.Projects.Include(p => p.CompanyId).FirstOrDefaultAsync(p => p.Id == projectId);
+            if(project != null)
             {
-                Id = userId
-            };
+                //Check if it has a project manager
+                List<BTUser> projectMangagers = await _rolesService.GetUsersInRoleAsync("Project Manager", project.CompanyId);
+                if(projectMangagers is null)
+                {
+                    //If not find user
+                    BTUser projectManagerUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
-            //Add projectManager BTUser to the role Project Manager
+                    //Add user to project manager role
+                    bool addedUser = await _rolesService.AddUserToRoleAsync(projectManagerUser, "Project Manager");
+                    return await AddUserToProjectAsync(userId, projectId);
+                }
+            }
+            
+           
 
-            await _rolesService.AddUserToRoleAsync(projectManager, "Project Manager");
 
-
-            //Find project by id, find collection of project members, and add this user to that collection
-
-            IQueryable<BTUser> Members = (IQueryable<BTUser>)_context.Projects.Where(p => p.Id == projectId).Select(p => p.Members);
-
-            Members.Append(projectManager);
-
-            _context.Projects.Where(p => p.Id == projectId).Add
-
+            //Call AddUserToProjectAsync method
 
         }
 
@@ -62,8 +65,17 @@ namespace BugTracker.Services
                     try
                     {
                         project.Members.Add(user);
+                        await _context.SaveChangesAsync();
+                        return true;
                     }
-                    catch()
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+                else
+                {
+                    return false;
                 }
             }
             else
@@ -185,9 +197,18 @@ namespace BugTracker.Services
             return priorityId;
         }
 
-        public Task RemoveUserFromProjectAsync(string userId, int projectId)
+        public async Task RemoveUserFromProjectAsync(string userId, int projectId)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                BTUser user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                Project project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId); 
+
+            }
+            catch(Exception ex)
+            {
+                
+            }
         }
 
         public Task RemoveUsersFromProjectByRoleAsync(string userId, int projectId)
