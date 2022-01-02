@@ -23,7 +23,7 @@ namespace BugTracker.Services.Interfaces
         public Task<List<Project>> GetUserProjectsAsync(string userId);
         public Task<bool> IsUserOnProjectAsync(string userId, int projectId);
         public Task<int> LookupProjectPriorityId(string priorityName);
-        public Task RemoveUsersFromProjectByRoleAsync(string userId, int projectId);
+        public Task RemoveUsersFromProjectByRoleAsync(string role, int projectId);
         public Task RemoveUserFromProjectAsync(string userId, int projectId);
         public Task UpdateProjectAsync(Project project);
 

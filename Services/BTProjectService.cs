@@ -1,5 +1,6 @@
 ﻿using BugTracker.Data;
 using BugTracker.Models;
+using BugTracker.Models.Enums;
 using BugTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -91,9 +92,14 @@ namespace BugTracker.Services
             await _context.SaveChangesAsync();
         }
 
-        public Task<List<BTUser>> GetAllProjectMembersExceptPMAsync(int projectId)
+        public async Task<List<BTUser>> GetAllProjectMembersExceptPMAsync(int projectId)
         {
-            throw new System.NotImplementedException();
+            List<BTUser> developers = await GetProjectMembersByRoleAsync(projectId, Roles.DemoUser.ToString());
+            List<BTUser> submitters = await GetProjectMembersByRoleAsync(projectId, Roles.Submitter.ToString());
+            List<BTUser> admins = await GetProjectMembersByRoleAsync(projectId, Roles.Admin.ToString());
+            List<BTUser> teamMembers = developers.Concat(submitters).Concat(admins).ToList();
+
+            return teamMembers;
         }
 
         public async Task<List<Project>> GetAllProjectsByCompany(int companyId)
@@ -157,9 +163,23 @@ namespace BugTracker.Services
             throw new System.NotImplementedException();
         }
 
-        public Task<List<BTUser>> GetProjectMembersByRoleAsync(int projectId, string role)
+        public async Task<List<BTUser>> GetProjectMembersByRoleAsync(int projectId, string role)
         {
-            throw new System.NotImplementedException();
+            Project project = await _context.Projects
+                                            .Include(p => p.Members)
+                                            .FirstOrDefaultAsync(p => p.Id == projectId);
+
+            List<BTUser> members = new List<BTUser>();
+            foreach (var member in project.Members)
+            {
+
+                if(await _rolesService.IsUserInRoleAsync(member, role))
+                {
+                    members.Add(member);
+                }
+            }
+
+            return members;
         }
 
         public Task<List<BTUser>> GetSubmittersOnProjectAsync(int projectId)
@@ -204,9 +224,11 @@ namespace BugTracker.Services
             }   
         }
 
-        public Task<List<BTUser>> GetUsersNotOnProjectAsync(int projectId, int companyId)
+        public async Task<List<BTUser>> GetUsersNotOnProjectAsync(int projectId, int companyId)
         {
-            throw new System.NotImplementedException();
+            List<BTUser> users = await _context.Users.Where(u => u.Projects.All(p => p.Id != projectId)).ToListAsync();
+
+            return users.Where(u => u.CompanyId == companyId).ToList();
         }
 
         public async Task<bool> IsUserOnProjectAsync(string userId, int projectId)
@@ -258,9 +280,32 @@ namespace BugTracker.Services
             }
         }
 
-        public Task RemoveUsersFromProjectByRoleAsync(string userId, int projectId)
+        public async Task RemoveUsersFromProjectByRoleAsync(string role, int projectId)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                List<BTUser> members = await GetProjectMembersByRoleAsync(projectId, role);
+                Project project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
+
+                foreach(var member in members)
+                {
+                    try
+                    {
+                        project.Members.Remove(member);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                   
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"*** ERROR *** Error removing users from the project. ---> {ex.Message}");
+                throw;
+            }
         }
 
         public async Task UpdateProjectAsync(Project project)
