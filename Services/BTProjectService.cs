@@ -114,7 +114,7 @@ namespace BugTracker.Services
                                                             .Include(p => p.Tickets)
                                                                 .ThenInclude(t => t.Attachments)
                                                             .Include(p => p.Tickets)
-                                                                .ThenInclude(t => t.Histroy)
+                                                                .ThenInclude(t => t.History)
                                                             .Include(p => p.Tickets)
                                                                 .ThenInclude(t => t.DeveloperUser)
                                                             .Include(p => p.Tickets)

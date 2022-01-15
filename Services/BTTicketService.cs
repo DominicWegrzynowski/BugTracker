@@ -27,46 +27,59 @@ namespace BugTracker.Services
 
         public async Task AddNewTicketAsync(Ticket ticket)
         {
-            _context.Tickets.Add(ticket);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Tickets.Add(ticket);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task ArchiveTicketAsync(Ticket ticket)
         {
-            if(ticket != null)
+            if(ticket is not null)
             {
                 try
                 {
                     ticket.Archived = true;
+                    _context.Update(ticket);
+                    await _context.SaveChangesAsync();
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
-                    Console.WriteLine($"*** ERROR *** - Error archiving ticket - {ex.Message}");
+                    throw;
                 }
             }
         }
 
         public async Task AssignTicketAsync(int ticketId, string userId)
         {
-            BTUser developer = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             Ticket ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
 
-            if(developer != null && ticket != null)
+            try
             {
-                if (await _BTRolesService.IsUserInRoleAsync(developer, Roles.Developer.ToString()))
+                if(ticket is not null)
                 {
                     try
                     {
                         ticket.DeveloperUserId = userId;
-                        _context.Tickets.Update(ticket);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"*** ERROR *** - Error Assigning ticket - {ex.Message}");
-                    }
+                        //Revisit this code when assigning tickets
+                        ticket.TicketStatusId = (await LookupTicketStatusIdAsync("Development")).Value;
 
+                        await _context.SaveChangesAsync();  
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
@@ -200,41 +213,74 @@ namespace BugTracker.Services
 
         public async Task<List<Ticket>> GetProjectTicketsByPriorityAsync(string priorityName, int companyId, int projectId)
         {
-            List<Ticket> companyTickets = await GetAllTicketsByCompanyAsync(companyId);
-            List<Ticket> projectTickets = companyTickets.Where(c => c.ProjectId == projectId).ToList();
+            List<Ticket> tickets = new();
 
-            return projectTickets.Where(t => t.TicketPriority.Name == priorityName).ToList();
-            
+            try
+            {
+                tickets = (await GetAllTicketsByPriorityAsync(companyId, priorityName)).Where(t => t.ProjectId == projectId).ToList();
+                return tickets;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<List<Ticket>> GetProjectTicketsByRoleAsync(string role, string userId, int projectId, int companyId)
         {
-            List<Ticket> companyTickets = await GetAllTicketsByCompanyAsync(companyId);
-            List<Ticket> projectTickets = companyTickets.Where(c => c.ProjectId == projectId).ToList();
-            //GetUsersInRole, 
-            //Come back to this
-            
+            List<Ticket> tickets = new();
+
+            try
+            {
+                tickets = (await GetTicketsByRoleAsync(role, userId, companyId)).Where( t => t.ProjectId == projectId).ToList();
+                return tickets;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<List<Ticket>> GetProjectTicketsByStatusAsync(string statusName, int companyId, int projectId)
         {
-            List<Ticket> companyTickets = await GetAllTicketsByCompanyAsync(companyId);
-            List<Ticket> projectTickets = companyTickets.Where(c => c.ProjectId == projectId).ToList();
-            
-            return projectTickets.Where(t => t.TicketStatus.Name == statusName).ToList();
+            List<Ticket> tickets = new();
+
+            try
+            {
+                tickets = (await GetAllTicketsByStatusAsync(companyId, statusName)).Where(t => t.ProjectId == projectId).ToList();
+                return tickets;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<List<Ticket>> GetProjectTicketsByTypeAsync(string typeName, int companyId, int projectId)
         {
-            List<Ticket> companyTickets = await GetAllTicketsByCompanyAsync(companyId);
-            List<Ticket> projectTickets = companyTickets.Where(c => c.ProjectId == projectId).ToList();
+            List<Ticket> tickets = new();
 
-            return projectTickets.Where(t => t.TicketType.Name == typeName).ToList();
+            try
+            {
+                tickets = (await GetAllTicketsByTypeAsync(companyId, typeName)).Where(t => t.ProjectId == projectId).ToList();
+                return tickets;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<Ticket> GetTicketByIdAsync(int ticketId)
         {
-            return await _context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
+            try
+            {
+                return await _context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<BTUser> GetTicketDeveloperAsync(int ticketId, int companyId)
@@ -383,8 +429,15 @@ namespace BugTracker.Services
 
         public async Task UpdateTicketAsync(Ticket ticket)
         {
-            _context.Update(ticket);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Update(ticket);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
