@@ -218,8 +218,6 @@ namespace BugTracker.Data
             }
         }
 
-
-
         public static async Task SeedDefaultUsersAsync(UserManager<BTUser> userManager)
         {
             //Seed Default Admin User
@@ -721,8 +719,6 @@ namespace BugTracker.Data
             }
         }
 
-
-
         public static async Task SeedDefaultTicketTypeAsync(ApplicationDbContext context)
         {
             try
@@ -802,8 +798,6 @@ namespace BugTracker.Data
                 throw;
             }
         }
-
-
 
         public static async Task SeedDefautTicketsAsync(ApplicationDbContext context)
         {
