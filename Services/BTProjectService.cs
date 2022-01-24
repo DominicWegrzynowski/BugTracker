@@ -25,8 +25,15 @@ namespace BugTracker.Services
 
         public async Task AddNewProjectAsync(Project project)
         {
-            _context.Add(project);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Add(project);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
@@ -79,11 +86,13 @@ namespace BugTracker.Services
                 }
                 else
                 {
+                    Console.WriteLine($"{ user.FullName } is already on the project!");
                     return false;
                 }
             }
             else
             {
+                Console.WriteLine($"{ user.FullName } does not exist");
                 return false;
             }
         }
@@ -97,7 +106,7 @@ namespace BugTracker.Services
 
         public async Task<List<BTUser>> GetAllProjectMembersExceptPMAsync(int projectId)
         {
-            List<BTUser> developers = await GetProjectMembersByRoleAsync(projectId, Roles.DemoUser.ToString());
+            List<BTUser> developers = await GetProjectMembersByRoleAsync(projectId, Roles.Developer.ToString());
             List<BTUser> submitters = await GetProjectMembersByRoleAsync(projectId, Roles.Submitter.ToString());
             List<BTUser> admins = await GetProjectMembersByRoleAsync(projectId, Roles.Admin.ToString());
             List<BTUser> teamMembers = developers.Concat(submitters).Concat(admins).ToList();

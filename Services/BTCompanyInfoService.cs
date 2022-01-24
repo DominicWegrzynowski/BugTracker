@@ -58,11 +58,11 @@ namespace BugTracker.Services
             return result;
         }
 
-        public async Task<Company> GetCompanyInfoByIdASync(int? companyId)
+        public async Task<Company> GetCompanyInfoByIdAsync(int? companyId)
         {
             Company result = new();
 
-            if (companyId != null)
+            if (companyId is not null)
             {
                 result = await _context.Companies
                                        .Include(c => c.Members)

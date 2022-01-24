@@ -80,6 +80,7 @@ namespace BugTracker.Services
         public async Task<bool> SendEmailNotificationAsync(Notification notification, string emailSubject)
         {
             BTUser user = await _context.Users.FirstOrDefaultAsync(u => u.Id == notification.RecipientId);
+
             if(user is not null)
             {
                 string userEmail = user.Email;
