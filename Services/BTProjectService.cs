@@ -15,8 +15,8 @@ namespace BugTracker.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
-        private readonly BTRolesService _rolesService;
-        public BTProjectService(ApplicationDbContext context, UserManager<BTUser> userManager, RoleManager<IdentityRole> roleManager, BTRolesService rolesService)
+        private readonly IBTRolesService _rolesService;
+        public BTProjectService(ApplicationDbContext context, UserManager<BTUser> userManager, RoleManager<IdentityRole> roleManager, IBTRolesService rolesService)
         {
             _context = context;
             _userManager = userManager;
