@@ -34,7 +34,6 @@ namespace BugTracker
             services.AddDbContext<ApplicationDbContext>(options =>
                   options.UseNpgsql(DataUtility.GetConnectionString(Configuration),
                   o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
-                      
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
