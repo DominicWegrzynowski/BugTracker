@@ -210,7 +210,7 @@ namespace BugTracker.Data.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ProjectId = table.Column<int>(type: "integer", nullable: false),
-                    TicketStatusId = table.Column<string>(type: "text", nullable: true),
+                    TicketStatusId = table.Column<int>(type: "integer", nullable: false),
                     OwnerUserId = table.Column<string>(type: "text", nullable: true),
                     DeveloperUserId = table.Column<string>(type: "text", nullable: true),
                     Title = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
@@ -219,8 +219,7 @@ namespace BugTracker.Data.Migrations
                     Updated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     Archived = table.Column<bool>(type: "boolean", nullable: false),
                     TicketTypeId = table.Column<int>(type: "integer", nullable: true),
-                    TicketPriorityId = table.Column<int>(type: "integer", nullable: true),
-                    TicketStatusId1 = table.Column<int>(type: "integer", nullable: true)
+                    TicketPriorityId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -250,8 +249,8 @@ namespace BugTracker.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Tickets_TicketStatuses_TicketStatusId1",
-                        column: x => x.TicketStatusId1,
+                        name: "FK_Tickets_TicketStatuses_TicketStatusId",
+                        column: x => x.TicketStatusId,
                         principalTable: "TicketStatuses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -496,9 +495,9 @@ namespace BugTracker.Data.Migrations
                 column: "TicketPriorityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_TicketStatusId1",
+                name: "IX_Tickets_TicketStatusId",
                 table: "Tickets",
-                column: "TicketStatusId1");
+                column: "TicketStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_TicketTypeId",
