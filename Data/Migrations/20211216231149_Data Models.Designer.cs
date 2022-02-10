@@ -129,7 +129,7 @@ namespace BugTracker.Data.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("CompanyDescription")
+                    b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")

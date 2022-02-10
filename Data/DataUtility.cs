@@ -91,11 +91,11 @@ namespace BugTracker.Data
             try
             {
                 IList<Company> defaultcompanies = new List<Company>() {
-                    new Company() { Name = "Company1", CompanyDescription="This is default Company 1" },
-                    new Company() { Name = "Company2", CompanyDescription="This is default Company 2" },
-                    new Company() { Name = "Company3", CompanyDescription="This is default Company 3" },
-                    new Company() { Name = "Company4", CompanyDescription="This is default Company 4" },
-                    new Company() { Name = "Company5", CompanyDescription="This is default Company 5" }
+                    new Company() { Name = "Company1", Description="This is default Company 1" },
+                    new Company() { Name = "Company2", Description="This is default Company 2" },
+                    new Company() { Name = "Company3", Description="This is default Company 3" },
+                    new Company() { Name = "Company4", Description="This is default Company 4" },
+                    new Company() { Name = "Company5", Description="This is default Company 5" }
                 };
 
                 var dbCompanies = context.Companies.Select(c => c.Name).ToList();
