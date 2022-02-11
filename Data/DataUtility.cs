@@ -24,8 +24,8 @@ namespace BugTracker.Data
 
         public static string GetConnectionString(IConfiguration configuration)
         {
-            //The default connection string will come from appSettings like usual
-            var connectionString = configuration["ConnectionString"];
+            //The default connection string comes from user secrets
+            var connectionString = configuration["ConnectionStrings:DefaultConnection"];
             //It will be automatically overwritten if we are running on Heroku
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
             return string.IsNullOrEmpty(databaseUrl) ? connectionString : BuildConnectionString(databaseUrl);
