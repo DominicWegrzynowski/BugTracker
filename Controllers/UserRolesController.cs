@@ -1,6 +1,9 @@
-﻿using BugTracker.Models.ViewModels;
+﻿using BugTracker.Extensions;
+using BugTracker.Models;
+using BugTracker.Models.ViewModels;
 using BugTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,20 +22,23 @@ namespace BugTracker.Controllers
 
         public async Task<IActionResult> ManageUserRoles()
         {
-            //Add an instance of the ViewModel as a list 
             List<ManageUserRolesViewModel> model = new();
-            //Get CompanyId
-
-            //Get all company users
             
-            //Loop over the users to populate the ViewModel
-            //  -instantiate ViewModel
-            //  -user _rolesService
-            //  -Create multi-selects
+            int companyId = User.Identity.GetCompanyId().Value;
+            
+            List<BTUser> users = await _companyInfoService.GetAllMembersAsync(companyId);
 
-            //Return the model to the view
+            foreach(BTUser user in users)
+            {
+                ManageUserRolesViewModel viewModel = new();
+                viewModel.BTUser = user;
+                IEnumerable<string> selectedRoles = await _rolesService.GetUserRolesAsync(user);
+                viewModel.Roles = new MultiSelectList(await _rolesService.GetRolesAsync(), "Name", "Name", selectedRoles);
 
-            return View();
+                model.Add(viewModel);
+            }
+
+            return View(model);
         }
     }
 }
