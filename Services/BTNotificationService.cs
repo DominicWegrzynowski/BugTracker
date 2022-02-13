@@ -13,17 +13,22 @@ namespace BugTracker.Services
     public class BTNotificationService : IBTNotificationService
     {
 
+        #region Fields
         private readonly ApplicationDbContext _context;
         private readonly IEmailSender _emailSender;
         private readonly IBTRolesService _rolesService;
+        #endregion
 
+        #region Constructor
         public BTNotificationService(ApplicationDbContext context, IEmailSender emailSender, IBTRolesService rolesService)
         {
             _context = context;
             _emailSender = emailSender;
             _rolesService = rolesService;
         }
+        #endregion
 
+        #region Add Notification
         public async Task AddNotificationAsync(Notification notification)
         {
             try
@@ -36,7 +41,9 @@ namespace BugTracker.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Get Received Notifications
         public async Task<List<Notification>> GetReceivedNotificationsAsync(string userId)
         {
             try
@@ -56,7 +63,9 @@ namespace BugTracker.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Get Sent Notifications
         public async Task<List<Notification>> GetSentNotificationsAsync(string userId)
         {
             try
@@ -76,12 +85,14 @@ namespace BugTracker.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Send Email Notification
         public async Task<bool> SendEmailNotificationAsync(Notification notification, string emailSubject)
         {
             BTUser user = await _context.Users.FirstOrDefaultAsync(u => u.Id == notification.RecipientId);
 
-            if(user is not null)
+            if (user is not null)
             {
                 string userEmail = user.Email;
                 string message = notification.Message;
@@ -102,13 +113,15 @@ namespace BugTracker.Services
                 return false;
             }
         }
+        #endregion
 
+        #region Send Email Notifications By Role
         public async Task SendEmailNotificationsByRoleAsync(Notification notification, int companyId, string role)
         {
             try
             {
                 List<BTUser> members = await _rolesService.GetUsersInRoleAsync(role, companyId);
-                
+
                 foreach (BTUser member in members)
                 {
                     notification.RecipientId = member.Id;
@@ -120,7 +133,9 @@ namespace BugTracker.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Send Members Email Notifications
         public async Task SendMembersEmailNotificationsAsync(Notification notification, List<BTUser> members)
         {
             try
@@ -135,6 +150,7 @@ namespace BugTracker.Services
             {
                 throw;
             }
-        }
+        } 
+        #endregion
     }
 }

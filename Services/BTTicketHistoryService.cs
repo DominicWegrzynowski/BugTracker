@@ -11,17 +11,22 @@ namespace BugTracker.Services
 {
     public class BTTicketHistoryService : IBTTicketHistoryService
     {
+        #region Fields
         private readonly ApplicationDbContext _context;
+        #endregion
 
+        #region Constructor
         public BTTicketHistoryService(ApplicationDbContext context)
         {
             _context = context;
         }
+        #endregion
 
+        #region Add History
         public async Task AddHistoryAsync(Ticket oldTicket, Ticket newTicket, string userId)
         {
             //New ticket has been added
-            if(oldTicket is null && newTicket is not null)
+            if (oldTicket is null && newTicket is not null)
             {
                 TicketHistory history = new()
                 {
@@ -37,7 +42,7 @@ namespace BugTracker.Services
                 try
                 {
                     await _context.TicketHistories.AddAsync(history);
-                    await _context.SaveChangesAsync(); 
+                    await _context.SaveChangesAsync();
                 }
                 catch (Exception)
                 {
@@ -48,7 +53,7 @@ namespace BugTracker.Services
             {
 
                 //Check Ticket Title
-                if(oldTicket.Title  != newTicket.Title)
+                if (oldTicket.Title != newTicket.Title)
                 {
                     TicketHistory history = new()
                     {
@@ -160,7 +165,9 @@ namespace BugTracker.Services
             }
 
         }
+        #endregion
 
+        #region Get Company Tickets Histories 
         public async Task<List<TicketHistory>> GetCompanyTicketsHistoriesAsync(int companyId)
         {
             try
@@ -183,7 +190,9 @@ namespace BugTracker.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Get Project Tickets Histories 
         public async Task<List<TicketHistory>> GetProjectTicketsHistoriesAsync(int projectId, int companyId)
         {
             try
@@ -199,9 +208,10 @@ namespace BugTracker.Services
                 return ticketHistory;
             }
             catch (Exception)
-            { 
+            {
                 throw;
             }
-        }
+        } 
+        #endregion
     }
 }

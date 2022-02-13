@@ -10,18 +10,25 @@ namespace BugTracker.Services
 {
     public class BTCompanyInfoService : IBTCompanyInfoService
     {
+        #region Fields
         private readonly ApplicationDbContext _context;
+        #endregion
 
+        #region Constructor
         public BTCompanyInfoService(ApplicationDbContext context)
         {
             _context = context;
         }
+        #endregion
 
+        #region Get All Members
         public async Task<List<BTUser>> GetAllMembersAsync(int companyId)
         {
             return await _context.Users.Where(u => u.CompanyId == companyId).ToListAsync();
         }
+        #endregion
 
+        #region Get ALl Projects
         public async Task<List<Project>> GetAllProjectsAsync(int companyId)
         {
             return await _context.Projects.Where(p => p.CompanyId == companyId)
@@ -45,7 +52,9 @@ namespace BugTracker.Services
                                           .Include(p => p.ProjectPriority)
                                           .ToListAsync();
         }
+        #endregion
 
+        #region Get All Tickets
         public async Task<List<Ticket>> GetAllTicketsAsync(int companyId)
         {
             List<Ticket> result = new List<Ticket>();
@@ -57,7 +66,9 @@ namespace BugTracker.Services
 
             return result;
         }
+        #endregion
 
+        #region Get Company Info By Id
         public async Task<Company> GetCompanyInfoByIdAsync(int? companyId)
         {
             Company result = new();
@@ -71,6 +82,7 @@ namespace BugTracker.Services
                                        .FirstOrDefaultAsync(c => c.Id == companyId);
             }
             return result;
-        }
+        } 
+        #endregion
     }
 }

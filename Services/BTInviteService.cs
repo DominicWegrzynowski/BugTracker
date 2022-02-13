@@ -13,18 +13,23 @@ namespace BugTracker.Services
     public class BTInviteService : IBTInviteService
     {
 
+        #region Fields
         private readonly ApplicationDbContext _context;
+        #endregion
 
+        #region Constructor
         public BTInviteService(ApplicationDbContext context)
         {
             _context = context;
         }
+        #endregion
 
+        #region Accept Invite
         public async Task<bool> AcceptInviteAsync(Guid? token, string userId, int companyId)
         {
             Invite invite = await _context.Invites.FirstOrDefaultAsync(i => i.CompanyToken == token);
 
-            if(invite is null)
+            if (invite is null)
             {
                 return false;
             }
@@ -38,11 +43,13 @@ namespace BugTracker.Services
                 return true;
             }
             catch (Exception)
-            { 
+            {
                 throw;
             }
         }
+        #endregion
 
+        #region Add New Invite
         public async Task AddNewInviteAsync(Invite invite)
         {
             try
@@ -55,7 +62,9 @@ namespace BugTracker.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Any Invite?
         public async Task<bool> AnyInviteAsync(Guid token, string email, int companyId)
         {
             try
@@ -70,7 +79,9 @@ namespace BugTracker.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Get Invite 1
         public async Task<Invite> GetInviteAsync(int inviteId, int companyId)
         {
             try
@@ -88,6 +99,9 @@ namespace BugTracker.Services
                 throw;
             }
         }
+        #endregion
+
+        #region Get Invite 2
         public async Task<Invite> GetInviteAsync(Guid token, string email, int companyId)
         {
             try
@@ -105,9 +119,12 @@ namespace BugTracker.Services
                 throw;
             }
         }
+        #endregion
+
+        #region Validate Invite Code
         public async Task<bool> ValidateInviteCodeAsync(Guid? token)
         {
-            if(token is null)
+            if (token is null)
             {
                 return false;
             }
@@ -141,6 +158,7 @@ namespace BugTracker.Services
             {
                 throw;
             }
-        }
+        } 
+        #endregion
     }
 }
