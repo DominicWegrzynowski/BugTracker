@@ -15,20 +15,19 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <form class="form-inline my-2 my-lg-0">
                       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                      <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
                     </form>
-
-                    <a asp-area="" asp-controller="Companies" asp-action="Index">Companies</a>
+                    <a asp-area="" asp-controller="Companies" asp-action="Index" class="info">Companies</a>
                     <a asp-area="" asp-controller="Projects" asp-action="Index">Projects</a>
                     <a asp-area="" asp-controller="Tickets" asp-action="Index">Tickets</a>
                     <a asp-area="" asp-controller="Notifications" asp-action="Index">Notifications</a>
-
+                    <a asp-area="" asp-controller="UserRoles" asp-action="ManageUserRoles">Manage Roles</a>
                     <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container-fluid ">
+    <div class="container ">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
