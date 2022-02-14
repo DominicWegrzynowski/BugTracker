@@ -49,6 +49,8 @@ namespace BugTracker.Controllers
         // GET: Projects/Create
         public IActionResult Create()
         {
+            
+
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
             ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id");
             return View();
