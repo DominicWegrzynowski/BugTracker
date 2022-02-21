@@ -1,4 +1,4 @@
-﻿@model BugTracker.Models.Project
+﻿@model BugTracker.Models.ViewModels.AddProjectWithPMViewModel;
 
 @{
     ViewData["Title"] = "Create";
@@ -10,55 +10,48 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="CompanyId" class="control-label"></label>
-                <select asp-for="CompanyId" class ="form-control" asp-items="ViewBag.CompanyId"></select>
+                <label asp-for="Project.Name" class="control-label"></label>
+                <input asp-for="Project.Name" class="form-control" />
+                <span asp-validation-for="Project.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ProjectPriorityId" class="control-label"></label>
-                <select asp-for="ProjectPriorityId" class ="form-control" asp-items="ViewBag.ProjectPriorityId"></select>
+                <label asp-for="Project.Description" class="control-label"></label>
+                <input asp-for="Project.Description" class="form-control" />
+                <span asp-validation-for="Project.Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="Project.StartDate" class="control-label"></label>
+                <input asp-for="Project.StartDate" class="form-control" />
+                <span asp-validation-for="Project.StartDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <label asp-for="Project.EndDate" class="control-label"></label>
+                <input asp-for="Project.EndDate" class="form-control" />
+                <span asp-validation-for="Project.EndDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
-                <span asp-validation-for="StartDate" class="text-danger"></span>
+                <label class="control-label">Choose a priority</label>
+                <select asp-for="ProjectPriority" class ="form-control" asp-items="@Model.PriorityList"></select>
             </div>
+            @*Set Up Image Capture*@
             <div class="form-group">
-                <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
-                <span asp-validation-for="EndDate" class="text-danger"></span>
+                <label class="control-label">Project Image</label>
+                <input asp-for="Project.ImageFormFile" class="form-control" type="file" accept=".png,.jpg,.jpeg,.gif"
+                       onchange="document.getElementById('imageFileData').src = window.URL.createObjectURL(this.files[0])"/>
+                <span asp-validation-for="Project.ImageFormFile"></span>
             </div>
+            <label>Image Preview</label>
+            @if(Model.Project.ImageFileData is not null)
+            {
+                <img id="imageFileData" class="img-fluid img-thumbnail" style="width:100px;height:80px;" src="data:image/*;base64,@(Convert.ToBase64String(Model.Project.ImageFileData))">
+            }
+            @*Fix up PM SelecList*@
             <div class="form-group">
-                <label asp-for="ImageFileName" class="control-label"></label>
-                <input asp-for="ImageFileName" class="form-control" />
-                <span asp-validation-for="ImageFileName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImageFileData" class="control-label"></label>
-                <input asp-for="ImageFileData" class="form-control" />
-                <span asp-validation-for="ImageFileData" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImageFileContentType" class="control-label"></label>
-                <input asp-for="ImageFileContentType" class="form-control" />
-                <span asp-validation-for="ImageFileContentType" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Archived" /> @Html.DisplayNameFor(model => model.Archived)
-                </label>
+                <label class="control-label">Project Manager</label>
+                <select asp-for="PmId" class ="form-control" asp-items="@Model.PmList"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
