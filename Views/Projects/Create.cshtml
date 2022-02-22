@@ -4,12 +4,12 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1 class="d-flex justify-content-center">Create Project</h1>
 
-<h4>Project</h4>
+
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="row d-flex justify-content-center">
+    <div class="col-md-6">
         <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -34,7 +34,7 @@
             </div>
             <div class="form-group">
                 <label class="control-label">Choose a priority</label>
-                <select asp-for="ProjectPriority" class ="form-control" asp-items="@Model.PriorityList"></select>
+                <select asp-for="Project.ProjectPriorityId" class ="form-control" asp-items="@Model.PriorityList"></select>
             </div>
             @*Set Up Image Capture*@
             <div class="form-group">
@@ -44,25 +44,34 @@
                 <span asp-validation-for="Project.ImageFormFile"></span>
             </div>
             <label>Image Preview</label>
-            @if(Model.Project.ImageFileData is not null)
+            @if(Model.Project?.ImageFileData is not null)
             {
                 <img id="imageFileData" class="img-fluid img-thumbnail" style="width:100px;height:80px;" src="data:image/*;base64,@(Convert.ToBase64String(Model.Project.ImageFileData))">
+            }
+            else
+            {
+                <img id="imageFileData" class="img-fluid img-thumbnail" style="width:100px;height:80px;" src="">
+
             }
             @*Fix up PM SelecList*@
             <div class="form-group">
                 <label class="control-label">Project Manager</label>
-                <select asp-for="PmId" class ="form-control" asp-items="@Model.PmList"></select>
+                <select asp-for="PmId" class ="form-control" asp-items="@Model.PmList">
+                    <option></option>
+                </select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
+        <div>
+            <a asp-action="Index">Back to List</a>
+        </div>
     </div>
+
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
