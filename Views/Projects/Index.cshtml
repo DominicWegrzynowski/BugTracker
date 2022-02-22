@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<BugTracker.Models.Project>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Projects";
 }
 
-<h1>Index</h1>
+<h1>Projects</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -25,13 +25,7 @@
                 @Html.DisplayNameFor(model => model.EndDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ImageFileName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageFileData)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageFileContentType)
+               @Html.DisplayNameFor(model => model.ImageFileData)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Archived)
@@ -61,13 +55,10 @@
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImageFileName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageFileData)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageFileContentType)
+                @if(item.ImageFileData is not null)
+                {
+                    <img id="imageFileData" class="img-fluid img-thumbnail" style="width:100px;height:80px;" src="data:image/*;base64,@(Convert.ToBase64String(item.ImageFileData))">
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Archived)
