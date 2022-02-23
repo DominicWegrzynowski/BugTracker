@@ -111,9 +111,23 @@ namespace BugTracker.Services
         #region Archive Project
         public async Task ArchiveProjectAsync(Project project)
         {
-            project.Archived = true;
-            _context.Update(project);
-            await _context.SaveChangesAsync();
+            try
+            {
+                project.Archived = true;
+                await UpdateProjectAsync(project);
+
+                foreach (var ticket in project.Tickets)
+                {
+                    ticket.ArchivedByProject = true;
+                    _context.Update(ticket);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch(Exception)
+            {
+                throw;
+            }
+            
         }
         #endregion
 
@@ -394,6 +408,28 @@ namespace BugTracker.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"*** ERROR *** Error removing users from the project. ---> {ex.Message}");
+                throw;
+            }
+        }
+        #endregion
+
+        #region Restore ProjectAsync
+        public async Task RestoreProjectAsync(Project project)
+        {
+            try
+            {
+                project.Archived = false;
+                await UpdateProjectAsync(project);
+
+                foreach (var ticket in project.Tickets)
+                {
+                    ticket.ArchivedByProject = false;
+                    _context.Update(ticket);
+                    await _context.SaveChangesAsync(); 
+                }
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }

@@ -50,6 +50,9 @@ namespace BugTracker.Models
         [DisplayName("Archived")]
         public bool Archived { get; set; }
 
+        [DisplayName("Archived By Project")]
+        public bool ArchivedByProject { get; set; }
+
         //Navigation Properties
         //the virtual keyword allows for lazy loading and change tracking in entity framework
         public virtual Project Project { get; set; }

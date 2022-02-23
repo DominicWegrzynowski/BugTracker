@@ -1,12 +1,12 @@
 ﻿@model BugTracker.Models.Project
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Archive";
 }
 
-<h1>Delete</h1>
+<h1>Archive</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Are you sure you want to archive this project?</h3>
 <div>
     <h4>Project</h4>
     <hr />
@@ -35,23 +35,11 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.EndDate)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageFileName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageFileName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageFileData)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageFileData)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageFileContentType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageFileContentType)
+        <dd class="col-sm-10">
+            @if(Model.ImageFileData is not null)
+            {
+                <img id="imageFileData" class="img-fluid img-thumbnail" style="width:100px;height:80px;" src="data:image/*;base64,@(Convert.ToBase64String(Model.ImageFileData))">
+            }
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Archived)
@@ -69,13 +57,13 @@
             @Html.DisplayNameFor(model => model.ProjectPriority)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProjectPriority.Id)
+            @Html.DisplayFor(model => model.ProjectPriority.Name)
         </dd class>
     </dl>
     
-    <form asp-action="Delete">
+    <form asp-action="Archive">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <input type="submit" value="Archive" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>
 </div>
