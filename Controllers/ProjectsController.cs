@@ -11,6 +11,7 @@ using BugTracker.Extensions;
 using BugTracker.Models.ViewModels;
 using BugTracker.Services.Interfaces;
 using BugTracker.Models.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
@@ -21,17 +22,19 @@ namespace BugTracker.Controllers
         private readonly IBTLookupService _lookupService;
         private readonly IBTFileService _fileService;
         private readonly IBTProjectService _projectService;
-        public ProjectsController(ApplicationDbContext context, 
-                                  IBTRolesService rolesService, 
-                                  IBTLookupService lookupService, 
-                                  IBTFileService fileService, 
-                                  IBTProjectService projectService)
+        private readonly UserManager<BTUser> _userManager;
+        public ProjectsController(ApplicationDbContext context,
+                                  IBTRolesService rolesService,
+                                  IBTLookupService lookupService,
+                                  IBTFileService fileService,
+                                  IBTProjectService projectService, UserManager<BTUser> userManager)
         {
             _context = context;
             _rolesService = rolesService;
             _lookupService = lookupService;
             _fileService = fileService;
             _projectService = projectService;
+            _userManager = userManager;
         }
 
         // GET: Projects
@@ -39,6 +42,15 @@ namespace BugTracker.Controllers
         {
             var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
             return View(await applicationDbContext.ToListAsync());
+        }
+
+        public async Task<IActionResult> MyProjects()
+        {
+            string userId = _userManager.GetUserId(User);
+
+            List<Project> projects = await _projectService.GetUserProjectsAsync(userId);
+
+            return View(projects);
         }
 
         // GET: Projects/Details/5

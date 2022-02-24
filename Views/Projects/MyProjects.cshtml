@@ -1,0 +1,95 @@
+﻿@model IEnumerable<BugTracker.Models.Project>
+@using BugTracker.Models.Enums
+
+@{
+    ViewData["Title"] = "My Projects";
+}
+
+<h1>My Projects</h1>
+
+@if(User.IsInRole(Roles.Admin.ToString()) || User.IsInRole(Roles.ProjectManager.ToString()))
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+            <th>
+               @Html.DisplayNameFor(model => model.ImageFileData)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Archived)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Company)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProjectPriority)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+            <td>
+                @if(item.ImageFileData is not null)
+                {
+                    <img id="imageFileData" class="img-fluid img-thumbnail" style="width:100px;height:80px;" src="data:image/*;base64,@(Convert.ToBase64String(item.ImageFileData))">
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Archived)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Company.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                @if (User.IsInRole(Roles.Admin.ToString()) || User.IsInRole(Roles.ProjectManager.ToString()))
+                {
+                    @if (item.Archived)
+                    {
+                        <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
+                    }
+                }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
