@@ -7,18 +7,11 @@
 @inject IBTProjectService ProjectService
 
 @{
-    ViewData["Title"] = "All Projects";
+    ViewData["Title"] = "Archived Projects";
     BTUser btUser = await UserManager.GetUserAsync(User);
 }
 
-<h1>All Projects</h1>
-
-@if(User.IsInRole(Roles.Admin.ToString()) || User.IsInRole(Roles.ProjectManager.ToString()))
-{
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-}
+<h1>Archived Projects</h1>
 
 <table class="table">
     <thead>
@@ -92,14 +85,7 @@
                 @if (User.IsInRole(Roles.Admin.ToString()) || isProjectPM)
                 {
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
-                    @if (item.Archived)
-                    {
-                        <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
-                    }
-                    else
-                    {
-                        <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
-                    }
+                    <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
                 }
             </td>
         </tr>
