@@ -1,78 +1,117 @@
-﻿@model BugTracker.Models.Project
-
-@{
-    ViewData["Title"] = "Details";
-}
-
-<h1>Details</h1>
+﻿<h1>Details</h1>
 
 <div>
-    <h4>Project</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageFileName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageFileName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageFileData)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageFileData)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageFileContentType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageFileContentType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Archived)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Archived)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Company)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Company.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProjectPriority)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProjectPriority.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="container-fluid">
+        <div class="row gy-2">
+            <div class="col-md-12 col">
+                <div class="row col-cols-2 mt-5 bg-secondary">
+                    <div class="card col m-1 p-2">
+                        <div class="body">
+                            @* Project Name *@
+                            <h5>[Project Name]</h5>
+                            @* Project Description *@
+                            <p>[Project description]</p>
+                            <div class="progress-container progress-info m-b-25">
+                                <span class="progress-badge" style="font-size:small">Project Status</span>
+                                <div class="progress">
+                                    @* Razor code block *@
+                                    [Progress Bar code]
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
+                                        @* Use Progress Bar code variable here *@
+                                        <span class="progress-value">100%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card col m-1 p-2">
+                        <div class="body">
+                            <ul class=" list-unstyled basic-list">
+                                <li>Start Date: <span class="">[Project Start Date]</span></li>
+                                <li>Deadline: <span class="">[Project End Date]</span></li>
+                                <li>Priority: <span class="">[Project Priority? Name]</span></li>
+                                @* if() logic *@
+                                [Project Active/Inactive]
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col mt-5 ">
+                <div class="bg-secondary">
+                    <div class="card m-1 p-2">
+                        <div class="header">
+                            <h2>Project Manager</h2>
+                            <hr />
+                        </div>
+                        <div class="body" style="overflow-y:auto;height:300px;">
+                            [Project Manager]
+                            @* if() logic for Avatar/Default etc *@
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col mt-5 ">
+                <div class="bg-secondary">
+                    <div class="card m-1 p-2">
+                        <div class="header">
+                            <h2>Project Team</h2>
+                            <hr />
+                        </div>
+                        <div class="body" style="overflow-y:auto;height:300px;">
+                            <ul class="right_chat list-unstyled mb-0">
+
+                                [Project Members]
+                                @* Logic for avatars *@
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col mt-5 ">
+                <div class="bg-dark">
+                    <div class="card m-1 p-2">
+                        <div class="header">
+                            <h2>Project Activity</h2>
+                            <hr />
+                        </div>
+                        <div class="body" style="overflow-y:auto;height:300px;background-color:antiquewhite">
+                            @* Project Activity loop *@
+                            [Project Activity  e.g. Ticket History]
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col">
+                <div class="mt-5 bg-secondary">
+                    <div class="card m-1 p-2">
+                        <div class="header">
+                            <h2>Tickets</h2>
+                        </div>
+                        <div class="body">
+                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
+                                <table class="table table-hover">
+                                    <thead class="">
+                                        <tr>
+                                            @* Table header *@
+                                            [Ticket Table header]
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @* Table body *@
+                                        [Ticket Table body]
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
