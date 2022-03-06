@@ -36,23 +36,44 @@ namespace BugTracker.Services
         #endregion
 
         #region Get Ticket Priorities
-        public Task<List<TicketPriority>> GetTicketPrioritiesAsync()
+        public async Task<List<TicketPriority>> GetTicketPrioritiesAsync()
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                return await _context.TicketPriorities.ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         #endregion
 
         #region Get Ticket Statuses
-        public Task<List<TicketStatus>> GetTicketStatusesAsync()
+        public async Task<List<TicketStatus>> GetTicketStatusesAsync()
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                return await _context.TicketStatuses.ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         #endregion
 
         #region Get Ticket Types
-        public Task<List<TicketType>> GetTicketTypesAsync()
+        public async Task<List<TicketType>> GetTicketTypesAsync()
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                return await _context.TicketTypes.ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         } 
         #endregion
     }
