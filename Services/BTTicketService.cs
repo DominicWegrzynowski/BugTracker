@@ -305,7 +305,13 @@ namespace BugTracker.Services
         {
             try
             {
-                return await _context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
+                return await _context.Tickets
+                                     .Include(t => t.OwnerUser)
+                                     .Include(t => t.Project)
+                                     .Include(t => t.TicketPriority)
+                                     .Include(t => t.TicketStatus)
+                                     .Include(t => t.TicketType)
+                                     .FirstOrDefaultAsync(t => t.Id == ticketId);
             }
             catch (Exception)
             {
