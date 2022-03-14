@@ -45,6 +45,21 @@ namespace BugTracker.Services
         }
         #endregion
 
+        #region Add Ticket Comment
+        public async Task AddTicketCommentAsync(TicketComment ticketComment)
+        {
+			try
+			{
+                await _context.AddAsync(ticketComment);
+                await _context.SaveChangesAsync();
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+        }
+        #endregion
+
         #region Archive Ticket
         public async Task ArchiveTicketAsync(Ticket ticket)
         {
@@ -311,6 +326,9 @@ namespace BugTracker.Services
                                      .Include(t => t.TicketPriority)
                                      .Include(t => t.TicketStatus)
                                      .Include(t => t.TicketType)
+                                     .Include(t => t.Comments)
+                                     .Include(t => t.Attachments)
+                                     .Include(t => t.History)
                                      .FirstOrDefaultAsync(t => t.Id == ticketId);
             }
             catch (Exception)

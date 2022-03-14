@@ -1,72 +1,157 @@
 ﻿@model BugTracker.Models.Ticket
+@using BugTracker.Models.Enums
+@using BugTracker.Services.Interfaces
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<BTUser> UserManager
+@inject IBTProjectService ProjectService
+@inject IBTTicketHistoryService HistoryService
+@inject IBTFileService FileService
 
 @{
-    ViewData["Title"] = "Details";
+	ViewData["Title"] = "Detail";
+	BTUser user = await UserManager.GetUserAsync(User);
+	BTUser projectManager = await ProjectService.GetProjectManagerAsync(Model.ProjectId);
 }
 
-<h1>Details</h1>
+<h1>Ticket Details</h1>
 
 <div>
-    <h4>Ticket</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketStatusId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TicketStatusId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Updated)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Updated)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Archived)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Archived)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Project)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Project.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OwnerUser)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OwnerUser.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DeveloperUser)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DeveloperUser.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+	<div classxfont-weighteighteightgetainer-fluid">
+		<div class="row gy-2">
+			<div class="col-md-12 col">
+				<div class="row col-cols-2 mt-5 bg-secondary">
+					<div class="card col m-1 p-2">
+						<div class="card-body">
+							<h5>@Model.Title</h5>
+							<p>@Model.Description</p>
+							<div class="progress-container progress-info m-b-25">
+								<span class="progress-badge" style="font-size:small">Project: @Model.Project.Name</span>
+								<div class="progress">
+									@{
+										var start = Model.Project.StartDate.DateTime;
+                                        var end = Model.Project.EndDate.DateTime;
+                                        var today = DateTime.Now;
+                                        var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
+									}
+									<div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
+										
+										<span class="progress-value">@percent%</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card col m-1 p-2">
+						<div class="card-body">
+							<ul class="list-unstyled">				  
+								<li><strong>Date Entered:</strong> <span class="">  @Model.Created.ToString("dd MMM, yyyy")</</span></li>
+								<li><strong>Deadline:</strong> <span class="">  @Model.Project.EndDate.ToString("dd MMM, yyyy")</</span></li>
+								<li><strong>Type:</strong> <span class="">  @Model.TicketType.Name</span></li>
+								<li><strong>Priority:</strong> <span class="">  @Model.TicketPriority.Name</span></li>
+								<li><strong>Status:</strong> <span class="">  @Model.TicketStatus.Name</span></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-8 col col-cols-2 mt-5 ">
+				<div class="col">
+					<div class="bg-secondary">
+						<div class="card m-1 p-2">
+							<div class="card-header">
+								<h2>Comments</h2>
+							</div>
+							<div class="card-body" style="overflow-y:auto;height:600px;">
+									
+								@*Form and Logic for authorized users to add comments*@
+								<form asp-action="AddTicketComment" asp-controller="Tickets" method="post">
+									<input type="hidden" asp-for="Id" name="TicketId"/>
+									@if(Model.DeveloperUserId == user.Id || Model.OwnerUserId == user.Id || projectManager?.Id == user.Id || User.IsInRole(nameof(Roles.Admin)))
+									{
+										<div class="form-group">
+											<textarea asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add comment..."></textarea>
+										</div>
+										<button class="btn btn-sm btn-primary">Submit</button>
+									}
+									else
+									{
+										<div class="form-group">
+											<textarea disabled asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add comment ..."></textarea>
+										</div>
+									}
+								</form>
+
+
+								<hr />
+									<h6>Comments</h6>
+									<ul class="right_chat list-unstyled mb-0">
+									@foreach (TicketComment ticketComment in Model.Comments)
+									{
+										<li class="online mb-4">
+											<div class="media">
+												<a href="javascript:void(9);">
+													@if(user?.AvatarFileData is not null)
+													{
+														<img class="media-object" src="data:image/*;base64,@(Convert.ToBase64String(user.AvatarFileData))" alt="Avatar"/>
+													}
+													else
+													{
+														<img class="media-object" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault92824.png" alt="" style="width:30px;height:30px;"/>
+													}
+												</a>
+												<div class="media-body">
+													<span class="text-muted" style="font-size:x-small;">
+														@@ @ticketComment.User.FullName
+														<small class="float-right">@ticketComment.Created.ToString("MM.dd.yyyy h:ss tt")</small>:
+													</span>
+												</div>
+												<span class="message text-primary">@Html.Raw(ticketComment.Comment)</span>
+											</div>
+										</li>
+									}	
+								</ul>
+							</div>
+							<div class="card-footer">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="bg-secondary">
+						<div class="card m-1 p-2">
+							<div class="card-header">
+								<h2>Attachments</h2>
+							</div>
+							<div class="card-body" style="overflow-y:auto;height:300px;">
+						
+					         @* Refer to the Ticket Attachments document for this section *@
+						
+							@* Ticket attachments part 1 here *@
+											
+														    
+						        @* Ticket attachments part 2 here *@
+														    
+							</div>
+							<div class="card-footer">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4 col mt-5 ">
+				<div class="bg-dark">
+					<div class="card m-1 p-2">
+						<div class="card-header">
+							<h2>History</h2>
+							<hr />
+						</div>
+						<div class="card-body" style="overflow-y:auto;height:1000px;background-color:antiquewhite">
+							@*Loop to show the history entries for the Ticket*@
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
