@@ -43,10 +43,25 @@ namespace BugTracker.Services
                 throw;
             }
         }
-        #endregion
+		#endregion
 
-        #region Add Ticket Comment
-        public async Task AddTicketCommentAsync(TicketComment ticketComment)
+		#region Add Ticket Attachment
+		public async Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment)
+		{
+			try
+			{
+                await _context.AddAsync(ticketAttachment);
+                await _context.SaveChangesAsync();
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+		} 
+		#endregion
+
+		#region Add Ticket Comment
+		public async Task AddTicketCommentAsync(TicketComment ticketComment)
         {
 			try
 			{
@@ -313,10 +328,28 @@ namespace BugTracker.Services
                 throw;
             }
         }
-        #endregion
+		#endregion
 
-        #region Get Tickets By Id
-        public async Task<Ticket> GetTicketByIdAsync(int ticketId)
+		#region Get Ticket Attachment By Id
+		public async Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId)
+		{
+			try
+			{
+                TicketAttachment ticketAttachment = await _context.TicketAttachments
+                                                                  .Include(t => t.User)
+                                                                  .FirstOrDefaultAsync(t => t.Id == ticketAttachmentId);
+
+                return ticketAttachment;
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+		} 
+		#endregion
+
+		#region Get Tickets By Id
+		public async Task<Ticket> GetTicketByIdAsync(int ticketId)
         {
             try
             {

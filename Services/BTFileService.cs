@@ -53,30 +53,22 @@ namespace BugTracker.Services
         public string FormatFileSize(long bytes)
         {
             int counter = 0;
-            decimal fileSize = bytes;
-
-            while (Math.Round(fileSize / 1024) >= 1)
+            decimal number = bytes;
+            while (Math.Round(number / 1024) >= 1)
             {
-                fileSize /= bytes;
+                number /= 1024;
                 counter++;
             }
 
-            return String.Format("{0:n1}{1}", fileSize, suffixes[counter]);
-
+            return string.Format("{0:n1}{1}", number, suffixes[counter]);
         }
         #endregion
 
         #region Get File Icon
         public string GetFileIcon(string file)
         {
-            string fileImage = "default";
-
-            if (!string.IsNullOrWhiteSpace(file))
-            {
-                fileImage = Path.GetExtension(file).Replace(".", "");
-                return $"/img/png/{fileImage}.png";
-            }
-
+            string ext = Path.GetExtension(file).Replace(".", "");
+            string fileImage = $"/img/contenttype/{ext}.png";
             return fileImage;
         } 
         #endregion

@@ -44,7 +44,8 @@
 					</div>
 					<div class="card col m-1 p-2">
 						<div class="card-body">
-							<ul class="list-unstyled">				  
+							<ul class="list-unstyled">		
+								<li><strong>Project:</strong> <span class="">  @Model.Project.Name</</span></li>
 								<li><strong>Date Entered:</strong> <span class="">  @Model.Created.ToString("dd MMM, yyyy")</</span></li>
 								<li><strong>Deadline:</strong> <span class="">  @Model.Project.EndDate.ToString("dd MMM, yyyy")</</span></li>
 								<li><strong>Type:</strong> <span class="">  @Model.TicketType.Name</span></li>
@@ -63,8 +64,6 @@
 								<h2>Comments</h2>
 							</div>
 							<div class="card-body" style="overflow-y:auto;height:600px;">
-									
-								@*Form and Logic for authorized users to add comments*@
 								<form asp-action="AddTicketComment" asp-controller="Tickets" method="post">
 									<input type="hidden" asp-for="Id" name="TicketId"/>
 									@if(Model.DeveloperUserId == user.Id || Model.OwnerUserId == user.Id || projectManager?.Id == user.Id || User.IsInRole(nameof(Roles.Admin)))
@@ -72,7 +71,7 @@
 										<div class="form-group">
 											<textarea asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add comment..."></textarea>
 										</div>
-										<button class="btn btn-sm btn-primary">Submit</button>
+										<button class="btn btn-sm btn-primary mt-3">Submit</button>
 									}
 									else
 									{
@@ -97,7 +96,7 @@
 													}
 													else
 													{
-														<img class="media-object" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault92824.png" alt="" style="width:30px;height:30px;"/>
+														<img class="media-object" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="" style="width:30px;height:30px;"/>
 													}
 												</a>
 												<div class="media-body">
@@ -124,13 +123,47 @@
 								<h2>Attachments</h2>
 							</div>
 							<div class="card-body" style="overflow-y:auto;height:300px;">
-						
-					         @* Refer to the Ticket Attachments document for this section *@
-						
-							@* Ticket attachments part 1 here *@
-											
-														    
-						        @* Ticket attachments part 2 here *@
+							<div class="row clearfix">
+								<div>
+									<form asp-action="AddTicketAttachment" asp-controller="Tickets" enctype="multipart/form-data" method="post">
+										<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+										<input type="hidden" asp-for="@Model.Id" name="TicketId" />
+										<div class="media-body ml-3">
+											<label>
+												Description
+												<input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control-file" />
+											</label>
+											<label>
+												<input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" class="form-control-file" />
+											</label>
+											<button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat mt-3">Submit</button>
+										</div>
+									</form>
+								</div>
+							</div>
+							
+							<hr />
+							<h6>Attachments</h6>
+							<div class="container">
+								<div class="row">
+									   @foreach (TicketAttachment item in Model.Attachments)
+									   {
+											<div class="col col-sm-2">
+	            								   <a asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
+	            	   								<div class="icon">
+	            	   									<img src="@FileService.GetFileIcon(item.FileName)" style="height:75px;width:75px" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="@item.FileName" />
+	            	   								</div>
+	            								   </a>
+	            								   <div style="font-size:x-small">
+	            	   								<div class="file-name">
+	            	   									<strong>@item.Description</strong>
+	            	   								</div>
+	            	   								<small>Size: @FileService.FormatFileSize(item.FileData.Length) </small>
+	            								   </div>
+											</div>
+									   }
+								</div>
+							</div>
 														    
 							</div>
 							<div class="card-footer">
