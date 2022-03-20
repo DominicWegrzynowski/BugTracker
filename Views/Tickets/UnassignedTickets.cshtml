@@ -1,0 +1,67 @@
+﻿@model IEnumerable<BugTracker.Models.Ticket>
+@using BugTracker.Models.Enums
+
+<div class="col-md-12 col">
+                <div class="mt-5 bg-secondary">
+                    <div class="card m-1 p-2">
+                        <div class="header">
+                            <h2>Unassigned Tickets</h2>
+                        </div>
+                        <div class="body">
+                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
+                                <table class="table table-hover">
+                                    <thead class="">
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Developer</th>
+                                            <th>Status</th>
+                                            <th>Priority</th>
+                                            <th>Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                          @foreach (var ticket in Model.OrderByDescending(d => d.Created))
+                                          {
+                                              <tr>
+                                                  <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" style="color:black"><strong>@ticket.Title</strong></a> </td>
+                                                  <td>
+                                                      @if (ticket.DeveloperUserId != null)
+                                                      {
+                                                          @ticket.DeveloperUser?.FullName
+                                                      }
+                                                      else
+                                                      {
+                                                          if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+                                                          {
+                                                              <a class="btn btn-xs btn-info" asp-action="AssignDeveloper" asp-controller="Home" asp-route-ticketId="@ticket.Id">Assign Dev</a>
+                                                          }
+
+                                                      }
+                                                  </td>
+                                                  @if (ticket.TicketStatus.Name == "New")
+                                                  {
+                                                      <td><span class="badge-success">@ticket.TicketStatus.Name </span></td>
+
+                                                  }
+                                                  else
+                                                  {
+                                                      <td><span class="badge-primary">@ticket.TicketStatus.Name </span></td>
+                                                  }
+                                                  <td><span class="badge-warning">@ticket.TicketPriority.Name </span></td>
+                                                  <td>@ticket.Created.ToString("MM-dd-yyyy")</td>
+                                                  <td>
+                                                      <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
+                                                      <a class="btn btn-sm btn-outline-danger"><i class="fs-5 bi-archive"></i></a>
+                                                  </td>
+                                              </tr>
+                                          }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>

@@ -328,10 +328,29 @@ namespace BugTracker.Services
                 throw;
             }
         }
-		#endregion
+        #endregion
 
-		#region Get Ticket Attachment By Id
-		public async Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId)
+        #region Get Unassigned Tickets
+        public async Task<List<Ticket>> GetUnassignedTicketsAsync(int companyId)
+        {
+            List<Ticket> tickets;
+
+            try
+            {
+                tickets = (await GetAllTicketsByCompanyAsync(companyId)).Where(t => string.IsNullOrEmpty(t.DeveloperUserId)).ToList();
+
+                return tickets;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        } 
+        #endregion
+
+        #region Get Ticket Attachment By Id
+        public async Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId)
 		{
 			try
 			{
