@@ -180,7 +180,19 @@
 							<hr />
 						</div>
 						<div class="card-body" style="overflow-y:auto;height:1000px;background-color:antiquewhite">
-							@*Loop to show the history entries for the Ticket*@
+							@foreach(TicketHistory history in Model.History)
+							{
+								<div class="">
+									<span class="date">@history.Created.ToString("dd MMM yyyy")</span>
+									<h6>@history.Description</h6>
+									<span>By: <a href="" title="@history.User.FullName">@history.User.FullName</a></span>
+									<div class="">
+										<p>The ticket <strong>@history.Property</strong> was edited</p>
+										<p>@($"Previous { history.Property }: { history.OldValue }")</p>
+										<p>@($"Current { history.Property }: { history.NewValue }")</p>
+									</div>
+								</div>
+							}
 						</div>
 					</div>
 				</div>
