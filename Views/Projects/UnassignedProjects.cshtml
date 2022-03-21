@@ -1,0 +1,73 @@
+﻿@model IEnumerable<BugTracker.Models.Project>
+
+@{
+    ViewData["Title"] = "Unassigned Projects";
+}
+
+<h1>Unassigned Projects</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+            <th>
+               @Html.DisplayNameFor(model => model.ImageFileData)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Archived)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProjectPriority)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+            <td>
+                @if(item.ImageFileData is not null)
+                {
+                    <img id="imageFileData" stle="width:60px;height:60px;" style="width:100px;height:80px;" src="data:image/*;base64,@(Convert.ToBase64String(item.ImageFileData))">
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Archived)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
+            </td>
+            <td>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="AssignPM" asp-route-id="@item.Id">Add PM</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

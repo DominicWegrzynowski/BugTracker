@@ -75,11 +75,24 @@ namespace BugTracker.Controllers
             return View(projects);
         }
 
+        // GET: Projects/ArchivedProjects
         public async Task<IActionResult> ArchivedProjects()
         {
             int companyId = User.Identity.GetCompanyId().Value;
 
             List<Project> projects = await _projectService.GetArchivedProjectsByCompanyAsync(companyId);
+
+            return View(projects);
+        }
+
+        // GET: Projects/UnassignedProjects
+        public async Task<IActionResult> UnassignedProjects()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Project> projects = new List<Project>();
+
+            projects = await _projectService.GetUnassignedProjectsAsync(companyId);
 
             return View(projects);
         }
