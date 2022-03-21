@@ -156,7 +156,7 @@ namespace BugTracker.Controllers
             }
         }
 
-        // GET AssignDeveloper
+        // GET Tickets/AssignDeveloper
         [HttpGet]
         public async Task<IActionResult> AssignDeveloper(int id)
         {
@@ -167,6 +167,20 @@ namespace BugTracker.Controllers
                                               "Id", "FullName");
 
             return View(model);
+        }
+
+        // POST Tickets/AssignDeveloper
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
+        {
+            if(model.DeveloperId is not null)
+            {
+                await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+                return RedirectToAction(nameof(Details), new { id = model.Ticket.Id });
+            }
+
+            return RedirectToAction(nameof(AssignDeveloper), new { id = model.Ticket.Id });
         }
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)

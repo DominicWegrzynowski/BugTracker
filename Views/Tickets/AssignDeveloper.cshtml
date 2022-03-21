@@ -12,7 +12,7 @@
                 </div>
                 <div class="card-body">
                     <form method="post" asp-action="AssignDeveloper" asp-controller="Ticket">
-                        <input asp-for="Ticket.Id" />
+                        <input hidden asp-for="Ticket.Id" />
                         <p>Description: @Model.Ticket.Description</p>
                         <div class="form-group">
                             <label class="col-form-label">Select Developers</label>
