@@ -1,0 +1,34 @@
+﻿@model BugTracker.Models.ViewModels.ProjectMembersViewModel
+
+<div class="container">
+    <h2>Assign Members for</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>@Model.Project.Name</h3>
+
+            <div class="card">
+                <div class="card-header">
+                    <label asp-for="@Model.Users" class="control-label">Assign team members for Project</label>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="AssignMembers" asp-controller="Projects">
+                        <input hidden asp-for="Project.Id" />
+                        <div class="col-12 mb-3">
+                            <div class="form-group">
+                                <select required asp-for="@Model.SelectedUsers" class="form-control" asp-items="@Model.Users" multiple="multiple"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-lg-10">
+                                <input type="submit" class="btn alert-primary" value="Assign users" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <a asp-action="Details" asp-controller="Projects" asp-route-id="@Model.Project.Id">Back to Detail</a>
+    </div>
+</div>
