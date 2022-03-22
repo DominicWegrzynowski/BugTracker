@@ -102,7 +102,7 @@ namespace BugTracker.Services
             }
             else
             {
-                Console.WriteLine($"{ user.FullName } does not exist");
+                Console.WriteLine($"User does not exist");
                 return false;
             }
         }

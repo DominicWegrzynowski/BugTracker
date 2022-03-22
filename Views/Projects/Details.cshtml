@@ -51,7 +51,7 @@
                                 <li>Start Date: <span class="">@start.ToString("dd MMM, yyyy")</span></li>
                                 <li>Deadline: <span class="">@end.ToString("dd MMM, yyyy")</span></li>
                                 <li>Priority: <span class="">@Model.ProjectPriority?.Name</span></li>
-                                @* if() logic *@
+                                
                                 @if(today < end && today >= start)
                                 {
                                     <li>Status:<span class=""> Active</span></li>
@@ -215,7 +215,7 @@
                                                       {
                                                           if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
                                                           {
-                                                              <a class="btn btn-xs btn-info" asp-action="AssignDeveloper" asp-controller="Home" asp-route-ticketId="@ticket.Id">Assign Dev</a>
+                                                              <a class="btn btn-xs btn-info" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@ticket.Id">Assign Dev</a>
                                                           }
 
                                                       }

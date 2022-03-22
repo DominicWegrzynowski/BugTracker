@@ -372,7 +372,7 @@ namespace BugTracker.Services
         {
             try
             {
-                return await _context.Tickets
+                Ticket ticket = await _context.Tickets
                                      .Include(t => t.DeveloperUser)
                                      .Include(t => t.OwnerUser)
                                      .Include(t => t.Project)
@@ -383,6 +383,8 @@ namespace BugTracker.Services
                                      .Include(t => t.Attachments)
                                      .Include(t => t.History)
                                      .FirstOrDefaultAsync(t => t.Id == ticketId);
+
+                return ticket;
             }
             catch (Exception)
             {
