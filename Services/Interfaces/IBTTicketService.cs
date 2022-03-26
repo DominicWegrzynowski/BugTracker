@@ -6,7 +6,6 @@ namespace BugTracker.Services.Interfaces
 {
     public interface IBTTicketService
     {
-        // CRUD Methods
         public Task AddNewTicketAsync(Ticket ticket);
         public Task UpdateTicketAsync(Ticket ticket);
         public Task<Ticket> GetTicketByIdAsync(int ticketId);
