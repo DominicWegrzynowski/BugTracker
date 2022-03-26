@@ -16,7 +16,7 @@
 
 <h1>Ticket Details</h1>
 
-@if(string.IsNullOrEmpty(Model.DeveloperUserId))
+@if(!string.IsNullOrEmpty(Model.DeveloperUserId))
 {
 	<a href="javascript:void(9);">
 		@if(Model.DeveloperUser?.AvatarFileData is not null)
@@ -28,7 +28,7 @@
 			<img class="media-object" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="" style="width:30px;height:30px;"/>
 		}
 	</a>
-	<span class="text-muted" style="font-size:x-small;">
+	<span class="text-muted" style="font-size:medium;">
 		Developer: <strong>@Model.DeveloperUser?.FullName</strong>
 	</span>
 }

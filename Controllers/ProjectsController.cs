@@ -145,13 +145,13 @@ namespace BugTracker.Controllers
                                                                .Select(m => m.Id).ToList();
 
                 //Remove current members
-                foreach(string member in memberIds)
+                foreach (string member in memberIds)
                 {
                     await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id);
                 }
 
                 //Add selected members
-                foreach(string member in model.SelectedUsers)
+                foreach (string member in model.SelectedUsers)
                 {
                     await _projectService.AddUserToProjectAsync(member, model.Project.Id);
                 }

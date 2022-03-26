@@ -11,11 +11,13 @@
                     <label class="control-label">Assign developers for Ticket</label>
                 </div>
                 <div class="card-body">
-                    <form method="post" asp-action="AssignDeveloper" asp-controller="Ticket">
+                    <form method="post" asp-action="AssignDeveloper" asp-controller="Tickets">
                         <input hidden asp-for="Ticket.Id" />
                         <p>Description: @Model.Ticket.Description</p>
+
                         <div class="form-group">
                             <label class="col-form-label">Select Developers</label>
+
                             <select required asp-for="DeveloperId" class="form-control" asp-items="Model.Developers">
                                 <option></option>
                             </select>
