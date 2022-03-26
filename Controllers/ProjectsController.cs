@@ -285,7 +285,7 @@ namespace BugTracker.Controllers
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("AllProjects");
                 }
                 catch (Exception)
                 {
@@ -327,7 +327,7 @@ namespace BugTracker.Controllers
 
             await _projectService.ArchiveProjectAsync(project);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(AllProjects));
         }
 
 

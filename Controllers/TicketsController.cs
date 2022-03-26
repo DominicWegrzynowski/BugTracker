@@ -166,6 +166,12 @@ namespace BugTracker.Controllers
             model.Developers = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.ProjectId, nameof(Roles.Developer)),
                                               "Id", "FullName");
 
+            //Redirect to Project details if developers haven't been assigned to the project instead of showing empty list
+            if(model.Developers.Count(d => d.Selected) < 1)
+            {
+                return RedirectToAction("Details", "Projects", new { id = model.Ticket.ProjectId });
+            }
+
             return View(model);
         }
 
