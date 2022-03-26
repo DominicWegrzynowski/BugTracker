@@ -176,25 +176,25 @@ namespace BugTracker.Data
                      new Project()
                      {
                          CompanyId = company1Id,
-                         Name = "Build a Personal Porfolio",
+                         Name = "Personal Portfolio",
                          Description="Single page html, css & javascript page.  Serves as a landing page for candidates and contains a bio and links to all applications and challenges." ,
-                         StartDate = new DateTime(2021,8,20),
-                         EndDate = new DateTime(2021,8,20).AddMonths(1),
+                         StartDate = new DateTime(2022,3,20),
+                         EndDate = new DateTime(2022,3,20).AddMonths(4),
                          ProjectPriorityId = priorityLow
                      },
                      new Project()
                      {
                          CompanyId = company2Id,
-                         Name = "Build a supplemental Blog Web Application",
-                         Description="Candidate's custom built web application using .Net Core with MVC, a postgres database and hosted in a heroku container.  The app is designed for the candidate to create, update and maintain a live blog site.",
-                         StartDate = new DateTime(2021,8,20),
-                         EndDate = new DateTime(2021,8,20).AddMonths(4),
+                         Name = "Blog Site",
+                         Description="My custom built web application using .Net Core with MVC, a postgres database and hosted in a heroku container.  The app is designed for the candidate to create, update and maintain a live blog site.",
+                         StartDate = new DateTime(2022,2,20),
+                         EndDate = new DateTime(2022,2,20).AddMonths(4),
                          ProjectPriorityId = priorityMedium
                      },
                      new Project()
                      {
                          CompanyId = company1Id,
-                         Name = "Build an Issue Tracking Web Application",
+                         Name = "Bug Tracker",
                          Description="A custom designed .Net Core application with postgres database.  The application is a multi tennent application designed to track issue tickets' progress.  Implemented with identity and user roles, Tickets are maintained in projects which are maintained by users in the role of projectmanager.  Each project has a team and team members.",
                          StartDate = new DateTime(2021,8,20),
                          EndDate = new DateTime(2021,8,20).AddMonths(6),
@@ -203,19 +203,19 @@ namespace BugTracker.Data
                      new Project()
                      {
                          CompanyId = company2Id,
-                         Name = "Build an Address Book Web Application",
+                         Name = "Address Book",
                          Description="A custom designed .Net Core application with postgres database.  This is an application to serve as a rolodex of contacts for a given user..",
-                         StartDate = new DateTime(2021,8,20),
-                         EndDate = new DateTime(2021,8,20).AddMonths(2),
+                         StartDate = new DateTime(2022,3,9),
+                         EndDate = new DateTime(2022,3,9).AddMonths(2),
                          ProjectPriorityId = priorityLow
                      },
                     new Project()
                      {
                          CompanyId = company1Id,
-                         Name = "Build a Movie Information Web Application",
+                         Name = "Movie Review Site",
                          Description="A custom designed .Net Core application with postgres database.  An API based application allows users to input and import movie posters and details including cast and crew information.",
-                         StartDate = new DateTime(2021,8,20),
-                         EndDate = new DateTime(2021,8,20).AddMonths(3),
+                         StartDate = new DateTime(2022,3,21),
+                         EndDate = new DateTime(2022,8,21).AddMonths(3),
                          ProjectPriorityId = priorityHigh
                      }
                 };
@@ -830,14 +830,14 @@ namespace BugTracker.Data
 
         #endregion
 
-        #region Seed Default Tickets
+        #region Seed Default Tickets 123
         public static async Task SeedDefautTicketsAsync(ApplicationDbContext context)
         {
             //Get project Ids
-            int portfolioId = context.Projects.FirstOrDefault(p => p.Name == "Build a Personal Porfolio").Id;
-            int blogId = context.Projects.FirstOrDefault(p => p.Name == "Build a supplemental Blog Web Application").Id;
-            int bugtrackerId = context.Projects.FirstOrDefault(p => p.Name == "Build an Issue Tracking Web Application").Id;
-            int movieId = context.Projects.FirstOrDefault(p => p.Name == "Build a Movie Information Web Application").Id;
+            int portfolioId = context.Projects.FirstOrDefault(p => p.Name == "Personal Portfolio").Id;
+            int blogId = context.Projects.FirstOrDefault(p => p.Name == "Blog Site").Id;
+            int bugtrackerId = context.Projects.FirstOrDefault(p => p.Name == "Bug Tracker").Id;
+            int movieId = context.Projects.FirstOrDefault(p => p.Name == "Movie Review Site").Id;
 
             //Get ticket type Ids
             int typeNewDev = context.TicketTypes.FirstOrDefault(p => p.Name == BTTicketType.NewDevelopment.ToString()).Id;
