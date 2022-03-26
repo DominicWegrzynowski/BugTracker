@@ -87,7 +87,7 @@ namespace BugTracker.Services
                 }
 
                 //Check Ticket Priority
-                if (oldTicket.TicketPriority != newTicket.TicketPriority)
+                if (oldTicket.TicketPriorityId != newTicket.TicketPriorityId)
                 {
                     TicketHistory history = new()
                     {
@@ -104,7 +104,7 @@ namespace BugTracker.Services
                 }
 
                 //Check Ticket Status
-                if (oldTicket.TicketStatus != newTicket.TicketStatus)
+                if (oldTicket.TicketStatusId != newTicket.TicketStatusId)
                 {
                     TicketHistory history = new()
                     {
@@ -121,7 +121,7 @@ namespace BugTracker.Services
                 }
 
                 //Check Ticket Type
-                if (oldTicket.TicketType != newTicket.TicketType)
+                if (oldTicket.TicketTypeId != newTicket.TicketTypeId)
                 {
                     TicketHistory history = new()
                     {
