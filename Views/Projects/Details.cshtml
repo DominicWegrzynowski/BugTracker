@@ -105,7 +105,7 @@
                                     <img class="rounded-circle" style="width:60px;height:60px;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar" />
                                     <div class="wid-u-info">
                                         <h5 class="text-muted m-b-0">Not Assigned</h5>
-                                        <span><a asp-action="AssignProjectManager" asp-controller="Home" asp-route-id="@Model.Id" class="btn btn-xs btn-outline-info">Assign Project Manager</a></span>
+                                        <span><a asp-action="AssignPM" asp-controller="Projects" asp-route-projectId="@Model.Id" class="btn btn-xs btn-outline-info">Assign Project Manager</a></span>
                                     </div>
                                 </div>
                             }
@@ -212,7 +212,6 @@
                                                           {
                                                               <a class="btn btn-xs  btn alert-primary" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@ticket.Id">Assign Dev</a>
                                                           }
-                                                          
                                                       }
                                                   </td>
                                                   @if (ticket.TicketStatus.Name == "New")

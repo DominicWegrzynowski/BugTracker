@@ -167,12 +167,7 @@ namespace BugTracker.Controllers
             model.Ticket = await _ticketService.GetTicketByIdAsync(id);
             model.Developers = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.ProjectId, nameof(Roles.Developer)),
                                               "Id", "FullName");
-
-            //Redirect to Project details if developers haven't been assigned to the project instead of showing empty list
-            if(model.Developers.Count(d => d.Selected) < 1)
-            {
-                return RedirectToAction("Details", "Projects", new { id = model.Ticket.ProjectId });
-            }
+            
 
             return View(model);
         }
@@ -184,7 +179,22 @@ namespace BugTracker.Controllers
         {
             if(model.DeveloperId is not null)
             {
-                await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+                BTUser user = await _userManager.GetUserAsync(User);
+                Ticket oldTicket = await _ticketService.GetTicketByIdAsync(model.Ticket.Id);
+
+                try
+                {
+                    await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+                    
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+
+                Ticket newTicket = await _ticketService.GetTicketByIdAsync(model.Ticket.Id);
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, user.Id);
+
                 return RedirectToAction(nameof(Details), new { id = model.Ticket.Id });
             }
 
@@ -239,16 +249,26 @@ namespace BugTracker.Controllers
 
             if (ModelState.IsValid)
             {
-                ticket.Created = DateTimeOffset.Now;
-                ticket.OwnerUserId = user.Id;
+                try
+                {
+                    ticket.Created = DateTimeOffset.Now;
+                    ticket.OwnerUserId = user.Id;
 
-                ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(BTTicketStatus.New))).Value;
+                    ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(BTTicketStatus.New))).Value;
 
-                await _ticketService.AddNewTicketAsync(ticket);
-                
-                //TODO: Ticket History
-                //TODO: Ticket Notification
-                return RedirectToAction(nameof(Index));
+                    await _ticketService.AddNewTicketAsync(ticket);
+
+                    Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                    await _historyService.AddHistoryAsync(null, newTicket, user.Id);
+
+                    //TODO: Ticket Notification
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+                    
             }
 
             if (User.IsInRole(nameof(Roles.Admin)))

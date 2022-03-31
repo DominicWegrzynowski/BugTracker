@@ -200,13 +200,24 @@
 							@foreach(TicketHistory history in Model.History)
 							{
 								<div class="">
-									<span class="date">@history.Created.ToString("dd MMM yyyy")</span>
+									<span class="date" style="font-weight:bold">@history.Created.ToString("dd MMM yyyy")</span>
 									<h6>@history.Description</h6>
 									<span>By: <a href="" title="@history.User.FullName">@history.User.FullName</a></span>
 									<div class="">
-										<p>The ticket <strong>@history.Property</strong> was edited</p>
-										<p>@($"Previous { history.Property }: { history.OldValue }")</p>
-										<p>@($"Current { history.Property }: { history.NewValue }")</p>
+										@if(history.Description.Contains("New Ticket Created"))
+										{
+											<p>A new ticket was added.</p>
+										}
+										else if(history.Property.Equals("TicketComment") || history.Property.Equals("TicketAttachment"))
+										{
+											<p>The ticket <strong>@history.Property</strong> was added.</p>
+										}
+										else
+										{
+											<p>The ticket <strong>@history.Property</strong> was edited</p>
+											<p>@($"Previous { history.Property }: ")<span style="color:red">@history.OldValue</span></p>
+											<p>@($"Current { history.Property }: ")<span style="color:green">@history.NewValue</span></p>
+										}
 									</div>
 								</div>
 								<hr />
