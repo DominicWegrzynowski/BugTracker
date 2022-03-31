@@ -210,11 +210,11 @@
 										}
 										else if(history.Property.Equals("TicketComment") || history.Property.Equals("TicketAttachment"))
 										{
-											<p>The ticket <strong>@history.Property</strong> was added.</p>
+											<p>The ticket <strong>@history.Property.ToLower().Replace("ticket", "").Replace("id", "")</strong> was added.</p>
 										}
 										else
 										{
-											<p>The ticket <strong>@history.Property</strong> was edited</p>
+											<p>The ticket <strong>@history.Property.ToLower().Replace("ticket", "").Replace("id", "")</strong> was edited</p>
 											<p>@($"Previous { history.Property }: ")<span style="color:red">@history.OldValue</span></p>
 											<p>@($"Current { history.Property }: ")<span style="color:green">@history.NewValue</span></p>
 										}
