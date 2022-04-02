@@ -28,6 +28,7 @@ namespace BugTracker.Controllers
         #endregion
 
         #region Manage User Roles (GET)
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles()
         {
@@ -52,6 +53,7 @@ namespace BugTracker.Controllers
         #endregion
 
         #region Manage User Roles (POST)
+        [Authorize(Roles="Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel member)
