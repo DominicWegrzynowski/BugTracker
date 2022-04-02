@@ -7,6 +7,47 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\ProjectPriorities\**" />
+    <Compile Remove="Views\TicketAttachments\**" />
+    <Compile Remove="Views\TicketComments\**" />
+    <Compile Remove="Views\TicketHistories\**" />
+    <Compile Remove="Views\TicketPriorities\**" />
+    <Compile Remove="Views\TicketStatus\**" />
+    <Compile Remove="Views\TicketTypes\**" />
+    <Content Remove="Views\ProjectPriorities\**" />
+    <Content Remove="Views\TicketAttachments\**" />
+    <Content Remove="Views\TicketComments\**" />
+    <Content Remove="Views\TicketHistories\**" />
+    <Content Remove="Views\TicketPriorities\**" />
+    <Content Remove="Views\TicketStatus\**" />
+    <Content Remove="Views\TicketTypes\**" />
+    <EmbeddedResource Remove="Views\ProjectPriorities\**" />
+    <EmbeddedResource Remove="Views\TicketAttachments\**" />
+    <EmbeddedResource Remove="Views\TicketComments\**" />
+    <EmbeddedResource Remove="Views\TicketHistories\**" />
+    <EmbeddedResource Remove="Views\TicketPriorities\**" />
+    <EmbeddedResource Remove="Views\TicketStatus\**" />
+    <EmbeddedResource Remove="Views\TicketTypes\**" />
+    <None Remove="Views\ProjectPriorities\**" />
+    <None Remove="Views\TicketAttachments\**" />
+    <None Remove="Views\TicketComments\**" />
+    <None Remove="Views\TicketHistories\**" />
+    <None Remove="Views\TicketPriorities\**" />
+    <None Remove="Views\TicketStatus\**" />
+    <None Remove="Views\TicketTypes\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\ProjectPrioritiesController.cs" />
+    <Compile Remove="Controllers\TicketAttachmentsController.cs" />
+    <Compile Remove="Controllers\TicketCommentsController.cs" />
+    <Compile Remove="Controllers\TicketHistoriesController.cs" />
+    <Compile Remove="Controllers\TicketPrioritiesController.cs" />
+    <Compile Remove="Controllers\TicketStatusController.cs" />
+    <Compile Remove="Controllers\TicketTypesController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="bootstrap" Version="5.1.3" />
     <PackageReference Include="MailKit" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.12" />
