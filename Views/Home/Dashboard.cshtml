@@ -1,0 +1,114 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    @* Instantiate the user *@
+}
+
+<h1>Dashboard</h1>
+<a href="javascript:void(0)">
+    @*User Info*@
+    [Code: copy from Ticket/Details]
+</a>
+
+@*Get the btUsers fullname*@
+
+<strong>[User's FullName</strong>
+<span class="text-muted" style="font-size:x-small">
+    @*Company Name*@
+    <strong> [Show companyName] </strong>
+</span>
+
+<div>
+    <div classxfont-weighteighteightgetainer-fluid">
+        <div class="row gy-2">
+            <div class="col-md-12 col">
+                <div class="row col-cols-4 mt-5 bg-secondary">
+                    <div class="card col m-1 p-2">
+                        <div class="card-body">
+                            <h5>Chart 1</h5>
+                            <p>[Projects]</p>
+                        </div>
+                    </div>
+                    <div class="card col m-1 p-2">
+                        <div class="card-body">
+                            <h5>Chart 2</h5>
+                            <p>[Projects]</p>
+                        </div>
+                    </div>
+                    <div class="card col m-1 p-2">
+						<div class="card-body">
+							<h5>Chart 3</h5>
+							<p>[Tickets]</p>
+						</div>
+					</div>
+					<div class="card col m-1 p-2">
+						<div class="card-body">
+							<h5>Chart 4</h5>
+							<p>[Tickets]</p>
+						</div>
+					</div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row gy-2">
+            <div class="col-sm mt-5 bg-secondary">
+                <div class="card col m-1 p-2">
+                    <div class="card-body" style="height:380px">
+                        <h5>Chart 5</h5>
+                        <p>[Projects: Tickets vs Developers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="mt-5">
+        <div class="row">
+            @*Project Table*@
+            <div class="col">
+                <div class="bg-secondary">
+                    <div class="card m-1 p-2">
+                        <div class="card-header">
+                            <h2>Projects</h2>
+                        </div>
+                        <div class="card-body">
+                            @*[Copy and format table from Unassigned Tickets]*@
+                        </div>
+                        <div class="card-footer">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*Tickets Table*@
+            <div class="col">
+                <div class="bg-secondary">
+                    <div class="card m-1 p-2">
+                        <div class="card-header">
+                            <h2>Tickets</h2>
+                        </div>
+                        <div class="card-body">
+                            @*Copy and format table from unassigned Tickets*@
+                        </div>
+                        <div class="card-footer">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="bg-dark">
+                    <div class="card m-1 p-2">
+                        <div class="card-header">
+                            <h2>Members</h2>
+                            <hr />
+                        </div>
+                        <div class="card-body" style="overflow-y:auto;height:600px;background-color:antiquewhite">
+                            @*Loop over company members. Display name and role*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
