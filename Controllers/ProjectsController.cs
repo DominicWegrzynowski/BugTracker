@@ -12,9 +12,11 @@ using BugTracker.Models.ViewModels;
 using BugTracker.Services.Interfaces;
 using BugTracker.Models.Enums;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugTracker.Controllers
 {
+    [Authorize]
     public class ProjectsController : Controller
     {
         private readonly IBTRolesService _rolesService;
@@ -76,6 +78,7 @@ namespace BugTracker.Controllers
         }
 
         // GET : Projects/AssignPM
+        [Authorize(Roles="Admin")]
         [HttpGet]
         public async Task<IActionResult> AssignPM(int projectId)
         {
@@ -90,6 +93,7 @@ namespace BugTracker.Controllers
         }
 
         // POST : /Projects/AssignPM
+        [Authorize(Roles="Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignPM(AssignPMViewModel model)
@@ -104,6 +108,7 @@ namespace BugTracker.Controllers
         }
 
         // GET : Projects/AssignMembers
+        [Authorize(Roles="Admin, ProjectManager")]
         [HttpGet]
         public async Task<IActionResult> AssignMembers(int id)
         {
@@ -125,6 +130,7 @@ namespace BugTracker.Controllers
         }
 
         // POST : Projects/AssignMembers/
+        [Authorize(Roles="Admin, ProjectManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
@@ -154,6 +160,7 @@ namespace BugTracker.Controllers
         }
 
         // GET : Projects/UnassignedProjects
+        [Authorize(Roles="Admin")]
         public async Task<IActionResult> UnassignedProjects()
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -185,6 +192,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Projects/Create
+        [Authorize(Roles="Admin, ProjectManager")]
         public async Task<IActionResult> CreateAsync()
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -198,6 +206,7 @@ namespace BugTracker.Controllers
         }
 
         // POST: Projects/Create
+        [Authorize(Roles="Admin, ProjectManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateAsync(AddProjectWithPMViewModel model)
@@ -237,6 +246,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Projects/Edit/5
+        [Authorize(Roles="Admin, ProjectManager")]
         public async Task<IActionResult> Edit(int? id)
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -252,6 +262,7 @@ namespace BugTracker.Controllers
         }
 
         // POST: Projects/Edit/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
@@ -296,6 +307,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Projects/Archive/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Archive(int? id)
         {
             if (id == null)
@@ -314,7 +326,8 @@ namespace BugTracker.Controllers
             return View(project);
         }
 
-        // POST: Projects/Archive/5
+        // POST: Projects/Restore/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(int id)
@@ -327,8 +340,8 @@ namespace BugTracker.Controllers
             return RedirectToAction(nameof(AllProjects));
         }
 
-
-        // GET: Projects/Restore/5
+        // POST: Projects/Restore/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Restore(int? id)
         {
             if (id == null)
@@ -348,6 +361,7 @@ namespace BugTracker.Controllers
         }
 
         // POST: Projects/Restore/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost, ActionName("Restore")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreConfirmed(int id)
