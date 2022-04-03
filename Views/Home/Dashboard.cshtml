@@ -13,13 +13,13 @@
 <h1>Dashboard</h1>
 <a href="javascript:void(0)">
     @if(user?.AvatarFileData is not null)
-		{
-			<img class="media-object" src="data:image/*;base64,@(Convert.ToBase64String(user.AvatarFileData))" alt="Avatar"/>
-		}
-		else
-		{
-			<img class="media-object" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="" style="width:30px;height:30px;"/>
-		}
+	{
+		<img class="media-object" src="data:image/*;base64,@(Convert.ToBase64String(user.AvatarFileData))" alt="Avatar"/>
+	}
+	else
+	{
+		<img class="media-object" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="" style="width:30px;height:30px;"/>
+	}
 </a>
 
 <strong>@user.FullName</strong>
@@ -29,19 +29,74 @@
 
 <div>
     <div classxfont-weighteighteightgetainer-fluid">
+
+        <!--Info Pills-->
+        <div class="row mt-2">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <a asp-action="AllProjects" asp-controller="Projects" style="text-decoration:none">
+                    <div class="card text-center bg-info">
+                        <div class="body">
+                            <div class="p-15 text-light">
+                                <h3>@Model.Projects.Where(p => p.StartDate < DateTime.Now && p.EndDate > DateTime.Now).Count()</h3>
+                                <span>Active Projects</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <a asp-action="AllTickets" asp-controller="Tickets" style="text-decoration:none">
+                    <div class="card text-center bg-secondary">
+                        <div class="body">
+                            <div class="p-15 text-light">
+                                <h3>@Model.Tickets.Count</h3>
+                                <span>Total Tickets</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card text-center bg-warning">
+                    <div class="body">
+                        <div class="p-15 text-light">
+                            <h3>@Model.Tickets.Where(t => string.IsNullOrEmpty(t.DeveloperUserId)).Count()</h3>
+                            <span>Unassigned Tickets</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card text-center bg-dark">
+                    <div class="body">
+                        <div class="p-15 text-light">
+                            <h3>
+                                @(Model.Projects.Count() + Model.Tickets.Count() + Model.Members.Count())
+                            </h3>
+                            <span>Total Data</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row gy-2">
             <div class="col-md-12 col">
                 <div class="row col-cols-4 mt-5 bg-secondary">
                     <div class="card col m-1 p-2">
                         <div class="card-body">
-                            <h5>Chart 1</h5>
-                            <p>[Projects]</p>
+                            <h5>Projects by Priority</h5>
+                            <p>[Google Charts]</p>
+                            <div id="chart3D"></div>
                         </div>
                     </div>
                     <div class="card col m-1 p-2">
                         <div class="card-body">
-                            <h5>Chart 2</h5>
-                            <p>[Projects]</p>
+                            <h5>Project Tickets Count(%)</h5>
+                            <p>[Google Charts]</p>
+                            <div id="donut"></div>
                         </div>
                     </div>
                     <div class="card col m-1 p-2">
@@ -194,3 +249,76 @@
         </div>
     </div>
 </div>
+
+@section scripts{
+
+    <!--Google Charts-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+    <script type="text/javascript">
+	    google.load("visualization", "1", { packages: ["corechart"] });
+	    google.setOnLoadCallback(drawChart);
+	    function drawChart() {
+		    $.ajax({
+			    type: "POST",
+			    url: "/Home/GglProjectPriority",
+			    data: '{}',
+			    contentType: "application/json; charset=utf-8",
+			    dataType: "json",
+			    success: function (result) {
+				    var data = google.visualization.arrayToDataTable(result);
+
+				    //3D Pie
+				    var options = {
+					    title: 'Project Priority',
+					    is3D: true,
+					    chartArea: { left: 0,bottom: 15,width: '100%', height: '100%'},
+					    legend: { position: 'bottom' }
+
+				    };
+
+				    var chart = new google.visualization.PieChart($("#chart3D")[0]);
+				    chart.draw(data, options);
+			    },
+			    failure: function (rresult) {
+				    alert(result.d);
+			    },
+			    error: function (result) {
+				    alert(result.d);
+			    }
+		    });
+	    }
+    </script>
+    <script type="text/javascript">
+	    google.load("visualization", "1", { packages: ["corechart"] });
+	    google.setOnLoadCallback(drawChart);
+	    function drawChart() {
+		    $.ajax({
+			    type: "POST",
+			    url: "/Home/GglProjectPriority",
+			    data: '{}',
+			    contentType: "application/json; charset=utf-8",
+			    dataType: "json",
+			    success: function (result) {
+				    var data = google.visualization.arrayToDataTable(result);
+
+				    //Donut
+				    var options = {
+					    title: 'Company Ticket Distribution',
+					    pieHole: 0.3,
+					    chartArea: { left: 0,bottom: 15,width: '100%', height: '100%'},
+					    legend: { position: 'bottom' }
+				    };
+				    var chart = new google.visualization.PieChart($("#donut")[0]);
+				    chart.draw(data, options);
+			    },
+			    failure: function (rresult) {
+				    alert(result.d);
+			    },
+			    error: function (result) {
+				    alert(result.d);
+			    }
+		    });
+	    }
+    </script>
+}

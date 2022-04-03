@@ -61,7 +61,7 @@ namespace BugTracker.Controllers
             }
             else
             {
-                projects = await _projectService.GetAllProjectsByCompany(companyId);
+                projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
             }
 
             return View(projects);
@@ -377,7 +377,7 @@ namespace BugTracker.Controllers
         {
             var companyId = User.Identity.GetCompanyId().Value;
 
-            return (await _projectService.GetAllProjectsByCompany(companyId)).Any(t => t.Id == id);
+            return (await _projectService.GetAllProjectsByCompanyAsync(companyId)).Any(t => t.Id == id);
         }
     }
 }

@@ -487,14 +487,14 @@ namespace BugTracker.Services
             {
                 if (await _BTRolesService.IsUserInRoleAsync(user, Roles.Admin.ToString()))
                 {
-                    tickets = (await _BTProjectService.GetAllProjectsByCompany(companyId))
+                    tickets = (await _BTProjectService.GetAllProjectsByCompanyAsync(companyId))
                                                       .SelectMany(t => t.Tickets)
                                                       .ToList();
                 }
 
                 if (await _BTRolesService.IsUserInRoleAsync(user, Roles.Developer.ToString()))
                 {
-                    tickets = (await _BTProjectService.GetAllProjectsByCompany(companyId))
+                    tickets = (await _BTProjectService.GetAllProjectsByCompanyAsync(companyId))
                                                       .SelectMany(t => t.Tickets)
                                                       .Where(t => t.DeveloperUserId == userId)
                                                       .ToList();
@@ -502,7 +502,7 @@ namespace BugTracker.Services
 
                 if (await _BTRolesService.IsUserInRoleAsync(user, Roles.Submitter.ToString()))
                 {
-                    tickets = (await _BTProjectService.GetAllProjectsByCompany(companyId))
+                    tickets = (await _BTProjectService.GetAllProjectsByCompanyAsync(companyId))
                                                       .SelectMany(t => t.Tickets)
                                                       .Where(t => t.OwnerUserId == userId)
                                                       .ToList();
