@@ -101,8 +101,15 @@
                     </div>
                     <div class="card col m-1 p-2">
 						<div class="card-body">
-							<h5>Chart 3</h5>
-							<p>[Tickets]</p>
+							<h5>Tickets by Priority</h5>
+							<p>[Morris Charts]</p>
+                            <!-- Morris: Donut -->
+                            <div class="col-md-12">
+                                <div id="legend" class="donut-legend" style="font-size:x-small"></div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="chart chart-md" id="morrisTicketPriority"></div>
+                            </div>
 						</div>
 					</div>
 					<div class="card col m-1 p-2">
@@ -255,6 +262,7 @@
     <!--Google Charts-->
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
+    <!--GglProjectPriority3D-->
     <script type="text/javascript">
 	    google.load("visualization", "1", { packages: ["corechart"] });
 	    google.setOnLoadCallback(drawChart);
@@ -289,6 +297,8 @@
 		    });
 	    }
     </script>
+
+    <!--GglProjectPriorityFlat-->
     <script type="text/javascript">
 	    google.load("visualization", "1", { packages: ["corechart"] });
 	    google.setOnLoadCallback(drawChart);
@@ -321,4 +331,48 @@
 		    });
 	    }
     </script>
+
+    @* Morris Donut Chart *@
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <script>
+
+	    var morrisDonutData = [{
+		    label: "Low",
+		    value: @Model.Tickets.Where(t=>t.TicketPriority.Name == nameof(BTTicketPriority.Low)).Count()
+	    }, {
+		    label: "Medium",
+		    value: @Model.Tickets.Where(t=>t.TicketPriority.Name == nameof(BTTicketPriority.Medium)).Count()
+	    }, {
+		    label: "High",
+		    value: @Model.Tickets.Where(t=>t.TicketPriority.Name == nameof(BTTicketPriority.High)).Count()
+	    }, {
+		    label: "Urgent",
+		    value: @Model.Tickets.Where(t=>t.TicketPriority.Name == nameof(BTTicketPriority.Urgent)).Count()
+	    }];
+
+
+	    /*
+	    Morris: Donut
+	    */
+	    if ($('#morrisTicketPriority').get(0)) {
+		    var donutChart = Morris.Donut({
+			    resize: true,
+			    element: 'morrisTicketPriority',
+			    data: morrisDonutData,
+			    colors: ['#0088cc', '#734ba9', '#E36159', '#ff993b']
+		    });
+
+		    donutChart.options.data.forEach(function(label, i) {
+			    var legendItem = $('<span></span>').text( label['label'] + ": " +label['value']).prepend('<span>&nbsp;</span>');
+			    legendItem.find('span')
+			      .css('backgroundColor', donutChart.options.colors[i])
+			      .css('width', '20px')
+			      .css('display', 'inline-block')
+			      .css('margin', '10px');
+			    $('#legend').append(legendItem)
+		    });
+	    };
+    </script>
+
 }
