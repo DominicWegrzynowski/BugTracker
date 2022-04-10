@@ -234,7 +234,7 @@ namespace BugTracker.Controllers
                     }
 
                     //TODO: Redirect to All Projects
-                    return RedirectToAction("Index");
+                    return RedirectToAction("AllProjects");
                 }
                 catch (Exception)
                 {
@@ -286,7 +286,7 @@ namespace BugTracker.Controllers
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
 
-                    return RedirectToAction("AllProjects");
+                    return RedirectToAction("Details", new { id = model.Project.Id });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -371,7 +371,7 @@ namespace BugTracker.Controllers
 
             await _projectService.RestoreProjectAsync(project);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(AllProjects));
         }
         private async Task<bool> ProjectExists(int id)
         {

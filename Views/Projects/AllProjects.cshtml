@@ -11,16 +11,113 @@
     BTUser btUser = await UserManager.GetUserAsync(User);
 }
 
-<h1>All Projects</h1>
+<div class="row mt-5">
+    <div class="col-12 text-center">
+        <h1 style="font-size: 350%">@ViewData["Title"]</h1>
+        @if(User.IsInRole(Roles.Admin.ToString()) || User.IsInRole(Roles.ProjectManager.ToString()))
+        {
+            <h3 class="text-center">
+                <a style="text-decoration: none" asp-action="Create">Create New</a>
+            </h3>
+        }
+    </div>
+</div>
 
-@if(User.IsInRole(Roles.Admin.ToString()) || User.IsInRole(Roles.ProjectManager.ToString()))
-{
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-}
+<div class="container-fluid p-5">
+    <div class="row">
+        @foreach (var item in Model) {
+            <div class="col-12 col-xl-3 col-md-6 gy-4">
+                <div class="card h-100 shadow rounded-3 mb-3">
+                @if(item.ImageFileData is not null)
+                {
+                    <img class="card-img-top" height="300" width="150" src="data:image/*;base64,@(Convert.ToBase64String(item.ImageFileData))">
+                }
+                    <div class="card-body text-center ">
+                        <div>
+                            <h2 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h2>
+                            <hr class="card-hr">
+                        </div>
+                        <div>
+                            <h5 class="card-text">@Html.DisplayFor(modelItem => item.StartDate) to @Html.DisplayFor(modelItem => item.EndDate)</h5>
+                            <hr class="card-hr">
+                        </div>
+                        <div>
+                            <p class="card-text pt-1 pb-3 text-start">@Html.DisplayFor(modelItem => item.Description)</p>
+                        </div>
+                        
+                        
 
-<table class="table">
+                    </div>
+
+                    <div class="row p-3">
+                        <hr/>
+                        <div class="progress-container progress-info m-b-25">
+                            <span class="progress-badge" style="font-size:small">Project Status</span>
+                            <div class="progress">
+                                @* Razor code block *@
+                                @{
+                                    var start = item.StartDate.DateTime;
+                                    var end = item.EndDate.DateTime;
+                                    var today = DateTime.Now;
+                                    var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
+                                }
+                                <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
+                                    @* Use Progress Bar code variable here *@
+                                    <span class="progress-value">@percent%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row p-3">
+                            @{
+                                //get projectmanager, check if its null and compare Id to BTUser
+                                bool isProjectPM = (await ProjectService.GetProjectManagerAsync(item.Id))?.Id == btUser.Id;
+                                string colValue;
+                                //col variable 
+                                if (User.IsInRole(Roles.Admin.ToString()) || isProjectPM)
+                                {
+                                    colValue  = "4";
+                                }
+                                else
+                                {
+                                    colValue = "12";
+                                }
+                            }
+
+                            <hr/>
+                            <div class="col-@colValue  text-center g-1">
+                                <a title="Details" asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary btn-lg btn-block rounded"><i class="fs-5 bi-justify"></i></a>
+                            </div>
+
+                            @if (User.IsInRole(Roles.Admin.ToString()) || isProjectPM)
+                            {
+                                <div class="col-@colValue text-center g-1">
+                                    <a title="Edit" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning btn-lg btn-block rounded"><i class="fs-5 bi bi-pencil-square"></i></a>
+                                </div>
+                                @if (item.Archived)
+                                {
+                                    <div class="col-@colValue text-center g-1">
+                                        <a title="Restore" asp-action="Restore" asp-route-id="@item.Id" class="btn btn-lg btn-outline-success btn-block rounded"><i class=" fs-5 bi bi-file-earmark-check"></i></a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-@colValue text-center g-1">
+                                        <a title="Archive" asp-action="Archive" asp-route-id="@item.Id" class="btn btn-lg btn-outline-danger btn-block rounded"><i class="fs-5 bi bi-archive"></i></a>
+                                    </div>
+                                }
+                            }
+                        </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+@*<table class="table">
     <thead>
         <tr>
             <th>
@@ -105,4 +202,7 @@
         </tr>
 }
     </tbody>
-</table>
+</table>*@
+
+
+

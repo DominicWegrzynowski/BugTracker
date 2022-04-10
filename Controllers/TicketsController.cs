@@ -187,7 +187,7 @@ namespace BugTracker.Controllers
             {
                 BTUser user = await _userManager.GetUserAsync(User);
                 Ticket oldTicket = await _ticketService.GetTicketByIdAsync(model.Ticket.Id);
-
+                
                 try
                 {
                     await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
@@ -201,7 +201,7 @@ namespace BugTracker.Controllers
                 Ticket newTicket = await _ticketService.GetTicketByIdAsync(model.Ticket.Id);
                 await _historyService.AddHistoryAsync(oldTicket, newTicket, user.Id);
 
-                return RedirectToAction(nameof(Details), new { id = model.Ticket.Id });
+                return RedirectToAction(nameof(Details), "Projects", new { id = newTicket.ProjectId});
             }
 
             return RedirectToAction(nameof(AssignDeveloper), new { id = model.Ticket.Id });
@@ -268,7 +268,7 @@ namespace BugTracker.Controllers
                     await _historyService.AddHistoryAsync(null, newTicket, user.Id);
 
                     //TODO: Ticket Notification
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(AllTickets));
                 }
                 catch (Exception)
                 {
@@ -389,7 +389,7 @@ namespace BugTracker.Controllers
             ticket.Archived = true;
             await _ticketService.UpdateTicketAsync(ticket);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(AllTickets));
         }
 
         // GET: Tickets/Restore/5
@@ -434,7 +434,7 @@ namespace BugTracker.Controllers
             ticket.Archived = false;
             await _ticketService.UpdateTicketAsync(ticket);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(AllTickets));
         }
 
         private async Task<bool> TicketExists(int id)
