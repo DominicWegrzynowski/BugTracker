@@ -46,14 +46,18 @@
 						</div><!--//app-search-box-->
 		            
 						<div class="app-utilities col-auto">
-							<div class="app-utility-item app-notifications-dropdown dropdown">    
+							<div class="app-utility-item app-notifications-dropdown dropdown">  
+								
+
+								<a class="btn app-btn-primary text-white me-3" asp-action="Create" asp-controller="Tickets" >New Ticket</a>
+
 								<a class="dropdown-toggle no-toggle-arrow" id="notifications-dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false" title="Notifications">
 									<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
 									<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bell icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 									  <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2z"/>
 									  <path fill-rule="evenodd" d="M8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
 									</svg>
-									<span class="icon-badge">3</span>
+									<span class="icon-badge"> @* @Model.Notification.Count()*@ </span>
 								</a><!--//dropdown-toggle-->
 					        
 								<div class="dropdown-menu p-0" aria-labelledby="notifications-dropdown-toggle">
@@ -163,7 +167,7 @@
 				<div class="sidepanel-inner d-flex flex-column">
 					<a href="#" id="sidepanel-close" class="sidepanel-close d-xl-none">&times;</a>
 					<div class="app-branding">
-						<a class="app-logo" href="index.html"><img class="logo-icon me-2" src="~/img/app-logo.svg" alt="logo"><span class="logo-text">PORTAL</span></a>
+						<a class="app-logo"><img class="logo-icon me-2" src="~/img/app-logo.svg" alt="logo"><span class="logo-text">BugTracker</span></a>
 	
 					</div><!--//app-branding-->  
 		        
@@ -171,54 +175,68 @@
 						<ul class="app-menu list-unstyled accordion" id="menu-accordion">
 							<li class="nav-item">
 								<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-								<a class="nav-link active" href="index.html">
+								<a class="nav-link active" asp-action="Dashboard" asp-controller="Home">
 									<span class="nav-icon">
-										<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-house-door" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-										  <path fill-rule="evenodd" d="M7.646 1.146a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 .146.354v7a.5.5 0 0 1-.5.5H9.5a.5.5 0 0 1-.5-.5v-4H7v4a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .146-.354l6-6zM2.5 7.707V14H6v-4a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v4h3.5V7.707L8 2.207l-5.5 5.5z"/>
-										  <path fill-rule="evenodd" d="M13 2.5V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-speedometer" viewBox="0 0 16 16">
+										  <path d="M8 2a.5.5 0 0 1 .5.5V4a.5.5 0 0 1-1 0V2.5A.5.5 0 0 1 8 2zM3.732 3.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707zM2 8a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 8zm9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5zm.754-4.246a.389.389 0 0 0-.527-.02L7.547 7.31A.91.91 0 1 0 8.85 8.569l3.434-4.297a.389.389 0 0 0-.029-.518z"/>
+										  <path fill-rule="evenodd" d="M6.664 15.889A8 8 0 1 1 9.336.11a8 8 0 0 1-2.672 15.78zm-4.665-4.283A11.945 11.945 0 0 1 8 10c2.186 0 4.236.585 6.001 1.606a7 7 0 1 0-12.002 0z"/>
 										</svg>
 									 </span>
-									 <span class="nav-link-text">Overview</span>
+									 <span class="nav-link-text">Dashboard</span>
 								</a><!--//nav-link-->
 							</li><!--//nav-item-->
 							<li class="nav-item">
 								<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-								<a class="nav-link" href="docs.html">
+								<a class="nav-link">
 									<span class="nav-icon">
-										<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-folder" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-										  <path d="M9.828 4a3 3 0 0 1-2.12-.879l-.83-.828A1 1 0 0 0 6.173 2H2.5a1 1 0 0 0-1 .981L1.546 4h-1L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3v1z"/>
-										  <path fill-rule="evenodd" d="M13.81 4H2.19a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4zM2.19 3A2 2 0 0 0 .198 5.181l.637 7A2 2 0 0 0 2.826 14h10.348a2 2 0 0 0 1.991-1.819l.637-7A2 2 0 0 0 13.81 3H2.19z"/>
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-inbox-fill" viewBox="0 0 16 16">
+										  <path d="M4.98 4a.5.5 0 0 0-.39.188L1.54 8H6a.5.5 0 0 1 .5.5 1.5 1.5 0 1 0 3 0A.5.5 0 0 1 10 8h4.46l-3.05-3.812A.5.5 0 0 0 11.02 4H4.98zm-1.17-.437A1.5 1.5 0 0 1 4.98 3h6.04a1.5 1.5 0 0 1 1.17.563l3.7 4.625a.5.5 0 0 1 .106.374l-.39 3.124A1.5 1.5 0 0 1 14.117 13H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .106-.374l3.7-4.625z"/>
 										</svg>
 									</span>
-									 <span class="nav-link-text">Docs</span>
+									 <span class="nav-link-text">Notifications</span>
 								</a><!--//nav-link-->
 							</li><!--//nav-item-->
-							<li class="nav-item">
+							
+							<!--PROJECTS SUBMENU-->
+							<li class="nav-item has-submenu">
 								<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-								<a class="nav-link" href="orders.html">
+								<a class="nav-link submenu-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-2" aria-expanded="false" aria-controls="submenu-2">
 									<span class="nav-icon">
-										<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-card-list" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-											<path fill-rule="evenodd" d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
-											<path fill-rule="evenodd" d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5z"/>
-											<circle cx="3.5" cy="5.5" r=".5"/>
-											<circle cx="3.5" cy="8" r=".5"/>
-											<circle cx="3.5" cy="10.5" r=".5"/>
+										<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-puzzle" viewBox="0 0 16 16">
+										  <path d="M3.112 3.645A1.5 1.5 0 0 1 4.605 2H7a.5.5 0 0 1 .5.5v.382c0 .696-.497 1.182-.872 1.469a.459.459 0 0 0-.115.118.113.113 0 0 0-.012.025L6.5 4.5v.003l.003.01c.004.01.014.028.036.053a.86.86 0 0 0 .27.194C7.09 4.9 7.51 5 8 5c.492 0 .912-.1 1.19-.24a.86.86 0 0 0 .271-.194.213.213 0 0 0 .039-.063v-.009a.112.112 0 0 0-.012-.025.459.459 0 0 0-.115-.118c-.375-.287-.872-.773-.872-1.469V2.5A.5.5 0 0 1 9 2h2.395a1.5 1.5 0 0 1 1.493 1.645L12.645 6.5h.237c.195 0 .42-.147.675-.48.21-.274.528-.52.943-.52.568 0 .947.447 1.154.862C15.877 6.807 16 7.387 16 8s-.123 1.193-.346 1.638c-.207.415-.586.862-1.154.862-.415 0-.733-.246-.943-.52-.255-.333-.48-.48-.675-.48h-.237l.243 2.855A1.5 1.5 0 0 1 11.395 14H9a.5.5 0 0 1-.5-.5v-.382c0-.696.497-1.182.872-1.469a.459.459 0 0 0 .115-.118.113.113 0 0 0 .012-.025L9.5 11.5v-.003a.214.214 0 0 0-.039-.064.859.859 0 0 0-.27-.193C8.91 11.1 8.49 11 8 11c-.491 0-.912.1-1.19.24a.859.859 0 0 0-.271.194.214.214 0 0 0-.039.063v.003l.001.006a.113.113 0 0 0 .012.025c.016.027.05.068.115.118.375.287.872.773.872 1.469v.382a.5.5 0 0 1-.5.5H4.605a1.5 1.5 0 0 1-1.493-1.645L3.356 9.5h-.238c-.195 0-.42.147-.675.48-.21.274-.528.52-.943.52-.568 0-.947-.447-1.154-.862C.123 9.193 0 8.613 0 8s.123-1.193.346-1.638C.553 5.947.932 5.5 1.5 5.5c.415 0 .733.246.943.52.255.333.48.48.675.48h.238l-.244-2.855zM4.605 3a.5.5 0 0 0-.498.55l.001.007.29 3.4A.5.5 0 0 1 3.9 7.5h-.782c-.696 0-1.182-.497-1.469-.872a.459.459 0 0 0-.118-.115.112.112 0 0 0-.025-.012L1.5 6.5h-.003a.213.213 0 0 0-.064.039.86.86 0 0 0-.193.27C1.1 7.09 1 7.51 1 8c0 .491.1.912.24 1.19.07.14.14.225.194.271a.213.213 0 0 0 .063.039H1.5l.006-.001a.112.112 0 0 0 .025-.012.459.459 0 0 0 .118-.115c.287-.375.773-.872 1.469-.872H3.9a.5.5 0 0 1 .498.542l-.29 3.408a.5.5 0 0 0 .497.55h1.878c-.048-.166-.195-.352-.463-.557-.274-.21-.52-.528-.52-.943 0-.568.447-.947.862-1.154C6.807 10.123 7.387 10 8 10s1.193.123 1.638.346c.415.207.862.586.862 1.154 0 .415-.246.733-.52.943-.268.205-.415.39-.463.557h1.878a.5.5 0 0 0 .498-.55l-.001-.007-.29-3.4A.5.5 0 0 1 12.1 8.5h.782c.696 0 1.182.497 1.469.872.05.065.091.099.118.115.013.008.021.01.025.012a.02.02 0 0 0 .006.001h.003a.214.214 0 0 0 .064-.039.86.86 0 0 0 .193-.27c.14-.28.24-.7.24-1.191 0-.492-.1-.912-.24-1.19a.86.86 0 0 0-.194-.271.215.215 0 0 0-.063-.039H14.5l-.006.001a.113.113 0 0 0-.025.012.459.459 0 0 0-.118.115c-.287.375-.773.872-1.469.872H12.1a.5.5 0 0 1-.498-.543l.29-3.407a.5.5 0 0 0-.497-.55H9.517c.048.166.195.352.463.557.274.21.52.528.52.943 0 .568-.447.947-.862 1.154C9.193 5.877 8.613 6 8 6s-1.193-.123-1.638-.346C5.947 5.447 5.5 5.068 5.5 4.5c0-.415.246-.733.52-.943.268-.205.415-.39.463-.557H4.605z"/>
 										</svg>
-									 </span>
-									 <span class="nav-link-text">Orders</span>
+									</span>
+									<span class="nav-link-text">Projects</span>
+									<span class="submenu-arrow">
+										<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+										<path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+										</svg>
+									</span><!--//submenu-arrow-->
 								</a><!--//nav-link-->
+								<div id="submenu-2" class="collapse submenu submenu-2" data-bs-parent="#menu-accordion">
+									<ul class="submenu-list list-unstyled">
+										<li class="submenu-item"><a class="submenu-link" asp-action="AllProjects" asp-controller="Projects">All Projects</a></li>
+										<li class="submenu-item"><a class="submenu-link" asp-action="MyProjects" asp-controller="Projects">My Projects</a></li>
+										<li class="submenu-item"><a class="submenu-link" asp-action="Create" asp-controller="Projects">Add Project</a></li>
+										<li class="submenu-item"><a class="submenu-link" asp-action="ManageProjects" asp-controller="Projects">Manage Projects</a></li>
+										<li class="submenu-item"><a class="submenu-link" asp-action="ArchivedProjects" asp-controller="Projects">Archived Projects</a></li>
+									</ul>
+								</div>
 							</li><!--//nav-item-->
+
+							<!--TICKETS SUBMENU-->
 							<li class="nav-item has-submenu">
 								<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
 								<a class="nav-link submenu-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-1" aria-expanded="false" aria-controls="submenu-1">
 									<span class="nav-icon">
 										<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-										<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-files" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-										  <path fill-rule="evenodd" d="M4 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H4z"/>
-										  <path d="M6 0h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2v-1a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1H4a2 2 0 0 1 2-2z"/>
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-ticket-perforated" viewBox="0 0 16 16">
+										  <path d="M4 4.85v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Z"/>
+										  <path d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3h-13ZM1 4.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v1.05a2.5 2.5 0 0 0 0 4.9v1.05a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-1.05a2.5 2.5 0 0 0 0-4.9V4.5Z"/>
 										</svg>
 									 </span>
-									 <span class="nav-link-text">Pages</span>
+									 <span class="nav-link-text">Tickets</span>
 									 <span class="submenu-arrow">
 										 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 											<path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
@@ -227,63 +245,26 @@
 								</a><!--//nav-link-->
 								<div id="submenu-1" class="collapse submenu submenu-1" data-bs-parent="#menu-accordion">
 									<ul class="submenu-list list-unstyled">
-										<li class="submenu-item"><a class="submenu-link" href="notifications.html">Notifications</a></li>
-										<li class="submenu-item"><a class="submenu-link" href="account.html">Account</a></li>
-										<li class="submenu-item"><a class="submenu-link" href="settings.html">Settings</a></li>
-									</ul>
-								</div>
-							</li><!--//nav-item-->
-							<li class="nav-item has-submenu">
-								<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-								<a class="nav-link submenu-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-2" aria-expanded="false" aria-controls="submenu-2">
-									<span class="nav-icon">
-									<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-									<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-columns-gap" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-									  <path fill-rule="evenodd" d="M6 1H1v3h5V1zM1 0a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H1zm14 12h-5v3h5v-3zm-5-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5zM6 8H1v7h5V8zM1 7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H1zm14-6h-5v7h5V1zm-5-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1h-5z"/>
-									</svg>
-									 </span>
-									 <span class="nav-link-text">External</span>
-									 <span class="submenu-arrow">
-										 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-											<path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-										 </svg>
-									 </span><!--//submenu-arrow-->
-								</a><!--//nav-link-->
-								<div id="submenu-2" class="collapse submenu submenu-2" data-bs-parent="#menu-accordion">
-									<ul class="submenu-list list-unstyled">
-										<li class="submenu-item"><a class="submenu-link" href="login.html">Login</a></li>
-										<li class="submenu-item"><a class="submenu-link" href="signup.html">Signup</a></li>
-										<li class="submenu-item"><a class="submenu-link" href="reset-password.html">Reset password</a></li>
-										<li class="submenu-item"><a class="submenu-link" href="404.html">404 page</a></li>
-									</ul>
-								</div>
-							</li><!--//nav-item-->
+										<li class="submenu-item"><a class="submenu-link" asp-action="AllTickets" asp-controller="Tickets">All Tickets</a></li>
+										<li class="submenu-item"><a class="submenu-link" asp-action="MyTickets" asp-controller="Tickets">My Tickets</a></li>
+										<li class="submenu-item"><a class="submenu-link" asp-action="Create" asp-controller="Tickets">Add Ticket</a></li>
+										<li class="submenu-item"><a class="submenu-link" asp-action="ArchivedTickets" asp-controller="Tickets">Archived Tickets</a></li>
 
-					   
+									</ul>
+								</div>
+							</li><!--//nav-item-->
+							
 							<li class="nav-item">
 								<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-								<a class="nav-link" href="charts.html">
+								<a class="nav-link" >
 									<span class="nav-icon">
-										<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bar-chart-line" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-										  <path fill-rule="evenodd" d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2zm1 12h2V2h-2v12zm-3 0V7H7v7h2zm-5 0v-3H2v3h2z"/>
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gem" viewBox="0 0 16 16">
+										  <path d="M3.1.7a.5.5 0 0 1 .4-.2h9a.5.5 0 0 1 .4.2l2.976 3.974c.149.185.156.45.01.644L8.4 15.3a.5.5 0 0 1-.8 0L.1 5.3a.5.5 0 0 1 0-.6l3-4zm11.386 3.785-1.806-2.41-.776 2.413 2.582-.003zm-3.633.004.961-2.989H4.186l.963 2.995 5.704-.006zM5.47 5.495 8 13.366l2.532-7.876-5.062.005zm-1.371-.999-.78-2.422-1.818 2.425 2.598-.003zM1.499 5.5l5.113 6.817-2.192-6.82L1.5 5.5zm7.889 6.817 5.123-6.83-2.928.002-2.195 6.828z"/>
 										</svg>
 									</span>
-									<span class="nav-link-text">Charts</span>
+									<span class="nav-link-text">Admin</span>
 								</a><!--//nav-link-->
-							</li><!--//nav-item-->
-					    
-							<li class="nav-item">
-								<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-								<a class="nav-link" href="help.html">
-									<span class="nav-icon">
-									<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-question-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-									  <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-									  <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
-									</svg>
-									 </span>
-									 <span class="nav-link-text">Help</span>
-								</a><!--//nav-link-->
-							</li><!--//nav-item-->					    
+							</li><!--//nav-item-->			    
 						</ul><!--//app-menu-->
 					</nav><!--//app-nav-->
 					<div class="app-sidepanel-footer">
@@ -420,15 +401,15 @@
     </div>*@
 
 	<!--Bootstrap-->         
-	<script src="assets/plugins/popper.min.js"></script>
-	<script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>  
+	<script src="/popper.min.js"></script>
+	<script src="/bootstrap/js/bootstrap.min.js"></script>  
 
 	<!-- Charts JS -->
-	<script src="assets/plugins/chart.js/chart.min.js"></script> 
-	<script src="assets/js/index-charts.js"></script> 
+	<script src="/js/chart.js/chart.min.js"></script> 
+	<script src="/js/index-charts.js"></script> 
     
 	<!-- Page Specific JS -->
-	<script src="assets/js/app.js"></script> 
+	<script src="/js/app.js"></script> 
 
 	@await RenderSectionAsync("Scripts", required: false)
 </body>
