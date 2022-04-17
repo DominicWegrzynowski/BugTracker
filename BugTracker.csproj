@@ -1775,7 +1775,6 @@
     <None Include="wwwroot\fontawesome\webfonts\fa-regular-400.woff2" />
     <None Include="wwwroot\fontawesome\webfonts\fa-solid-900.svg" />
     <None Include="wwwroot\fontawesome\webfonts\fa-solid-900.woff2" />
-    <None Include="wwwroot\img\users\.DS_Store" />
     <None Include="wwwroot\scss\app\styles.scss" />
     <None Include="wwwroot\scss\app\_app.scss" />
     <None Include="wwwroot\scss\app\_auth.scss" />

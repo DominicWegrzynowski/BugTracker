@@ -6,6 +6,7 @@
 
 @inject UserManager<BTUser> UserManager
 @inject IBTRolesService RolesService
+@inject IBTProjectService ProjectService
 @{
     ViewData["Title"] = "Dashboard";
     BTUser user = await UserManager.GetUserAsync(User);
@@ -284,18 +285,111 @@
                     <div class="app-card app-card-chart shadow-sm h-100">
                         <div class=" p-4 text-center">
                                 <h5 class="">Priority Projects</h5>
-                                <h6 class="">Priority end date</h6>
                         </div> 
-                        <div class="app-card-body mt-4  h-100" style="height: 400%">
+                        <div class="app-card-body mt-4  h-100">
                             <div class="chart-container">
-                                <canvas id="chart-pie"></canvas>
+                                <canvas height="220" id="chart-pie"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
                  <div class="col-6 col-lg-3">
                     <div class="app-card app-card-stat shadow-sm h-100">
-                            
+                        <div class=" p-4 text-center">
+                                <h5 class="">Project Ticket Percentage</h5>
+                        </div> 
+                        <div class="app-card-body mt-4 p-0 h-100" style="height: 400%">
+                            <div class="chart-container">
+                                <canvas height="250"  id="chart-doughnut"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4 mb-4">
+                <div class="col-5">
+                    <div class="app-card app-card-stat shadow-sm h-100">
+                        <div class="card-body">
+                            <div class=" p-2 text-center">
+                                <h5 class="">Members</h5>
+                            </div>
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr class="row table-dark">
+                                        <th class="col-2 text-start">Avatar</th>
+                                        <th class="col-4 text-start">Name</th>
+                                        <th class="col-3 text-start">Projects</th>
+                                        <th class="col-3 text-start">Role</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach(BTUser member in Model.Members)
+                                    {
+                                        <tr class="row">
+                                            @if(member.AvatarFileData is null)
+                                            {
+                                                <td class="col-2 text-start">
+                                                    <img class="rounded-circle" style="width:30px;height:30px;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td class="col-2 text-start">
+                                                    <img class="rounded-circle" style="width:60px;height:60px;" src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" alt="@member.FullName's avatar'" />
+                                                </td>
+                                            }
+
+                                            <td class="col-4 text-start">
+                                                @member.FullName
+                                            </td>
+
+                                            @if(member.Projects is null)
+                                            {
+                                                <td class="col-3 text-start">
+                                                    0
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td class="col-3 text-start">
+                                                    @member.Projects.Count()
+                                                </td>
+                                            }
+
+                                            <td class="col-3 text-start">
+                                                <a class="btn btn-outline-secondary">
+                                                    
+                                                </a>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-7">
+                    <div class="app-card app-card-stat shadow-sm h-100">
+                        <div class="card-body">
+                            <div class=" p-2 text-center">
+                                <h5 class="">Projects</h5>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -646,56 +740,39 @@
 	        }
         };
 
-        var lineChartConfig = {
-	        type: 'line',
-
+        var doughnutChartConfig = {
+	        type: 'doughnut',
 	        data: {
-                @{
-                    //Get Labels
-                    List<string> labels = new();
-
-                    
-                    foreach(Project project in Model.Projects)
-                    {
-                        labels.Add(project.Name);
-                    }
-                }
-		        labels: <text>@labels</text>,
-		        
 		        datasets: [{
-			        label: 'Dataset',
-			        backgroundColor: "rgba(117,193,129,0.2)", 
-			        borderColor: "rgba(117,193,129, 0.8)", 
-                    @{
-                        //Get Assigned/Unassigned Ticket Counts
-                        List<string> data = new();
-                        
-                        foreach(Project project in Model.Projects)
-                        {
-                            data.Add(project.Tickets.Where(t => t.DeveloperUserId != null).Count().ToString());
-                            data.Add(",");
-                            data.Add(project.Tickets.Where(t => t.DeveloperUserId == null).Count().ToString());
-                            data.Add(",");
-                        }
-                    }
-                   
 			        data: [
-                        @data;
+				        @foreach(Project project in Model.Projects)
+                        {
+                            <text>@project.Tickets.Count().ToString(),</text>
+                        }
 			        ],
-		        }]
+			        backgroundColor: [
+				        window.chartColors.green,
+				        window.chartColors.blue,
+				        window.chartColors.gray,
+			        ],
+			        label: 'Dataset 1'
+		        }],
+		        labels: [
+			       @foreach(Project project in Model.Projects)
+                    {
+                        <text>"@project.Name",</text>
+                    } 
+		        ]
 	        },
 	        options: {
-		        responsive: true,		
-		
+		        responsive: true,
 		        legend: {
 			        display: true,
 			        position: 'bottom',
-			        align: 'end',
+			        align: 'center',
 		        },
 
 		        tooltips: {
-			        mode: 'index',
-			        intersect: false,
 			        titleMarginBottom: 10,
 			        bodySpacing: 10,
 			        xPadding: 16,
@@ -705,49 +782,35 @@
 			        backgroundColor: '#fff',
 			        bodyFontColor: window.chartColors.text,
 			        titleFontColor: window.chartColors.text,
-                    callbacks: {
-                        label: function(tooltipItem, data) {	                 
-	                        return tooltipItem.value + '%';   
-                        }
+			
+			        animation: {
+				        animateScale: true,
+				        animateRotate: true
+			        },
+			
+			        /* Display % in tooltip - https://stackoverflow.com/questions/37257034/chart-js-2-0-doughnut-tooltip-percentages */
+			        callbacks: {
+                        label: function(tooltipItem, data) {
+					        //get the concerned dataset
+					        var dataset = data.datasets[tooltipItem.datasetIndex];
+					        //calculate the total of this data set
+					        var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+					            return previousValue + currentValue;
+					        });
+					        //get the current items value
+					        var currentValue = dataset.data[tooltipItem.index];
+					        //calculate the precentage based on the total and current item, also this does a rough rounding to give a whole number
+					        var percentage = Math.floor(((currentValue/total) * 100)+0.5);
+					
+					        return percentage + "%";
+			            },
                     },
-            
+			
 
 		        },
-		        hover: {
-			        mode: 'nearest',
-			        intersect: true
-		        },
-		        scales: {
-			        xAxes: [{
-				        display: true,
-				        gridLines: {
-					        drawBorder: false,
-					        color: window.chartColors.border,
-				        },
-				        scaleLabel: {
-					        display: false,
-				
-				        }
-			        }],
-			        yAxes: [{
-				        display: true,
-				        gridLines: {
-					        drawBorder: false,
-					        color: window.chartColors.border,
-				        },
-				        scaleLabel: {
-					        display: false,
-				        },
-				        ticks: {
-		                    beginAtZero: true,
-		                    userCallback: function(value, index, values) {
-		                        return value.toLocaleString() + '%';  
-		                    }
-		                },
-			        }]
-		        }
 	        }
         };
+
 
 
 
@@ -757,14 +820,14 @@
 	        //var lineChart = document.getElementById('chart-line').getContext('2d');
 	        //window.myLine = new Chart(lineChart, lineChartConfig);
 	
-	        var barChart = document.getElementById('chart-bar').getContext('2d');
-	        window.myBar = new Chart(barChart, barChartConfig);
+	        //var barChart = document.getElementById('chart-bar').getContext('2d');
+	        //window.myBar = new Chart(barChart, barChartConfig);
 	
 	        var pieChart = document.getElementById('chart-pie').getContext('2d');
 	        window.myPie = new Chart(pieChart, pieChartConfig);
 	
-	        //var doughnutChart = document.getElementById('chart-doughnut').getContext('2d');
-	        //window.myDoughnut = new Chart(doughnutChart, doughnutChartConfig);
+	        var doughnutChart = document.getElementById('chart-doughnut').getContext('2d');
+	        window.myDoughnut = new Chart(doughnutChart, doughnutChartConfig);
 	
 
         });	

@@ -28,7 +28,7 @@ namespace BugTracker.Services
         }
         #endregion
 
-        #region Get ALl Projects
+        #region Get All Projects
         public async Task<List<Project>> GetAllProjectsAsync(int companyId)
         {
             return await _context.Projects.Where(p => p.CompanyId == companyId)

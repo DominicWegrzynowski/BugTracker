@@ -20,12 +20,14 @@ namespace BugTracker.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IBTCompanyInfoService _companyService;
         private readonly IBTProjectService _projectService;
+        private readonly IBTRolesService _rolesService;
 
-        public HomeController(ILogger<HomeController> logger, IBTCompanyInfoService companyService, IBTProjectService projectService)
+        public HomeController(ILogger<HomeController> logger, IBTCompanyInfoService companyService, IBTProjectService projectService, IBTRolesService rolesService)
         {
             _logger = logger;
             _companyService = companyService;
             _projectService = projectService;
+            _rolesService = rolesService;
         }
 
         public IActionResult Index()
@@ -45,6 +47,8 @@ namespace BugTracker.Controllers
                                  .Where(t => t.Archived == false)
                                  .ToList();
             model.Members = model.Company.Members.ToList();
+            
+            _rolesService.GetUserRolesAsync()
 
             return View(model);
         }
