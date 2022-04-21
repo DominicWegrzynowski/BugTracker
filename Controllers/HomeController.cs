@@ -43,12 +43,37 @@ namespace BugTracker.Controllers
             model.Company = await _companyService.GetCompanyInfoByIdAsync(companyId);
             model.Projects = (await _companyService.GetAllProjectsAsync(companyId)).Where(p => p.Archived == false).ToList();
             model.Tickets = model.Projects
-                                 .SelectMany(p => p.Tickets)
-                                 .Where(t => t.Archived == false)
-                                 .ToList();
+                                    .SelectMany(p => p.Tickets)
+                                    .Where(t => t.Archived == false)
+                                    .ToList();
             model.Members = model.Company.Members.ToList();
+
+            foreach(BTUser member in model.Members)
+            {
+                if(await _rolesService.IsUserInRoleAsync(member, nameof(Roles.Admin)) == true)
+                {
+                    model.Roles?.Add("Admin");
+                }
+                if (await _rolesService.IsUserInRoleAsync(member, nameof(Roles.ProjectManager)) == true)
+                {
+                    model.Roles?.Add("Project Manager");
+                }
+                if (await _rolesService.IsUserInRoleAsync(member, nameof(Roles.Developer)) == true)
+                {
+                    model.Roles?.Add("Developer");
+                }
+                if (await _rolesService.IsUserInRoleAsync(member, nameof(Roles.Submitter)) == true)
+                {
+                    model.Roles?.Add("Submitter");
+                }
+                if (await _rolesService.IsUserInRoleAsync(member, nameof(Roles.DemoUser)) == true)
+                {
+                    model.Roles?.Add("Demo User");
+                }
+            }
+
             
-            _rolesService.GetUserRolesAsync()
+            
 
             return View(model);
         }
