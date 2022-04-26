@@ -35,6 +35,7 @@ namespace BugTracker.Controllers
             return View();
         }
 
+        [HttpGet]
         public async Task<IActionResult> Dashboard()
         {
             DashboardViewModel model = new();
