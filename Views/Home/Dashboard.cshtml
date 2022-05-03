@@ -19,9 +19,9 @@
         color: #fff;
     }
 
-    #chartdiv {
+    #am-chart {
         width: 100%;
-        height: 300px;
+        height: 500px;
     }
 </style>
 
@@ -186,33 +186,33 @@
                         </div>
                     </div>
                 </div>
-                 <div class="col-6 col-lg-3">
+                <div class="col-6 col-lg-3">
                     <div class="app-card app-card-stat shadow-sm h-200" style="height:100%;">
-                            <div class="card-body p-3 p-lg-4">
+                        <div class="card-body p-3 p-lg-4">
                                 <div class="pb-3">
                                    <h5 class="">Company Data</h5>
                                    <h6 class="">@Model.Company.Name</h6>
                                 </div>
-                               <div class="row pt-2 pb-1 d-flex">
-                                    <div class="col-2">
-                                        <span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
-                                              <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                                              <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
-                                              <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
-                                            </svg>
-                                        </span>
-                                    </div>
-                                    <div class="col-8 align-content-start justify-content-start text-start">
-                                         <!--LINK TO LIST OF MEMBERS(needs to be developed)-->
-                                        <a href="#">
-                                            <p>Members</p>
-                                        </a>
-                                    </div>
-                                    <div class="col-2"> 
-                                        <p class="btn-outline-danger">@Model.Members.Count()</p>
-                                    </div>
-                               </div>
+                            <div class="row pt-2 pb-1 d-flex">
+                                <div class="col-2">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                                            <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                                            <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
+                                            <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div class="col-8 align-content-start justify-content-start text-start">
+                                        <!--LINK TO LIST OF MEMBERS(needs to be developed)-->
+                                    <a href="#">
+                                        <p>Members</p>
+                                    </a>
+                                </div>
+                                <div class="col-2"> 
+                                    <p class="btn-outline-danger">@Model.Members.Count()</p>
+                                </div>
+                            </div>
 
                                <hr />
 
@@ -307,6 +307,18 @@
                 </div>
             </div>
             <!--THIRD ROW-->
+            <!--PROJECTS BY TICKET PRIORITY COUNTS BAR CHART-->
+            <div class="row mb-4">
+                <div class="col">
+                    <div class="app-card app-card-stat shadow-sm h-100">
+                        <div class="card-body p-3 p-lg-4">
+                            <canvas id="am-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--FOURTH ROW-->
             <!--Members and Projects Table-->
             <div class="row g-4 mb-4">
                 <div class="col-5">
@@ -454,7 +466,7 @@
                 </div>
             </div>
 
-            <!--FOURTH ROW-->
+            <!--FIFTH ROW-->
             <!--Tickets Table-->
             <div class="row mb-1">
                 <div class="col">
@@ -813,7 +825,7 @@
 
     <script src="~/chart.js/chart.min.js"></script>
 
-    <!--Charts-->
+    <!--Charts JS-->
     <script type="text/javascript">
         'use strict';
 
@@ -965,6 +977,7 @@
 	        }
         };
 
+       
 
 
 
@@ -985,6 +998,87 @@
 	
 
         });	
+    </script>
+
+    <!--Jquery-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="crossorigin="anonymous"></script>
+
+    <!--AM Charts-->
+    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+    	    $.ajax({
+		            type: "POST",
+		            url: "/Home/AmCharts",
+		            data: '{}',
+		            contentType: "application/json; charset=utf-8",
+		            dataType: "json",
+		            success: function (result) {
+			            am4core.ready(function() {
+
+				            // Themes begin
+				            // Themes end
+
+				            // Create chart instance
+				            var chart = am4core.create("am-chart", am4charts.XYChart);
+
+
+				            // Add data
+				            chart.data = result;
+
+				            // Create axes
+				            var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
+				            categoryAxis.dataFields.category = "project";
+				            categoryAxis.numberFormatter.numberFormat = "#";
+				            categoryAxis.renderer.inversed = true;
+				            categoryAxis.renderer.grid.template.location = 0;
+				            categoryAxis.renderer.cellStartLocation = 0.1;
+				            categoryAxis.renderer.cellEndLocation = 0.9;
+
+				            var  valueAxis = chart.xAxes.push(new am4charts.ValueAxis());
+				            valueAxis.renderer.opposite = true;
+
+				            // Create series
+				            function createSeries(field, name) {
+				                var series = chart.series.push(new am4charts.ColumnSeries());
+				                series.dataFields.valueX = field;
+				                series.dataFields.categoryY = "project";
+				                series.name = name;
+				                series.columns.template.tooltipText = "{name}: [bold]{valueX}[/]";
+				                series.columns.template.height = am4core.percent(100);
+				                series.sequencedInterpolation = true;
+
+				                var valueLabel = series.bullets.push(new am4charts.LabelBullet());
+				                valueLabel.label.text = "{valueX}";
+				                valueLabel.label.horizontalCenter = "left";
+				                valueLabel.label.dx = 10;
+				                valueLabel.label.hideOversized = false;
+				                valueLabel.label.truncate = false;
+
+				                var categoryLabel = series.bullets.push(new am4charts.LabelBullet());
+				                categoryLabel.label.text = "{name}";
+				                categoryLabel.label.horizontalCenter = "right";
+				                categoryLabel.label.dx = -10;
+				                categoryLabel.label.fill = am4core.color("#fff");
+				                categoryLabel.label.hideOversized = false;
+				                categoryLabel.label.truncate = false;
+				            }
+
+				            createSeries("tickets", "Tickets");
+				            createSeries("developers", "Devs");
+
+			            }); 
+		            },
+		            failure: function (result) {
+			            alert(result.d);
+		            },
+		            error: function (result) {
+			            alert(result.d);
+		            }
+	        });
+        });
     </script>
 
     <!--Table Search-->
@@ -1089,81 +1183,7 @@
         </script>
 
         
-        <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-        <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
-        <script>
-    
-    	    $.ajax({
-		    type: "POST",
-		    url: "/Home/AmCharts",
-		    data: '{}',
-		    contentType: "application/json; charset=utf-8",
-		    dataType: "json",
-		    success: function (result) {
-			    am4core.ready(function() {
-
-				    // Themes begin
-				    // Themes end
-
-				     // Create chart instance
-				    var chart = am4core.create("chartdiv", am4charts.XYChart);
-
-
-				    // Add data
-				    chart.data = result;
-
-				    // Create axes
-				    var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
-				    categoryAxis.dataFields.category = "project";
-				    categoryAxis.numberFormatter.numberFormat = "#";
-				    categoryAxis.renderer.inversed = true;
-				    categoryAxis.renderer.grid.template.location = 0;
-				    categoryAxis.renderer.cellStartLocation = 0.1;
-				    categoryAxis.renderer.cellEndLocation = 0.9;
-
-				    var  valueAxis = chart.xAxes.push(new am4charts.ValueAxis());
-				    valueAxis.renderer.opposite = true;
-
-				    // Create series
-				    function createSeries(field, name) {
-				      var series = chart.series.push(new am4charts.ColumnSeries());
-				      series.dataFields.valueX = field;
-				      series.dataFields.categoryY = "project";
-				      series.name = name;
-				      series.columns.template.tooltipText = "{name}: [bold]{valueX}[/]";
-				      series.columns.template.height = am4core.percent(100);
-				      series.sequencedInterpolation = true;
-
-				      var valueLabel = series.bullets.push(new am4charts.LabelBullet());
-				      valueLabel.label.text = "{valueX}";
-				      valueLabel.label.horizontalCenter = "left";
-				      valueLabel.label.dx = 10;
-				      valueLabel.label.hideOversized = false;
-				      valueLabel.label.truncate = false;
-
-				      var categoryLabel = series.bullets.push(new am4charts.LabelBullet());
-				      categoryLabel.label.text = "{name}";
-				      categoryLabel.label.horizontalCenter = "right";
-				      categoryLabel.label.dx = -10;
-				      categoryLabel.label.fill = am4core.color("#fff");
-				      categoryLabel.label.hideOversized = false;
-				      categoryLabel.label.truncate = false;
-				    }
-
-				    createSeries("tickets", "Tickets");
-				    createSeries("developers", "Devs");
-
-			    }); 
-
-
-		    },
-		    failure: function (result) {
-			    alert(result.d);
-		    },
-		    error: function (result) {
-			    alert(result.d);
-		    }
-	    });
+        
         *@
 
 }
