@@ -220,8 +220,11 @@
 									<ul class="submenu-list list-unstyled">
 										<li class="submenu-item"><a class="submenu-link" asp-action="AllProjects" asp-controller="Projects">All Projects</a></li>
 										<li class="submenu-item"><a class="submenu-link" asp-action="MyProjects" asp-controller="Projects">My Projects</a></li>
-										<li class="submenu-item"><a class="submenu-link" asp-action="Create" asp-controller="Projects">Add Project</a></li>
-										<li class="submenu-item"><a class="submenu-link" asp-action="ManageProjects" asp-controller="Projects">Manage Projects</a></li>
+										@if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+										{
+											<li class="submenu-item"><a class="submenu-link" asp-action="Create" asp-controller="Projects">Add Project</a></li>
+											<li class="submenu-item"><a class="submenu-link" asp-action="ManageProjects" asp-controller="Projects">Manage Projects</a></li>
+										}
 										<li class="submenu-item"><a class="submenu-link" asp-action="ArchivedProjects" asp-controller="Projects">Archived Projects</a></li>
 									</ul>
 								</div>
