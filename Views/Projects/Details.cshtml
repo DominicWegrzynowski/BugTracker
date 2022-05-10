@@ -1,4 +1,5 @@
 ﻿@model BugTracker.Models.Project
+@using BugTracker.Extensions
 @using BugTracker.Models.Enums
 @using BugTracker.Services.Interfaces
 @using Microsoft.AspNetCore.Identity
@@ -6,248 +7,269 @@
 @inject UserManager<BTUser> UserManager
 @inject IBTProjectService ProjectService
 @inject IBTTicketHistoryService HistoryService
-
+@inject IBTTicketService TicketService
 @{
     ViewData["Title"] = "Details";
 
     BTUser user = await UserManager.GetUserAsync(User);
     BTUser projectManager = await ProjectService.GetProjectManagerAsync(Model.Id);
+
+    int companyId = User.Identity.GetCompanyId().Value;
 }
 
-<h1>Details</h1>
-
-<div>
-    <div class="container-fluid">
-        <div class="row gy-2">
-            <div class="col-md-12 col">
-                <div class="row col-cols-2 mt-5 bg-secondary">
-                    <div class="card col m-1 p-2">
-                        <div class="body">
-                            @* Project Name *@
-                            <h5>@Model.Name</h5>
-                            @* Project Description *@
-                            <p>@Model.Description</p>
-                            <div class="progress-container progress-info m-b-25">
-                                <span class="progress-badge" style="font-size:small">Project Status</span>
-                                <div class="progress">
-                                    @* Razor code block *@
-                                    @{
-                                        var start = Model.StartDate.DateTime;
-                                        var end = Model.EndDate.DateTime;
-                                        var today = DateTime.Now;
-                                        var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
-                                    }
-                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
-                                        @* Use Progress Bar code variable here *@
-                                        <span class="progress-value">@percent%</span>
-                                    </div>
-                                </div>
+<div class="app-wrapper">
+    <div class="app-content pt-3 p-md-3 p-lg-4">
+	    <div class="container-xl">
+            <h2>Project Details</h2>
+            <div class="row g-5">
+                <div class="col-4">
+                     @*Top Card*@
+                    <div class="row mb-4">
+                        <div class="col-12 app-card h-100 text-start p-3 rounded-5">
+                            <div class="card-body">
+                                <h3>@Model.Name</h3>
+                                <p>@Model.Description</p>
+                                @* Razor code block *@
+						        @{
+							        var start = Model.StartDate.DateTime;
+							        var end = Model.EndDate.DateTime;
+							        var today = DateTime.Now;
+							        var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
+						        }
+                                <span>Project Status</span>
+                                <div class="progress-bar progress-bar-striped bg-primary" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
+								    @* Use Progress Bar code variable here *@
+                                    
+								    <span class="progress-value">@percent%</span>
+							    </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card col m-1 p-2">
-                        <div class="body">
-                            <ul class=" list-unstyled basic-list">
-                                <li>Start Date: <span class="">@start.ToString("dd MMM, yyyy")</span></li>
-                                <li>Deadline: <span class="">@end.ToString("dd MMM, yyyy")</span></li>
-                                <li>Priority: <span class="">@Model.ProjectPriority?.Name</span></li>
-                                
-                                @if(today < end && today >= start)
-                                {
-                                    <li>Status:<span class=""> Active</span></li>
-                                }
-                                else
-                                {
-                                    <li>Status:<span class=""> Inactive</span></li>
-                                }
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col mt-5 ">
-                <div class="bg-secondary">
-                    <div class="card m-1 p-2">
-                        <div class="header">
-                            <h2>Project Manager</h2>
-                            <hr />
-                        </div>
-                        <div class="body" style="overflow-y:auto;height:300px;">
-                            
-                            
-                            @if(projectManager is not null)
-                            {
-                                <div>
-                                    @if(projectManager.AvatarFileData is not null)
+                    @*Middle Card*@
+                    <div class="row mb-4">
+                        <div class="col-12 app-card h-100">
+                            <div class="card-body">
+                                @*Created*@
+                                <div class="row">
+                                    <div class="col-6 text-start">
+                                        <p class="text-muted">Created:</p>
+                                    </div>
+                                    <div class="col-6 text-end">@Model.StartDate.ToString("MMM dd, yyyy")</div>
+                                </div>
+                                @*Deadline*@
+                                <div class="row">
+                                    <div class="col-6 text-start">
+                                        <p class="text-muted">Deadline:</p>
+                                    </div>
+                                    <div class="col-6 text-end">@Model.EndDate.ToString("MMM dd, yyyy")</div>
+                                </div>
+                                @*Priority*@
+                                <div class="row">
+                                    <div class="col-6 text-start">
+                                        <p class="text-muted">Priority:</p>
+                                    </div>
+                                    <div class="col-6 text-end">@Model.ProjectPriority.Name</div>
+                                </div>
+                                @*Status*@
+                                <div class="row">
+                                    <div class="col-6 text-start">
+                                        <p class="text-muted">Status:</p>
+                                    </div>
+                                    @if(Model.StartDate <= DateTime.Now)
                                     {
-                                        <img class="rounded-circle" style="width:60px;height:60px;" src="data:image/*;base64,@(Convert.ToBase64String(projectManager.AvatarFileData))" alt="Project Manager Avatar" />
+                                        <div class="col-6 text-end">Active</div>
                                     }
                                     else
                                     {
-                                        <img class="rounded-circle" style="width:60px;height:60px;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
+                                        <div class="col-6 text-end">Inactive</div>
                                     }
-
-                                    <div>
-                                        <h5>@projectManager.FullName</h5>
-                                        <span>@projectManager.Email</span>>
-                                        <p class="text-muted m-b-0">Project Manager</p>
-                                        @if(User.IsInRole("Admin") || (user.Id == projectManager.Id))
-                                        {
-                                            <a class="btn btn-xs btn alert-primary"  asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@Model.Id">Manage Team</a>
-                                        }
-                                    </div>
-
                                 </div>
-                            }
-                            else
-                            {
-                                <div>
-                                    <img class="rounded-circle" style="width:60px;height:60px;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar" />
-                                    <div class="wid-u-info">
-                                        <h5 class="text-muted m-b-0">Not Assigned</h5>
-                                        <span><a asp-action="AssignPM" asp-controller="Projects" asp-route-projectId="@Model.Id" class="btn btn-xs btn-outline-info">Assign Project Manager</a></span>
-                                    </div>
-                                </div>
-                            }
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-4 col mt-5 ">
-                <div class="bg-secondary">
-                    <div class="card m-1 p-2">
-                        <div class="header">
-                            <h2>Project Team</h2>
-                            <hr />
-                        </div>
-                        <div class="body" style="overflow-y:auto;height:300px;">
-                            <ul class="right_chat list-unstyled mb-0">                               
-                                @foreach(BTUser member in await ProjectService.GetAllProjectMembersExceptPMAsync(Model.Id))
-                                {
-                                    <li class="">
-                                        <div class="media">
-                                            @if(member.AvatarFileData is not null)
-                                            {
-                                                <img class="" style="width:30px;height:30px;" src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" alt="" />
-                                            }
-                                            else
-                                            {
-                                                <img class="" style="width:30px;height:30px;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar" />
-                                            }
-                                            <div class="">
-                                                <span class="">@member.FullName</span>
-                                                <span class="" style="font-size:x-small;">[@((await UserManager.GetRolesAsync(member)).FirstOrDefault())]</span>
+
+                    @*Bottom Card*@
+                    <div class="row">
+                        <div class="col-12 app-card h-100">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h4>Project Team</h4>
+                                        <p class="text-muted">@Model.Members.Count team members</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2">
+
+                                    </div>
+                                </div>
+								@if (projectManager is not null)
+								{
+                                    <div class="row">
+                                        <div class="col-2">
+									    @if (projectManager.AvatarFileData is null)
+									    {
+										    <img class="rounded-circle shadow-sm" style="width:60px;height:60px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
+									    }
+									    else
+									    {
+										    <img class="rounded-circle shadow-sm btn-outline-light" style="width:60px;height:60px;outline-color:white;outline-width:thin;" src="data:image/*;base64,@(Convert.ToBase64String(projectManager.AvatarFileData))" alt="@projectManager.FullName's avatar'" />
+									    }
+                                        </div>
+                                        <div class="col-10 text-start">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <span>@projectManager.FullName</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <span class="text-sm">@projectManager.Email</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <span class="text-muted">Project Manager</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </li>
-                                }
-
-                            </ul>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col mt-5 ">
-                <div class="bg-dark">
-                    <div class="card m-1 p-2">
-                        <div class="header">
-                            <h2>Project Activity</h2>
-                            <hr />
-                        </div>
-                        <div class="body" style="overflow-y:auto;height:300px;background-color:antiquewhite">
-                            @* Project Activity loop *@
-                            @foreach(TicketHistory history in await HistoryService.GetProjectTicketsHistoriesAsync(Model.Id, user.CompanyId))
-                            {
-                                <div class="">
-                                    <span class="date">@history.Created.ToString("dd MMM yyyy")</span>
-                                    <h6>@history.Description</h6>
-                                    <span>By: <a href="" title="@history.User.FullName">@history.User.FullName</a></span>
-                                    <div class="">
-                                        <p>The ticket <strong>@history.Property</strong> was edited</p>
-                                        <p>@($"Previous { history.Property }: { history.OldValue }")</p>
-                                        <p>@($"Current { history.Property }: { history.NewValue }")</p>
                                     </div>
-                                </div>
-                            }
-                        </div>
+								}
+								else
+								{
+									<span class="truncate">Not Assigned</span>
+								}
 
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12 col">
-                <div class="mt-5 bg-secondary">
-                    <div class="card m-1 p-2">
-                        <div class="header">
-                            <h2>Tickets</h2>
-                        </div>
-                        <div class="body">
-                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
-                                <table class="table table-hover">
-                                    <thead class="">
-                                        <tr>
-                                            @* Table header *@
-                                            <th>Title</th>
-                                            <th>Developer</th>
-                                            <th>Status</th>
-                                            <th>Priority</th>
-                                            <th>Date</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @* Table body *@
-                                          @foreach (var ticket in Model.Tickets.OrderByDescending(d => d.Created))
-                                          {
-                                              <tr>
-                                                  <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" style="color:black"><strong>@ticket.Title</strong></a> </td>
-                                                  <td>
-                                                      @if (ticket.DeveloperUserId != null)
-                                                      {
-                                                          @ticket.DeveloperUser?.FullName
-                                                      }
-                                                      else
-                                                      {
-                                                          if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
-                                                          {
-                                                              <a class="btn btn-xs  btn alert-primary" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@ticket.Id">Assign Dev</a>
-                                                          }
-                                                      }
-                                                  </td>
-                                                  @if (ticket.TicketStatus.Name == "New")
-                                                  {
-                                                      <td><span class="badge-success">@ticket.TicketStatus.Name </span></td>
-
-                                                  }
-                                                  else
-                                                  {
-                                                      <td><span class="badge-primary">@ticket.TicketStatus.Name </span></td>
-                                                  }
-                                                  <td><span class="badge-warning">@ticket.TicketPriority.Name </span></td>
-                                                  <td>@ticket.Created.ToString("MM-dd-yyyy")</td>
-                                                  <td>
-                                                      <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
-                                                      @if (ticket.DeveloperUserId == user.Id || ticket.OwnerUserId == user.Id || (projectManager?.Id == user.Id) || User.IsInRole(nameof(Roles.Admin)))
-                                                      {
-                                                          <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-pencil"></i></a>
-                                                      }
-
-                                                      @if (User.IsInRole("Admin") || (projectManager?.Id == user.Id))
-                                                      {
-                                                          <a class="btn btn-sm btn-outline-danger"><i class="fs-5 bi-archive"></i></a>
-                                                      }
-                                                  </td>
-                                              </tr>
-                                          }
-                                    </tbody>
-                                </table>
+                                <hr />
+                               
+                                    @foreach(BTUser member in Model.Members) 
+                                    {
+                                        <div class="row mb-3">
+                                            <div class="col-2">
+                                                @if (member.AvatarFileData is null)
+									            {
+										            <img class="rounded-circle shadow-sm" style="width:45px;height:45px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
+									            }
+									            else
+									            {
+										            <img class="rounded-circle shadow-sm btn-outline-light" style="width:45px;height:45px;outline-color:white;outline-width:thin;" src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" alt="@member.FullName's avatar'" />
+									            }
+                                            </div>
+                                            <div class="col-10 text-start">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <span>@member.FullName</span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <span class="text-muted">Developer</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
                             </div>
-
                         </div>
                     </div>
 
+                </div>
+                <div class="col-8">
+                    @if (Model.Tickets.Any())
+					{
+						<div class="row g-3 mb-4 align-items-center justify-content-between">
+							<div class="col-auto">
+								<h1 class="app-page-title mb-0">Tickets</h1>
+							</div>
+							<div class="col-auto">
+								<div class="page-utilities">
+									<div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+										<div class="col-auto">
+											<form class="table-search-form row gx-1 align-items-center">
+												<div class="col-auto">
+													<input type="text" id="search-orders" name="searchorders" class="form-control search-orders" placeholder="Search">
+												</div>
+												<div class="col-auto">
+													<button type="submit" class="btn app-btn-secondary">Search</button>
+												</div>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="tab-content" id="orders-table-tab-content">
+							<div class="tab-pane fade show active" id="orders-cancelled" role="tabpanel" aria-labelledby="orders-cancelled-tab">
+								<div class="app-card app-card-orders-table mb-5">
+									<div class="app-card-body pt-3 ps-3 pe-3">
+											<div class="table-responsive">
+												<table class="table app-table-hover mb-0 text-left">
+													<thead>
+														<tr>
+															<th class="cell">Title</th>
+															<th class="cell">Developer</th>
+															<th class="cell">Status</th>
+															<th class="cell">Priority</th>
+															<th class="cell">Date</th>
+															<th class="cell">Action</th>
+														</tr>
+													</thead>
+													<tbody>
+														@foreach (Ticket ticket in Model.Tickets.Where(m => m.Archived == false))
+														{
+
+															<tr>
+																<td class="cell">
+																	<span class="fw-bold">@ticket.Title</span>
+																</td>
+                                                            @{
+                                                                BTUser developerUser = await TicketService.GetTicketDeveloperAsync(ticket.Id, companyId);
+                                                            }
+																<td class="cell"><span class="truncate">@developerUser.FullName</span></td>
+																<td class="cell ">@ticket.TicketStatus.Name</td>
+																<td class="cell">@ticket.TicketPriority.Name</td>
+																<td class="cell">@ticket.Created.ToString("MM-dd-yyyy")</td>
+																<td class="cell text-center">
+																	<a class="btn-sm app-btn-secondary me-2" asp-action="Details" asp-controller="Projects" asp-route-id="@ticket.Id">
+																		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+																			<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+																			<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+																		</svg>
+																	</a>
+																	@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
+																	{
+																		<a class="btn-sm app-btn-secondary me-2" asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id">
+																			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+																				<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+																				<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+																			</svg>
+																		</a>
+																		<a class="btn-sm app-btn-secondary g-2" asp-action="Archive" asp-controller="Tickets" asp-route-id="@ticket.Id">
+														                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+															                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+															                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+														                    </svg>
+													                    </a>
+																	}
+																</td>
+															</tr>
+														}
+													</tbody>
+												</table>
+											</div>
+										
+									</div>	
+								</div>
+							</div>
+						</div>
+					}
+					else
+					{
+						<h3 class="text-muted text-center m-5">No Tickets Submitted</h3>
+					}
                 </div>
             </div>
         </div>
     </div>
 </div>
+
