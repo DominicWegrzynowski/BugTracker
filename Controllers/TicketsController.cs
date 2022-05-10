@@ -172,8 +172,16 @@ namespace BugTracker.Controllers
             
 
             model.Ticket = await _ticketService.GetTicketByIdAsync(id);
-            model.Developers = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.Project.Id, nameof(Roles.Developer)),
+            try
+            {
+                model.Developers = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.Project.Id, nameof(Roles.Developer)),
                                               "Id", "FullName");
+            }
+            catch(Exception)
+            {
+                
+            }
+            
             
 
             return View(model);
