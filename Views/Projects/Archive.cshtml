@@ -3,71 +3,35 @@
 @{
     ViewData["Title"] = "Archive";
 }
-<div class="app-wrapper">
-    <div class="app-content pt-3 p-md-3 p-lg-4">
-        <div class="container-xl">
-            <h1>Archive</h1>
-
-            <h3>Are you sure you want to archive this project?</h3>
-            <div>
-                <h4>Project</h4>
-                <hr />
-                <dl class="row">
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.Name)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @Html.DisplayFor(model => model.Name)
-                    </dd>
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.Description)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @Html.DisplayFor(model => model.Description)
-                    </dd>
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.StartDate)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @Html.DisplayFor(model => model.StartDate)
-                    </dd>
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.EndDate)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @Html.DisplayFor(model => model.EndDate)
-                    </dd>
-                    <dd class="col-sm-10">
-                        @if(Model.ImageFileData is not null)
-                        {
-                            <img id="imageFileData" class="img-fluid img-thumbnail" style="width:100px;height:80px;" src="data:image/*;base64,@(Convert.ToBase64String(Model.ImageFileData))">
-                        }
-                    </dd>
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.Archived)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @Html.DisplayFor(model => model.Archived)
-                    </dd>
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.Company)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @Html.DisplayFor(model => model.Company.Id)
-                    </dd class>
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.ProjectPriority)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @Html.DisplayFor(model => model.ProjectPriority.Name)
-                    </dd class>
-                </dl>
-    
-                <form asp-action="Archive">
-                    <input type="hidden" asp-for="Id" />
-                    <input type="submit" value="Archive" class="btn btn-danger" /> |
-                    <a asp-action="Index">Back to List</a>
-                </form>
+<div class="app-wrapper">   
+	<div class="app-content pt-3 p-md-3 p-lg-4">
+		<div class="container-xl">
+			<h2>Archive</h2>
+			<div class="row g-3 mb-4 align-items-center justify-content-between">
+               
+                <div class="app-card h-100 col-6">
+                    <div class="card-body">
+                        <h3>Are you sure you want to archive this project?</h3>
+                        <hr />
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label asp-for="Name" class="control-label"></label>
+                                <input disabled asp-for="Name" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="Description" class="control-label"></label>
+                                <input disabled asp-for="Description" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                            <form asp-action="Archive">
+                                <input type="hidden" asp-for="Id" />
+                                <input type="submit" value="Archive" class="btn btn-danger text-white" />  | 
+                                <a asp-action="Index">Back to List</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
