@@ -21,6 +21,7 @@
     <div class="app-content pt-3 p-md-3 p-lg-4">
 	    <div class="container-xl">
             <h2>Project Details</h2>
+            <br />
             <div class="row g-5">
                 <div class="col-4">
                      @*Top Card*@
@@ -163,12 +164,23 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-12">
+                                                        <span>@member.Email</span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-12">
                                                         <span class="text-muted">Developer</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     }
+                                @if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+                                {
+                                    <div class="row">
+                                        <a asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@Model.Id" class="btn btn-sm btn-primary text-white">Assign Members</a>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -177,33 +189,14 @@
                 <div class="col-8">
                     @if (Model.Tickets.Any())
 					{
-						<div class="row g-3 mb-4 align-items-center justify-content-between">
-							<div class="col-auto">
-								<h1 class="app-page-title mb-0">Tickets</h1>
-							</div>
-							<div class="col-auto">
-								<div class="page-utilities">
-									<div class="row g-2 justify-content-start justify-content-md-end align-items-center">
-										<div class="col-auto">
-											<form class="table-search-form row gx-1 align-items-center">
-												<div class="col-auto">
-													<input type="text" id="search-orders" name="searchorders" class="form-control search-orders" placeholder="Search">
-												</div>
-												<div class="col-auto">
-													<button type="submit" class="btn app-btn-secondary">Search</button>
-												</div>
-											</form>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
 						<div class="tab-content" id="orders-table-tab-content">
 							<div class="tab-pane fade show active" id="orders-cancelled" role="tabpanel" aria-labelledby="orders-cancelled-tab">
 								<div class="app-card app-card-orders-table mb-5">
 									<div class="app-card-body pt-3 ps-3 pe-3">
-											<div class="table-responsive">
-												<table class="table app-table-hover mb-0 text-left">
+											<div class="table-responsive pb-3">
+                                                <h4 class="mb-1">Tickets</h4>
+
+												<table id="ticketsTable" class="table app-table-hover mb-0 text-left">
 													<thead>
 														<tr>
 															<th class="cell">Title</th>
@@ -222,10 +215,19 @@
 																<td class="cell">
 																	<span class="fw-bold">@ticket.Title</span>
 																</td>
-                                                            @{
-                                                                BTUser developerUser = await TicketService.GetTicketDeveloperAsync(ticket.Id, companyId);
-                                                            }
-																<td class="cell"><span class="truncate">@developerUser.FullName</span></td>
+                                                                @{
+                                                                    BTUser developerUser = await TicketService.GetTicketDeveloperAsync(ticket.Id, companyId);
+                                                                }
+                                                                @if(ticket.DeveloperUser is null)
+                                                                {
+                                                                    <td>
+                                                                        <a class="btn btn-sm btn-primary text-white" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@ticket.Id">Assign Developer</a>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td class="cell"><span class="truncate">@developerUser.FullName</span></td>
+                                                                }
 																<td class="cell ">@ticket.TicketStatus.Name</td>
 																<td class="cell">@ticket.TicketPriority.Name</td>
 																<td class="cell">@ticket.Created.ToString("MM-dd-yyyy")</td>
@@ -273,3 +275,16 @@
     </div>
 </div>
 
+@section scripts{ 
+
+    <script>
+        $(document).ready(function () {
+            $("#ticketsTable").DataTable({
+                "scrollY" : "450px",
+                "scrollCollapse":true,
+                "paging": true
+            });
+        });
+    </script>
+
+}

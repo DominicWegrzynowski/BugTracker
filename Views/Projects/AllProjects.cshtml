@@ -22,24 +22,6 @@
 				    <div class="col-auto">
 			            <h1 class="app-page-title mb-0">Projects</h1>
 				    </div>
-				    <div class="col-auto">
-					     <div class="page-utilities">
-						    <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
-							    <div class="col-auto">
-								    <form class="table-search-form row gx-1 align-items-center">
-					                    <div class="col-auto">
-					                        <input type="text" id="search-orders" name="searchorders" class="form-control search-orders" placeholder="Search">
-					                    </div>
-					                    <div class="col-auto">
-					                        <button type="submit" class="btn app-btn-secondary">Search</button>
-					                    </div>
-					                </form>
-					                
-							    </div><!--//col-->
-							   
-						    </div><!--//row-->
-					    </div>
-				    </div>
 			    </div>
 			   
 			    
@@ -56,8 +38,8 @@
 					<div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
 					    <div class="app-card app-card-orders-table shadow-sm mb-5">
 						    <div class="app-card-body pt-3 ps-3">
-							    <div class="table-responsive">
-							        <table class="table app-table-hover mb-0 text-left">
+							    <div class="table-responsive p-2">
+							        <table id="allProjects" class="table app-table-hover mb-0 text-left">
 										<thead>
 											<tr>
 												<th class="cell">Project</th>
@@ -168,23 +150,10 @@
 		
 										</tbody>
 									</table>
-						        </div><!--//table-responsive-->
+						        </div>
 						       
-						    </div><!--//app-card-body-->		
-						</div><!--//app-card-->
-						<nav class="app-pagination">
-							<ul class="pagination justify-content-center">
-								<li class="page-item disabled">
-									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-							    </li>
-								<li class="page-item active"><a class="page-link" href="#">1</a></li>
-								<li class="page-item"><a class="page-link" href="#">2</a></li>
-								<li class="page-item"><a class="page-link" href="#">3</a></li>
-								<li class="page-item">
-								    <a class="page-link" href="#">Next</a>
-								</li>
-							</ul>
-						</nav><!--//app-pagination-->
+						    </div>		
+						</div>
 			        </div>
 			        
 					@*Active Projects*@
@@ -192,7 +161,7 @@
 					    <div class="app-card app-card-orders-table mb-5">
 						    <div class="app-card-body pt-3 ps-3 pe-3">
 							    <div class="table-responsive">
-							        <table class="table app-table-hover mb-0 text-left">
+							        <table id="activeProjects" class="table app-table-hover mb-0 text-left">
 										<thead>
 											<tr>
 												<th class="cell">Project</th>
@@ -324,7 +293,7 @@
 							else 
 							{  
 							    <div class="table-responsive">
-							        <table class="table app-table-hover mb-0 text-left">
+							        <table id="inactiveProjects" class="table app-table-hover mb-0 text-left">
 										<thead>
 											<tr>
 												<th class="cell">Project</th>
@@ -453,7 +422,7 @@
 							@if(archivedProjects is not null)
 							{ 
 								<div class="table-responsive">
-									<table class="table app-table-hover mb-0 text-left">
+									<table id="archivedProjects" class="table app-table-hover mb-0 text-left">
 										<thead>
 											<tr>
 												<th class="cell">Project</th>
@@ -582,4 +551,31 @@
 		    </div>
 	    </footer>	    
 </div>
-s
+@section scripts{ 
+
+    <script>
+        $(document).ready(function () {
+            $("#allProjects").DataTable({
+                "scrollY" : "450px",
+                "scrollCollapse":true,
+                "paging": true
+            });
+			$("#activeProjects").DataTable({
+                "scrollY" : "450px",
+                "scrollCollapse":true,
+                "paging": true
+            });
+			$("#inactiveProjects").DataTable({
+                "scrollY" : "450px",
+                "scrollCollapse":true,
+                "paging": true
+            });
+			$("#archivedProjects").DataTable({
+                "scrollY" : "450px",
+                "scrollCollapse":true,
+                "paging": true
+            });
+        });
+    </script>
+
+}

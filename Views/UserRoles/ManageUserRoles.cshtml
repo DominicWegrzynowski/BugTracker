@@ -1,36 +1,43 @@
 ﻿@model IEnumerable<BugTracker.Models.ViewModels.ManageUserRolesViewModel>
 
-<div class="row">
-    <h2 class="mb-3 h3"><strong>Manage Member Roles</strong></h2>
-    <br />
-    @foreach(var member in Model)
-    {
-        <div class="row mt-3">
-            <div class="card col-6 m-3">
-                <div class="card-body">
-                    <p class="text-muted font-13 m-b-30">
-                        This form displays the current roles assigned to the user: <strong class="text-info">@member.BTUser.FullName</strong>.
-                        Use the dropdown to select the roles this user should be assigned.
-                        once roles are selected, click "Assign Roles" to submit this form.
-                    </p>
-                    <hr/>
-                    <form asp-action="ManageUserRoles" asp-controller="UserRoles" method=post>
-                        <input type="hidden" asp-for="@member.BTUser.Id"/> 
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <lable asp-for="@member.Roles" class="custom-label"> Roles for @member.BTUser.FullName</lable>
-                                    <select asp-for="@member.SelectedRoles" class="form-control" asp-items="@member.Roles" multiple></select>
-                                    <hr />
-                                </div>
-                                <div class="form-group">
-                                    <input type="submit" value="Assign Role" class="btn btn-info" />
-                                </div>
+
+<div class="app-wrapper">
+	<div class="app-content pt-3 p-md-3 p-lg-4">
+		<div class="container-xl">
+            <div class="row">
+                <h2 class="mb-3 h3"><strong>Manage Member Roles</strong></h2>
+                <br />
+                @foreach(var member in Model)
+                {
+                    <div class="row mt-3">
+                        <div class="card col-6 m-3">
+                            <div class="card-body">
+                                <p class="text-muted font-13 m-b-30">
+                                    This form displays the current roles assigned to the user: <strong class="text-info">@member.BTUser.FullName</strong>.
+                                    Use the dropdown to select the roles this user should be assigned.
+                                    once roles are selected, click "Assign Roles" to submit this form.
+                                </p>
+                                <hr/>
+                                <form asp-action="ManageUserRoles" asp-controller="UserRoles" method=post>
+                                    <input type="hidden" asp-for="@member.BTUser.Id"/> 
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <lable asp-for="@member.Roles" class="custom-label"> Roles for @member.BTUser.FullName</lable>
+                                                <select asp-for="@member.SelectedRoles" class="form-control" asp-items="@member.Roles" multiple></select>
+                                                <hr />
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="submit" value="Assign Role" class="btn btn-info" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                }
             </div>
         </div>
-    }
+    </div>
 </div>
