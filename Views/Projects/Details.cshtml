@@ -191,7 +191,7 @@
 					{
 						<div class="tab-content" id="orders-table-tab-content">
 							<div class="tab-pane fade show active" id="orders-cancelled" role="tabpanel" aria-labelledby="orders-cancelled-tab">
-								<div class="app-card app-card-orders-table mb-5">
+								<div class="app-card app-card-orders-table mb-4">
 									<div class="app-card-body pt-3 ps-3 pe-3">
 											<div class="table-responsive pb-3">
                                                 <h4 class="mb-1">Tickets</h4>
@@ -213,7 +213,7 @@
 
 															<tr>
 																<td class="cell">
-																	<span><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" class="fw-bold">@ticket.Title</a></span>
+																	<span>@ticket.Title</span>
 																</td>
                                                                 @{
                                                                     BTUser developerUser = await TicketService.GetTicketDeveloperAsync(ticket.Id, companyId);
@@ -269,6 +269,19 @@
 					{
 						<h3 class="text-muted text-center m-5">No Tickets Submitted</h3>
 					}
+
+                    <div class="tab-content" id="orders-table-tab-content">
+						<div class="tab-pane fade show active" id="orders-cancelled" role="tabpanel" aria-labelledby="orders-cancelled-tab">
+							<div class="app-card app-card-orders-table mb-5">
+								<div class="app-card-body pt-2 ps-3 pe-3">
+                                    <h3>Project Activity</h3>
+                                    <hr />
+                                    @*Develop This section*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
