@@ -322,20 +322,14 @@
             <!--Members and Projects Table-->
             <div class="row g-4 mb-4">
                 <div class="col-5">
-                    <div class="app-card app-card-stat shadow-sm h-100 p-2">
+                    <div class="app-card app-card-orders-table shadow-sm mb-2">
                         <div class="card-body">
                             <div class="p-2 text-center">
                                 <h5 class="">Members</h5>
                             </div>
-                            <div class="input-group mb-3 ">
-
-                                <span class="input-group-text">Search</span>
-                                <input type="text" title="Search" class="form-control" id="membersTableSearchInput" placeholder=""/>
-
-                            </div>
-                            <table class="table table-hover">
+                            <table id="membersTable" class="table table-hover">
                                 <thead>
-                                    <tr class="row table-dark">
+                                    <tr>
                                         <th class="col-2 text-start">Avatar</th>
                                         <th class="col-4 text-start">Name</th>
                                         <th class="col-2 text-start">Projects</th>
@@ -346,38 +340,38 @@
                                     
                                     @for(int i =0; i < Model.Members.Count(); i++)
                                     {     
-                                        <tr class="row">
+                                        <tr>
                                             @if(Model.Members[i].AvatarFileData is null)
                                             {
-                                                <td class="col-2 text-start">
+                                                <td class="cell">
                                                     <img class="rounded-circle" style="width:30px;height:30px;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
                                                 </td>
                                             }
                                             else
                                             {
-                                                <td class="col-2 text-start">
+                                                <td class="cell">
                                                     <img class="rounded-circle" style="width:60px;height:60px;" src="data:image/*;base64,@(Convert.ToBase64String(Model.Members[i].AvatarFileData))" alt="@Model.Members[i].FullName's avatar'" />
                                                 </td>
                                             }
 
-                                            <td class="col-4 text-start">
+                                            <td class="cell">
                                                 @Model.Members[i].FullName
                                             </td>
 
                                             @if(Model.Members[i].Projects is null)
                                             {
-                                                <td class="col-2 text-start">
+                                                <td class="cell">
                                                     0
                                                 </td>
                                             }
                                             else
                                             {
-                                                <td class="col-2 text-start">
+                                                <td class="cell">
                                                     @Model.Members[i].Projects.Count()
                                                 </td>
                                             }
 
-                                            <td class="col-4 text-start">
+                                            <td class="cell">
                                                     @Model.Roles[i]
                                             </td>
 
@@ -389,165 +383,180 @@
                     </div>
                 </div>
                 <div class="col-7">
-                    <div class="app-card app-card-stat shadow-sm h-100 p-2">
+                    <div class="app-card app-card-orders-table shadow-sm mb-2">
                         <div class="card-body">
                             <div class="p-2 text-center">
                                 <h5 class="">Projects</h5>
                             </div>
-                            <div class="input-group mb-3 ">
+                            <div class="table-responsive">
+									<table id="projectsTable" class="table app-table-hover mb-0 text-left">
+										<thead>
+											<tr>
+												<th class="cell">Project</th>
+												<th class="cell">End Date</th>
+												
+												<th class="cell">Project Manager</th>
+												<th class="cell">Team</th>
+												
+												<th class="cell"></th>
+											</tr>
+										</thead>
+										<tbody>
+										@foreach(Project project in Model.Projects.Where(m => m.Archived == false))
+										{
+											
+												<tr>
+													<td class="cell">
+														<span class="">@project.Name</span>
+														<span class="note">Created @project.StartDate.ToString("MM.dd.yy")</span>
+													</td>
+													<td class="cell"><span class="truncate">@project.StartDate.ToString("MM.dd.yy")</span></td>
+													
+													<td class="cell">
+														@{
+															var projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
+														}
 
-                                <span class="input-group-text">Search</span>
-                                <input type="text" title="Search" class="form-control" id="membersTableSearchInput" placeholder=""/>
+														@if (projectManager is not null)
+														{
+															@if (projectManager.AvatarFileData is null)
+															{
+																<img class="rounded-circle shadow-sm" style="width:35px;height:35px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
+															}
+															else
+															{
+																<img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(projectManager.AvatarFileData))" alt="@projectManager.FullName's avatar'" />
+															}
+															<span class="note">@projectManager.FullName</span>
+														}
+														else
+														{
+															<span class="truncate">Not Assigned</span>
+														}
+													</td>
+													<td class="cell">
+														@foreach (BTUser member in project.Members)
+														{
 
-                            </div>
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr class="row table-dark">
-                                        <th class="col-5 text-start">Name</th>
-                                        <th class="col-1 text-start">Start Date</th>
-                                        <th class="col-1 text-start">End Date</th>
-                                        <th class="col-3 text-start">Team</th>
-                                        <th class="col-2 text-start">Ticket Count</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach(Project project in Model.Projects)
-                                    {     
-                                        <tr class="row g-1">
-                                            <td class="col-5 row text-start">
-                                                <strong class="col-12">@project.Name</strong>
-
-                                                @{
-                                                    var projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
-                                                }
-
-                                                @if(projectManager is not null)
-                                                {
-                                                    <p class="m-0">Project Manager: @projectManager.FullName</p>
-                                                }
-                                                else
-                                                {
-                                                    <p class="m-0">Project Manager: Not Assigned</p>
-                                                }
-                                            </td>
-                                            
-                                            <td class="col-1 text-center">
-                                                <p class="text-primary text-center" style="font-size:small">@project.StartDate.ToString("MM-dd-yy")</p>
-                                            </td>
-
-                                            <td class="col-1 text-center">
-                                                <p class="text-danger text-center" style="font-size:small">@project.EndDate.ToString("MM-dd-yy")</p>
-                                            </td>
-
-                                            <td class="col-3 text-center">
-                                                @foreach(BTUser member in project.Members)
-                                                {
-                                                    
-                                                    @if(member.AvatarFileData is null)
-                                                    { 
-                                                        <img class="rounded-circle shadow-sm" style="width:30px;height:30px;margin-left:-15px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-                                                    }
-                                                    else
-                                                    {
-                                                        <img class="rounded-circle shadow-sm btn-outline-light" style="width:60px;height:60px;margin-left:-15px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" alt="@member.FullName's avatar'" />
-                                                    }
-                                                }
-                                            </td>
-
-                                            <td class="col-2">
-                                                @project.Tickets.Count()
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+															@if (member.AvatarFileData is null)
+															{
+																<img class="rounded-circle shadow-sm" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
+															}
+															else
+															{
+																<img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" alt="@member.FullName's avatar'" />
+															}
+														}
+													</td>
+													<td class="cell text-center">
+														<a class="btn-sm app-btn-secondary me-2" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">
+															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+																<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+																<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+															</svg>
+														</a>
+														@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
+														{
+															<a class="btn-sm app-btn-secondary me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
+																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+																	<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+																	<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+																</svg>
+															</a>
+															<a class="btn-sm app-btn-secondary g-2" asp-action="Restore" asp-controller="Projects" asp-route-id="@project.Id">
+																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+																	<path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+																	<path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+																</svg>
+															</a>
+														}
+													</td>
+												</tr>
+										}
+										</tbody>
+									</table>
+								</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!--FIFTH ROW-->
-            <!--Tickets Table-->
+            @*FIFTH ROW*@
+            @*Tickets Table*@
             <div class="row mb-1">
                 <div class="col">
-                    <div class="app-card app-card-stat shadow-sm h-100 p-2">
-                        <div class="card-body">
+                    <div class="app-card app-card-orders-table shadow-sm mb-5">
+                        <div class="card-body pt-3 ps-3">
                             <div class="p-2 text-center">
                                 <h5 class="">Tickets</h5>
                             </div>
-                            <div class="input-group mb-3 ">
-
-                                <span class="input-group-text">Search</span>
-                                <input type="text" title="Search" class="form-control" id="membersTableSearchInput" placeholder=""/>
-
-                            </div>
-                            <table class="table table-hover">
+                            <table id="ticketsTable" class="table table-hover">
                                 <thead>
-                                    <tr class="row table-dark">
-                                        <th class="col-4 text-start">Title</th>
-                                        <th class="col-2 text-start">Developer</th>
-                                        <th class="col-2 text-start">Status</th>
-                                        <th class="col-1 text-start">Priority</th>
-                                        <th class="col-1 text-start">Date</th>
-                                        <th class="col-2 text-center">Action</th>
+                                    <tr>
+                                        <th class="cell">Title</th>
+                                        <th class="cell">Developer</th>
+                                        <th class="cell">Status</th>
+                                        <th class="cell">Priority</th>
+                                        <th class="cell">Date</th>
+                                        <th class="cell">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach(Ticket ticket in Model.Tickets)
                                     {     
-                                        <tr class="row g-1">
-                                            <td class="col-4 text-start"><strong>@ticket.Title</strong></td>
+                                        <tr>
+                                            <td class="cell">@ticket.Title</td>
                                             
                                             @*DeveloperUser*@
                                             @if(ticket.DeveloperUserId is not null)
                                             {
-                                                <td class="col-2 text-start">@ticket.DeveloperUser.FullName</td>
+                                                <td class="cell">@ticket.DeveloperUser.FullName</td>
                                             }
                                             else
                                             {
-                                                <td class="col-2 text-start"></td>
+                                                <td class="cell"></td>
                                             }
 
                                             @*TicketStatus*@
                                             @if(ticket.TicketStatus.Name == "New")
                                             {
-                                                <td class="col-2 text-start text-primary">@ticket.TicketStatus.Name</td>
+                                                <td class="cell">@ticket.TicketStatus.Name</td>
                                             }
                                             else
                                             {
-                                                <td class="col-2 text-start">@ticket.TicketStatus.Name</td>
+                                                <td class="cell">@ticket.TicketStatus.Name</td>
                                             }
 
                                             @*TicketPriority*@
-                                            <td class="col-1 text-start">@ticket.TicketPriority.Name</td>
+                                            <td class="cell">@ticket.TicketPriority.Name</td>
                                             
                                             @*TicketDate*@
-                                            <td class="col-1 text-start">@ticket.Created.ToString("MM-dd-yyyy")</td>
+                                            <td class="cell">@ticket.Created.ToString("MM-dd-yyyy")</td>
 
                                             @*Actions*@
-                                            <td class="col-2 g-1 text-center">
-                                                <a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-outline-info">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                                      <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-                                                      <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-                                                    </svg>
-                                                </a>
-                                                @if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
-                                                {
-                                                    <a asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-outline-warning">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                          <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                                          <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                                                        </svg>
-                                                    </a>
-                                                    <a asp-action="Archive" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-outline-danger">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                                          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                                          <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                                        </svg>
-                                                    </a>
-                                                }
-                                            </td>
+                                            <td class="cell text-center">
+												<a class="btn-sm app-btn-secondary me-2" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id">
+													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+														<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+														<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+													</svg>
+												</a>
+												@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
+												{
+													<a class="btn-sm app-btn-secondary me-2" asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id">
+															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+															<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+															<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+														</svg>
+													</a>
+													<a class="btn-sm app-btn-secondary g-2" asp-action="Archive" asp-controller="Tickets" asp-route-id="@ticket.Id">
+														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+															<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+															<path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+														</svg>
+													</a>
+												}
+											</td>
                                         </tr>
 
                                     }
@@ -1000,13 +1009,32 @@
         });	
     </script>
 
-    <!--Jquery-->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="crossorigin="anonymous"></script>
-
     <!--AM Charts-->
     <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
 
+    <!--DataTables-->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#ticketsTable").DataTable({
+                "scrollY" : "450px",
+                "scrollCollapse":true,
+                "paging": true
+            });
+			$("#projectsTable").DataTable({
+                "scrollY" : "450px",
+                "scrollCollapse":true,
+                "paging": true
+            });
+            $("#membersTable").DataTable({
+                "scrollY" : "450px",
+                "scrollCollapse":true,
+                "paging": true
+            });
+        });
+    </script>
+
+    <!--AM Charts Init-->
     <script type="text/javascript">
         $(document).ready(function(){
     	    $.ajax({
@@ -1081,15 +1109,7 @@
         });
     </script>
 
-    <!--Table Search-->
-    <script type="text/javascript">
-        let searchMembersTable = () => {
-            document.getElementById("#membersTableSearchInput").onkeyup(function()
-            {
-                var value = $(this).val()
-            });
-        }
-    </script>
+    
        @* 
         <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
