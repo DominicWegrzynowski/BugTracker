@@ -218,11 +218,15 @@
                                                                 @{
                                                                     BTUser developerUser = await TicketService.GetTicketDeveloperAsync(ticket.Id, companyId);
                                                                 }
-                                                                @if(ticket.DeveloperUser is null)
+                                                                @if(ticket.DeveloperUser is null && (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)) ))
                                                                 {
                                                                     <td>
                                                                         <a class="btn btn-sm btn-primary text-white" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@ticket.Id">Assign Developer</a>
                                                                     </td>
+                                                                }
+                                                                else if(ticket.DeveloperUser is null && !(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager))))
+                                                                {
+                                                                    <td class="cell"><span class="truncate">Unassigned</span></td>
                                                                 }
                                                                 else
                                                                 {
