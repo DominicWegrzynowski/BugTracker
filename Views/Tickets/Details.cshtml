@@ -22,7 +22,7 @@
 <div class="app-wrapper">
     <div class="app-content pt-3 p-md-3 p-lg-4">
 	    <div class="container-xl">
-            <h2>Project Details</h2>
+            <h2>Ticket Details</h2>
             <br />
             <div class="row g-5">
 				@*Left Cards*@
@@ -33,7 +33,6 @@
                             <div class="card-body">
                                 <h3>@Model.Title</h3>
                                 <p>@Model.Description</p>
-                                @* Razor code block *@
 						        @{
 							        var start = Model.Project.StartDate.DateTime;
 							        var end = Model.Project.EndDate.DateTime;
@@ -122,10 +121,19 @@
 	            	   						</div>
 	            							</a>
 	            							<div style="font-size:x-small">
-	            	   						<div class="file-name">
-	            	   							<strong>@item.Description</strong>
-	            	   						</div>
-	            	   						<small>Size: @FileService.FormatFileSize(item.FileData.Length) </small>
+												@if(item.Description is null)
+												{
+													<div class="file-name">
+	            	   									<strong>@item.FileName</strong>
+													</div>
+												}
+												else
+												{
+													<div class="file-name">
+	            	   										<strong>@item.Description</strong>
+	            	   								</div>
+												}s
+	            	   							<small>Size: @FileService.FormatFileSize(item.FileData.Length) </small>
 	            							</div>
 									</div>
 								}
@@ -139,25 +147,25 @@
                     <div class="row mb-4">
 						<div class="col-12 app-card h-100 text-start p-3 rounded-5">
 							<div class="card-body">
-								<div class="card-header">
-									<h2>Ticket Comments</h2>
-								</div>
+								<h2>Ticket Comments</h2>
 								<form asp-action="AddTicketComment" asp-controller="Tickets" method="post">
 									<input type="hidden" asp-for="Id" name="TicketId"/>
 									@if(Model.DeveloperUserId == user.Id || Model.OwnerUserId == user.Id || projectManager?.Id == user.Id || User.IsInRole(nameof(Roles.Admin)))
 									{
 										<div class="form-group">
-											<textarea asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add comment..."></textarea>
+											<textarea asp-for="@(new TicketComment().Comment)" style="min-height: 70px;" class="form-control" required placeholder="Add comment..."></textarea>
 										</div>
-										<button class="btn btn-sm btn-primary mt-3">Submit</button>
+										<button class="btn btn-primary btn-sm text-white mt-3">Submit</button>
 									}
 									else
 									{
 										<div class="form-group">
-											<textarea disabled asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add comment ..."></textarea>
+											<textarea disabled asp-for="@(new TicketComment().Comment)" style="min-height: 70px;" class="form-control" required placeholder="Add comment ..."></textarea>
 										</div>
 									}
 								</form>
+
+								<hr />
 
 								<ul class="right_chat list-unstyled mb-0">
 									@foreach (TicketComment ticketComment in Model.Comments)
@@ -180,7 +188,7 @@
 														<small class="float-right">@ticketComment.Created.ToString("MM.dd.yyyy h:ss tt")</small>:
 													</span>
 												</div>
-												<span class="message text-primary">@Html.Raw(ticketComment.Comment)</span>
+												<span class="message">@Html.Raw(ticketComment.Comment)</span>
 											</div>
 										</li>
 									}	
@@ -189,12 +197,11 @@
 							</div>
 						</div>
 					</div>
+					@*Ticket History*@
 					<div class="row mb-4">
 						<div class="col-12 app-card h-100 text-start p-3 rounded-5">
-							<div class="card-header">
 								<h2>History</h2>
 								<hr />
-							</div>
 							<div class="card-body" style="overflow-y:auto;height:1000px;">
 							@foreach(TicketHistory history in Model.History)
 							{

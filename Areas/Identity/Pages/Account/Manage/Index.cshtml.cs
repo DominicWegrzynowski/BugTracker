@@ -4,9 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using BugTracker.Models;
+using BugTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.IO;
 
 namespace BugTracker.Areas.Identity.Pages.Account.Manage
 {
@@ -14,18 +17,22 @@ namespace BugTracker.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<BTUser> _userManager;
         private readonly SignInManager<BTUser> _signInManager;
+        private readonly IBTFileService _fileService;
 
-        public IndexModel(
-            UserManager<BTUser> userManager,
-            SignInManager<BTUser> signInManager)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
+		public IndexModel(
+			UserManager<BTUser> userManager,
+			SignInManager<BTUser> signInManager, IBTFileService fileService)
+		{
+			_userManager = userManager;
+			_signInManager = signInManager;
+			_fileService = fileService;
+		}
 
-        public string Username { get; set; }
+		public string Username { get; set; }
 
-        [TempData]
+		public string CurrentImage { get; set; }
+
+		[TempData]
         public string StatusMessage { get; set; }
 
         [BindProperty]
@@ -36,7 +43,8 @@ namespace BugTracker.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
-        }
+			public IFormFile Image { get; set; }
+		}
 
         private async Task LoadAsync(BTUser user)
         {
@@ -44,6 +52,10 @@ namespace BugTracker.Areas.Identity.Pages.Account.Manage
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
             Username = userName;
+            if (user.AvatarFileData is not null || user.AvatarContentType is not null)
+			{
+                CurrentImage = _fileService.ConvertByteArrayToFile(user.AvatarFileData, user.AvatarContentType);
+            }
 
             Input = new InputModel
             {
@@ -87,6 +99,14 @@ namespace BugTracker.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
+
+            if(Input.Image is not null)
+			{
+                user.AvatarFileData = await _fileService.ConvertFileToByteArrayAsync(Input.Image);
+                user.AvatarContentType = Input.Image?.ContentType;
+
+                await _userManager.UpdateAsync(user);
+			}
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
