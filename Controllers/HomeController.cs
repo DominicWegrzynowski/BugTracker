@@ -79,6 +79,17 @@ namespace BugTracker.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AllUsers()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<BTUser> allMembers = await _companyService.GetAllMembersAsync(companyId);
+
+            return View(allMembers);
+
+        }
+
         [HttpPost]
         public async Task<JsonResult> GglProjectTickets()
         {
