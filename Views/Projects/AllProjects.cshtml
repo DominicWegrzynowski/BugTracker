@@ -35,9 +35,9 @@
 				
 				<div class="tab-content" id="orders-table-tab-content">
 					@*All Projects*@
-					<div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
+					<div class="tab-pane fade active show" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
 					    <div class="app-card app-card-orders-table shadow-sm mb-5">
-						    <div class="app-card-body pt-3 ps-3">
+						    <div class="app-card-body pt-3 ps-3 pe-3">
 							    <div class="table-responsive p-2">
 							        <table id="allProjects" class="table app-table-hover mb-0 text-left">
 										<thead>
@@ -131,13 +131,13 @@
 													</a>
 													@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
 													{
-														<a class="btn-sm app-btn-secondary me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
+														<a class="btn-sm app-btn-secondary-warning me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
 															 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
 																<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
 																<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
 															</svg>
 														</a>
-														<a class="btn-sm app-btn-secondary g-2" asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id">
+														<a class="btn-sm app-btn-secondary-danger g-2" asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id">
 															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
 															  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
 															  <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
@@ -160,8 +160,8 @@
 			        <div class="tab-pane fade" id="orders-paid" role="tabpanel" aria-labelledby="orders-paid-tab">
 					    <div class="app-card app-card-orders-table mb-5">
 						    <div class="app-card-body pt-3 ps-3 pe-3">
-							    <div class="table-responsive">
-							        <table id="activeProjects" class="table app-table-hover mb-0 ">
+							    <div class="table-responsive p-2">
+							        <table id="activeProjects" class="table app-table-hover mb-0 text-left">
 										<thead>
 											<tr>
 												<th class="cell">Project</th>
@@ -182,9 +182,8 @@
 													<span class="note">Created @project.StartDate.ToString("MM.dd.yy")</span>
 												</td>
 												<td class="cell"><span class="truncate">@project.StartDate.ToString("MM.dd.yy")</span></td>
-												<td class="cell ">
+												<td class="cell">
 													<div class="progress">
-														@* Razor code block *@
 														@{
 															var start = project.StartDate.DateTime;
 															var end = project.EndDate.DateTime;
@@ -192,7 +191,6 @@
 															var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
 														}
 														<div class="progress-bar progress-bar-striped bg-primary" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
-															@* Use Progress Bar code variable here *@
 															<span class="progress-value">@percent%</span>
 														</div>
 													</div>
@@ -253,13 +251,13 @@
 													</a>
 													@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
 													{
-														<a class="btn-sm app-btn-secondary me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
+														<a class="btn-sm app-btn-secondary-warning me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
 															 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
 																<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
 																<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
 															</svg>
 														</a>
-														<a class="btn-sm app-btn-secondary g-2" asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id">
+														<a class="btn-sm app-btn-secondary-danger g-2" asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id">
 															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
 															  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
 															  <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
@@ -385,13 +383,13 @@
 													</a>
 													@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
 													{
-														<a class="btn-sm app-btn-secondary me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
+														<a class="btn-sm app-btn-secondary-warning me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
 																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
 																<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
 																<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
 															</svg>
 														</a>
-														<a class="btn-sm app-btn-secondary g-2" asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id">
+														<a class="btn-sm app-btn-secondary-primary g-2" asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id">
 															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
 																<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
 																<path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
@@ -507,13 +505,13 @@
 														</a>
 														@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
 														{
-															<a class="btn-sm app-btn-secondary me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
+															<a class="btn-sm app-btn-secondary-warning me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
 																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
 																	<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
 																	<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
 																</svg>
 															</a>
-															<a class="btn-sm app-btn-secondary g-2" asp-action="Restore" asp-controller="Projects" asp-route-id="@project.Id">
+															<a class="btn-sm app-btn-secondary-danger g-2" asp-action="Restore" asp-controller="Projects" asp-route-id="@project.Id">
 																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
 																	<path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
 																	<path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
@@ -564,17 +562,17 @@
                 "scrollY" : "450px",
                 "scrollCollapse":true,
                 "paging": true
-            });
+            }).columns.adjust().draw();
 			$("#inactiveProjects").DataTable({
                 "scrollY" : "450px",
                 "scrollCollapse":true,
                 "paging": true
-            });
+            }).columns.adjust().draw();
 			$("#archivedProjects").DataTable({
                 "scrollY" : "450px",
                 "scrollCollapse":true,
                 "paging": true
-            });
+            }).columns.adjust().draw();
         });
     </script>
 

@@ -12216,14 +12216,41 @@ button.close:focus {
 .app-btn-secondary {
     background: #fff;
     color: #5d6778;
-    border: 1px solid #bcc1cb
+    border: 1px solid #5d6778;
 }
 
+
 .app-btn-secondary:hover {
-    color: #15a362;
-    border: 1px solid #15a362;
+    color: black;
+    border: 1px solid black;
     background: #fff
 }
+
+.app-btn-secondary-danger {
+    background: #fff;
+    color: #5d6778;
+    border: 1px solid #5d6778
+}
+
+.app-btn-secondary-danger:hover {
+    color: #DC3545;
+    border: 1px solid #DC3545;
+    background: #fff
+}
+
+.app-btn-secondary-warning {
+    background: #fff;
+    color: #5d6778;
+    border: 1px solid #5d6778
+}
+
+.app-btn-secondary-warning:hover {
+    color: #FFC107;
+    border: 1px solid #FFC107;
+    background: #fff
+}
+
+
 
 .btn-light {
     background: #f5f6fe;
