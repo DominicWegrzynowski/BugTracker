@@ -148,7 +148,7 @@
 					@*Ticket Comments*@
                     <div class="row mb-4">
 						<div class="col-12 app-card h-100 text-start p-3 rounded-5">
-							<div class="card-body" style="overflow-y:auto;height:500px;">
+							<div class="card-body" style="overflow-y:auto;height:auto;max-height:500px;">
 								<h2>Ticket Comments</h2>
 								<form asp-action="AddTicketComment" asp-controller="Tickets" method="post">
 									<input type="hidden" asp-for="Id" name="TicketId"/>
@@ -206,7 +206,7 @@
 						<div class="col-12 app-card h-100 text-start p-3 rounded-5">
 								<h2>History</h2>
 								<hr />
-							<div class="card-body" style="overflow-y:auto;height:500px;">
+							<div class="card-body" style="overflow-y:auto;height:auto;max-height:500px;">
 							@foreach(TicketHistory history in Model.History)
 							{
 								<div class="">

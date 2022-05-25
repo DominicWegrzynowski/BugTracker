@@ -190,7 +190,6 @@
 						<a href="#" id="sidepanel-close" class="sidepanel-close d-xl-none">&times;</a>
 						<div class="app-branding">
 							<a class="app-logo"><img class="logo-icon me-2" src="~/img/app-logo.svg" alt="logo"><span class="logo-text">BugTracker</span></a>
-	
 						</div>  
 		        
 						<nav id="app-nav-main" class="app-nav app-nav-main flex-grow-1">
@@ -308,8 +307,38 @@
 										</ul>
 									</div>
 								</li>
-							}	    
-					</ul>
+							}
+							@if (User.IsInRole(nameof(Roles.ProjectManager)))
+							{
+								<!--PM SUBMENU-->
+								<li class="nav-item has-submenu">
+									<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
+									<a class="nav-link submenu-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-1" aria-expanded="false" aria-controls="submenu-1">
+										<span class="nav-icon">
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gem" viewBox="0 0 16 16">
+												<path d="M3.1.7a.5.5 0 0 1 .4-.2h9a.5.5 0 0 1 .4.2l2.976 3.974c.149.185.156.45.01.644L8.4 15.3a.5.5 0 0 1-.8 0L.1 5.3a.5.5 0 0 1 0-.6l3-4zm11.386 3.785-1.806-2.41-.776 2.413 2.582-.003zm-3.633.004.961-2.989H4.186l.963 2.995 5.704-.006zM5.47 5.495 8 13.366l2.532-7.876-5.062.005zm-1.371-.999-.78-2.422-1.818 2.425 2.598-.003zM1.499 5.5l5.113 6.817-2.192-6.82L1.5 5.5zm7.889 6.817 5.123-6.83-2.928.002-2.195 6.828z"/>
+											</svg>
+										</span>
+										<span class="nav-link-text">Project Manager</span>
+										<span class="submenu-arrow">
+											<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+												<path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+											</svg>
+										</span>
+									</a>
+									<div id="submenu-1" class="collapse submenu submenu-1" data-bs-parent="#menu-accordion">
+										<ul class="submenu-list list-unstyled">
+											<li class="submenu-item"><a class="submenu-link" asp-action="" asp-controller="Invites">Company Invite</a></li>
+											<li class="submenu-item"><a class="submenu-link" asp-action="ManageUserRoles" asp-controller="UserRoles">Manage Roles</a></li>
+											<li class="submenu-item"><a class="submenu-link" asp-action="AssignPM" asp-controller="Projects">Assign Project Manager</a></li>
+											<li class="submenu-item"><a class="submenu-link" asp-action="ManageProjects" asp-controller="Projects">Manage Projects</a></li>
+											<li class="submenu-item"><a class="submenu-link" asp-action="AssignDeveloper" asp-controller="Tickets">Assign Tickets</a></li>
+											<li class="submenu-item"><a class="submenu-link" asp-action="" asp-controller="">Member Profiles</a></li>
+										</ul>
+									</div>
+								</li>
+							}	
+						</ul>
 						</nav>
 						<div class="app-sidepanel-footer">
 							<nav class="app-nav app-nav-footer">
