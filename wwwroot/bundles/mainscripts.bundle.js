@@ -42,7 +42,7 @@ function skinChanger() {
 	    var $body = $('body');
 	    var $this = $(this);
 
-		debugger;
+		
 	    var existTheme = $('.choose-skin li.active').data('theme');
 	    $('.choose-skin li').removeClass('active');
 	    $body.removeClass('theme-' + existTheme);
@@ -55,7 +55,7 @@ function skinChanger() {
 
 // set Mode From Session
 function setModeFromSession() {
-	debugger;
+	
 	var mode = sessionStorage.getItem('lucidThemeMode');
 	var $logo = $('.img-responsive.logo');
 	var $iotAppliences = $('.iot-appliances-widget');
@@ -96,7 +96,7 @@ function modeChanger() {
 		var $logo = $('.img-responsive.logo');
 		var $iotAppliences = $('.iot-appliances-widget');
 
-		debugger;
+		
 		var existTheme = $('.choose-mode li.active').data('mode');
 		$('.choose-mode li').removeClass('active');
 		if (existTheme == 'dark') {

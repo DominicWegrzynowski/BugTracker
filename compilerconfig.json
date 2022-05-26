@@ -1,0 +1,14 @@
+﻿[
+  {
+    "outputFile": "wwwroot/scss/main.css",
+    "inputFile": "wwwroot/scss/main.scss"
+  },
+  {
+    "outputFile": "wwwroot/scss/color_skins.css",
+    "inputFile": "wwwroot/scss/color_skins.scss"
+  },
+  {
+    "outputFile": "wwwroot/scss/theme-mode.css",
+    "inputFile": "wwwroot/scss/theme-mode.scss"
+  }
+]

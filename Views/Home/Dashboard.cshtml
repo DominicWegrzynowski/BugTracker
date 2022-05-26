@@ -13,21 +13,134 @@
     int companyId = User.Identity.GetCompanyId().Value;
 }
 
-<style>
-    .amDark {
-        background-color: #30303d;
-        color: #fff;
-    }
+@section VendorCSS {
+    <link rel="stylesheet" href="~/vendor/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css">
+    <link rel="stylesheet" href="~/vendor/jvectormap/jquery-jvectormap-2.0.3.min.css" />
+    <link rel="stylesheet" href="~/vendor/morrisjs/morris.min.css" />
+    <link rel="stylesheet" href="~/vendor/nestable/jquery-nestable.css" />
 
-    #am-chart {
-        width: 100%;
-        height: 500px;
-    }
-</style>
+}
 
-<div class="app-wrapper">
-    <div class="app-content pt-3 p-md-3 p-lg-4">
-        <div class="container-xl">
+@*First Row*@
+<div class="row clearfix">
+    <div class="col-lg-3 col-md-6">
+        <a asp-action="AllProjects" asp-controller="Projects" style="text-decoration: none;">
+            <div class="card overflowhidden">
+                <div class="body text-center bg-info">
+                    <div class="p-15 text-light">
+                        <h3>@Model.Projects.Where(p => p.EndDate > DateTime.Now).Count()</h3>
+                        <span>Active Projects</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <a asp-action="AllTickets" asp-controller="Tickets" style="text-decoration: none;">
+            <div class="card overflowhidden">
+                <div class="body text-center bg-secondary">
+                    <div class="p-15 text-light">
+                        <h3>@Model.Tickets.Count</h3>
+                        <span>Total Tickets</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <a asp-action="UnassignedTickets" asp-controller="Tickets" style="text-decoration: none;">
+            <div class="card overflowhidden">
+                <div class="body text-center bg-warning">
+                    <div class="p-15 text-light">
+                        <h3>@Model.Tickets.Where(t => t.DeveloperUser is null).Count()</h3>
+                        <span>Unassigned Tickets</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card overflowhidden">
+            <div class="body text-center bg-dark">
+                <div class="p-15 text-light">
+                    <h3>@(Model.Projects.Count() + Model.Tickets.Count() + Model.Members.Count())</h3>
+                    <span>Active Projects</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Second Row*@
+<div class="row clearfix">
+    <div class="col-lg-3 col-md-6">
+        <div class="card">
+            <div class="header">
+                <h2>My Stats</h2>
+            </div>
+            <div class="body">
+                <div class="list-group list-widget">
+                    <a asp-controller="App" asp-action="Inbox" class="list-group-item">
+                        <span class="badge badge-success">0</span>
+                        <i class="bi bi-person-fill"></i>New Users
+                    </a>
+                    <a href="javascript:void(0);" class="list-group-item">
+                        <span class="badge badge-info">364</span>
+                        <i class="bi bi-people-fill"></i> Total Users
+                    </a>
+                    <a href="javascript:void(0);" class="list-group-item">
+                        <span class="badge badge-warning">12</span>
+                        <i class="bi bi-ticket-perforated"></i> Tickets in Development
+                    </a>
+                    <a href="javascript:void(0);" class="list-group-item">
+                        <span class="badge badge-danger">54</span>
+                        <i class="bi bi-code-slash"></i> Total Developers
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card">
+            <div class="header">
+                <h2>Company Data</h2>
+            </div>
+            <div class="body">
+                <div class="list-group list-widget">
+                    <a asp-controller="App" asp-action="Inbox" class="list-group-item">
+                        <span class="badge badge-success">654</span>
+                        <i class="bi bi-people-fill"></i>Members
+                    </a>
+                    <a href="javascript:void(0);" class="list-group-item">
+                        <span class="badge badge-info">364</span>
+                        <i class="bi bi-folder2-open"></i> Projects
+                    </a>
+                    <a href="javascript:void(0);" class="list-group-item">
+                        <span class="badge badge-warning">12</span>
+                        <i class="fa fa-phone text-muted"></i> Tickets
+                    </a>
+                    <a href="javascript:void(0);" class="list-group-item">
+                        <span class="badge badge-danger">54</span>
+                        <i class="bi bi-bell-fill"></i> Notifications
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/bundles/jvectormap.bundle.js"></script> <!-- JVectorMap Plugin Js -->
+    <script src="~/bundles/morrisscripts.bundle.js"></script> <!-- Morris Plugin Js -->
+    <script src="~/bundles/knob.bundle.js"></script> <!-- Jquery Knob-->
+    <script src="~/vendor/nestable/jquery.nestable.js"></script> <!-- Jquery Nestable -->
+
+    <script src="~/js/pages/ui/sortable-nestable.js"></script>
+    <script src="~/js/index6.js"></script>
+
+}
+
+<div >
             <h1 class="app-page-title">Dashboard</h1>
 
             @*Admin Dashboard*@
@@ -2210,383 +2323,5 @@
                 </div>
             }
 
-        </div>
-    </div>
 </div>
 
-@section scripts{
-
-    <script src="~/chart.js/chart.min.js"></script>
-
-    <!--Charts JS-->
-    <script type="text/javascript">
-        'use strict';
-
-        /* Chart.js docs: https://www.chartjs.org/ */
-
-        window.chartColors = {
-	        green: '#75c181', // rgba(117,193,129, 1)
-	        blue: '#5b99ea', // rgba(91,153,234, 1)
-	        gray: '#a9b5c9',
-	        text: '#252930',
-	        border: '#e7e9ed'
-        };
-
-        var pieChartConfig = {
-	        type: 'pie',
-	        data: {
-		        datasets: [{
-			        data: [
-				        @Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTTicketPriority.Low)).Count(),
-				        @Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTTicketPriority.Medium)).Count(),
-				        @Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTTicketPriority.High)).Count(),
-				        @Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTTicketPriority.Urgent)).Count()
-			        ],
-			        backgroundColor: [
-				        window.chartColors.green,
-				        window.chartColors.blue,
-				        window.chartColors.gray,
-
-			        ],
-			        label: 'Project Priorities'
-		        }],
-		        labels: [
-			        'Low',
-			        'Medium',
-			        'High',
-                    'Urgent'
-		        ]
-	        },
-	        options: {
-		        responsive: true,
-		        legend: {
-			        display: true,
-			        position: 'bottom',
-			        align: 'center',
-		        },
-
-		        tooltips: {
-			        titleMarginBottom: 10,
-			        bodySpacing: 10,
-			        xPadding: 16,
-			        yPadding: 16,
-			        borderColor: window.chartColors.border,
-			        borderWidth: 1,
-			        backgroundColor: '#fff',
-			        bodyFontColor: window.chartColors.text,
-			        titleFontColor: window.chartColors.text,
-			
-			        /* Display % in tooltip - https://stackoverflow.com/questions/37257034/chart-js-2-0-doughnut-tooltip-percentages */
-			        callbacks: {
-                        label: function(tooltipItem, data) {
-					        //get the concerned dataset
-					        var dataset = data.datasets[tooltipItem.datasetIndex];
-					        //calculate the total of this data set
-					        var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
-					        return previousValue + currentValue;
-					        });
-					        //get the current items value
-					        var currentValue = dataset.data[tooltipItem.index];
-					        //calculate the precentage based on the total and current item, also this does a rough rounding to give a whole number
-					        var percentage = Math.floor(((currentValue/total) * 100)+0.5);
-					
-					        return percentage + "%";
-			            },
-                    },
-			
-
-		        },
-	        }
-        };
-
-        var doughnutChartConfig = {
-	        type: 'doughnut',
-	        data: {
-		        datasets: [{
-			        data: [
-				        @foreach(Project project in Model.Projects)
-                        {
-                            <text>@project.Tickets.Count().ToString(),</text>
-                        }
-			        ],
-			        backgroundColor: [
-				        window.chartColors.green,
-				        window.chartColors.blue,
-				        window.chartColors.gray,
-			        ],
-			        label: 'Dataset 1'
-		        }],
-		        labels: [
-			       @foreach(Project project in Model.Projects)
-                    {
-                        <text>"@project.Name",</text>
-                    } 
-		        ]
-	        },
-	        options: {
-		        responsive: true,
-		        legend: {
-			        display: true,
-			        position: 'bottom',
-			        align: 'center',
-		        },
-
-		        tooltips: {
-			        titleMarginBottom: 10,
-			        bodySpacing: 10,
-			        xPadding: 16,
-			        yPadding: 16,
-			        borderColor: window.chartColors.border,
-			        borderWidth: 1,
-			        backgroundColor: '#fff',
-			        bodyFontColor: window.chartColors.text,
-			        titleFontColor: window.chartColors.text,
-			
-			        animation: {
-				        animateScale: true,
-				        animateRotate: true
-			        },
-			
-			        /* Display % in tooltip - https://stackoverflow.com/questions/37257034/chart-js-2-0-doughnut-tooltip-percentages */
-			        callbacks: {
-                        label: function(tooltipItem, data) {
-					        //get the concerned dataset
-					        var dataset = data.datasets[tooltipItem.datasetIndex];
-					        //calculate the total of this data set
-					        var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
-					            return previousValue + currentValue;
-					        });
-					        //get the current items value
-					        var currentValue = dataset.data[tooltipItem.index];
-					        //calculate the precentage based on the total and current item, also this does a rough rounding to give a whole number
-					        var percentage = Math.floor(((currentValue/total) * 100)+0.5);
-					
-					        return percentage + "%";
-			            },
-                    },
-			
-
-		        },
-	        }
-        };
-
-       
-
-
-
-        // Generate charts on load
-        window.addEventListener('load', function(){
-	
-	        //var lineChart = document.getElementById('chart-line').getContext('2d');
-	        //window.myLine = new Chart(lineChart, lineChartConfig);
-	
-	        //var barChart = document.getElementById('chart-bar').getContext('2d');
-	        //window.myBar = new Chart(barChart, barChartConfig);
-	
-	        var pieChart = document.getElementById('chart-pie').getContext('2d');
-	        window.myPie = new Chart(pieChart, pieChartConfig);
-	
-	        var doughnutChart = document.getElementById('chart-doughnut').getContext('2d');
-	        window.myDoughnut = new Chart(doughnutChart, doughnutChartConfig);
-	
-
-        });	
-    </script>
-
-    <!--AM Charts-->
-    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
-
-    <!--DataTables-->
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#ticketsTable").DataTable({
-                "scrollY" : "450px",
-                "scrollCollapse":true,
-                "paging": true
-            });
-			$("#projectsTable").DataTable({
-                "scrollY" : "450px",
-                "scrollCollapse":true,
-                "paging": true
-            });
-            $("#membersTable").DataTable({
-                "scrollY" : "450px",
-                "scrollCollapse":true,
-                "paging": true
-            });
-        });
-    </script>
-
-    <!--AM Charts Init-->
-    <script type="text/javascript">
-        $(document).ready(function(){
-    	    $.ajax({
-		            type: "POST",
-		            url: "/Home/AmCharts",
-		            data: '{}',
-		            contentType: "application/json; charset=utf-8",
-		            dataType: "json",
-		            success: function (result) {
-			            am4core.ready(function() {
-
-				            // Themes begin
-				            // Themes end
-
-				            // Create chart instance
-				            var chart = am4core.create("am-chart", am4charts.XYChart);
-
-
-				            // Add data
-				            chart.data = result;
-
-				            // Create axes
-				            var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
-				            categoryAxis.dataFields.category = "project";
-				            categoryAxis.numberFormatter.numberFormat = "#";
-				            categoryAxis.renderer.inversed = true;
-				            categoryAxis.renderer.grid.template.location = 0;
-				            categoryAxis.renderer.cellStartLocation = 0.1;
-				            categoryAxis.renderer.cellEndLocation = 0.9;
-
-				            var  valueAxis = chart.xAxes.push(new am4charts.ValueAxis());
-				            valueAxis.renderer.opposite = true;
-
-				            // Create series
-				            function createSeries(field, name) {
-				                var series = chart.series.push(new am4charts.ColumnSeries());
-				                series.dataFields.valueX = field;
-				                series.dataFields.categoryY = "project";
-				                series.name = name;
-				                series.columns.template.tooltipText = "{name}: [bold]{valueX}[/]";
-				                series.columns.template.height = am4core.percent(100);
-				                series.sequencedInterpolation = true;
-
-				                var valueLabel = series.bullets.push(new am4charts.LabelBullet());
-				                valueLabel.label.text = "{valueX}";
-				                valueLabel.label.horizontalCenter = "left";
-				                valueLabel.label.dx = 10;
-				                valueLabel.label.hideOversized = false;
-				                valueLabel.label.truncate = false;
-
-				                var categoryLabel = series.bullets.push(new am4charts.LabelBullet());
-				                categoryLabel.label.text = "{name}";
-				                categoryLabel.label.horizontalCenter = "right";
-				                categoryLabel.label.dx = -10;
-				                categoryLabel.label.fill = am4core.color("#fff");
-				                categoryLabel.label.hideOversized = false;
-				                categoryLabel.label.truncate = false;
-				            }
-
-				            createSeries("tickets", "Tickets");
-				            createSeries("developers", "Devs");
-
-			            }); 
-		            },
-		            failure: function (result) {
-			            alert(result.d);
-		            },
-		            error: function (result) {
-			            alert(result.d);
-		            }
-	        });
-        });
-    </script>
-
-    
-       @* 
-        <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
-        <script>
-
-	        var morrisDonutData = [{
-		        label: "Low",
-		        value: @Model.Tickets.Where(t=>t.TicketPriority.Name == nameof(BTTicketPriority.Low)).Count()
-	        }, {
-		        label: "Medium",
-		        value: @Model.Tickets.Where(t=>t.TicketPriority.Name == nameof(BTTicketPriority.Medium)).Count()
-	        }, {
-		        label: "High",
-		        value: @Model.Tickets.Where(t=>t.TicketPriority.Name == nameof(BTTicketPriority.High)).Count()
-	        }, {
-		        label: "Urgent",
-		        value: @Model.Tickets.Where(t=>t.TicketPriority.Name == nameof(BTTicketPriority.Urgent)).Count()
-	        }];
-
-
-	        /*
-	        Morris: Donut
-	        */
-	        if ($('#morrisTicketPriority').get(0)) {
-		        var donutChart = Morris.Donut({
-			        resize: true,
-			        element: 'morrisTicketPriority',
-			        data: morrisDonutData,
-			        colors: ['#0088cc', '#734ba9', '#E36159', '#ff993b']
-		        });
-
-		        donutChart.options.data.forEach(function(label, i) {
-			        var legendItem = $('<span></span>').text( label['label'] + ": " +label['value']).prepend('<span>&nbsp;</span>');
-			        legendItem.find('span')
-			          .css('backgroundColor', donutChart.options.colors[i])
-			          .css('width', '20px')
-			          .css('display', 'inline-block')
-			          .css('margin', '10px');
-			        $('#legend').append(legendItem)
-		        });
-	        };
-        </script>
-
-        
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/dist/chart.min.js"></script>
-        <script>
-            var donutChartCanvas = $('#donutChart').get(0).getContext('2d');
-            var donutData = {
-                labels: [
-                    '@nameof(BTTicketStatus.Development)',
-                    '@nameof(BTTicketStatus.New)',
-                    '@nameof(BTTicketStatus.Resolved)',
-                    '@nameof(BTTicketStatus.Testing)'
-                ],
-                datasets: [
-                    {
-                        data: [
-                            @Model.Tickets.Where(t => t.TicketStatus.Name == nameof(BTTicketStatus.Development)).Count(),
-                            @Model.Tickets.Where(t => t.TicketStatus.Name == nameof(BTTicketStatus.New)).Count(),
-                            @Model.Tickets.Where(t => t.TicketStatus.Name == nameof(BTTicketStatus.Resolved)).Count(),
-                            @Model.Tickets.Where(t => t.TicketStatus.Name == nameof(BTTicketStatus.Testing)).Count()
-                        ],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-					        'rgba(54, 162, 235, 0.2)',
-					        'rgba(255, 206, 86, 0.2)',
-					        'rgba(75, 192, 192, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-					        'rgba(54, 162, 235, 1)',
-					        'rgba(255, 206, 86, 1)',
-					        'rgba(75, 192, 192, 1)'
-                        ]
-                    }
-                ]
-            };
-
-            var donutOptions = {
-                maintainAspectRatio: false,
-                responsive: true
-            };
-
-            //Create pie or donut chart
-            new Chart(donutChartCanvas, {
-                type: 'doughnut',
-                data: donutData,
-                options: donutOptions
-        
-            });
-        </script>
-
-        
-        
-        *@
-}
