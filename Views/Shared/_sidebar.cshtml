@@ -1,0 +1,386 @@
+﻿<sidebar class="">
+    <div class="user-account">
+        <img src="~/images/user.png" class="rounded-circle user-photo" alt="User Profile Picture">
+        <div class="dropdown">
+            <span>Welcome,</span>
+            <a href="javascript:void(0);" class="dropdown-toggle user-name" data-toggle="dropdown"><strong>Alizee Thomas</strong></a>
+            <ul class="dropdown-menu dropdown-menu-right account">
+                <li><a asp-controller="Page" asp-action="Profile2"><i class="icon-user"></i>My Profile</a></li>
+                <li><a asp-controller="App" asp-action="Inbox"><i class="icon-envelope-open"></i>Messages</a></li>
+                <li><a href="javascript:void(0);"><i class="icon-settings"></i>Settings</a></li>
+                <li class="divider"></li>
+                <li><a asp-controller="Authentication" asp-action="Login"><i class="icon-power"></i>Logout</a></li>
+            </ul>
+        </div>
+        <hr>
+        <ul class="row list-unstyled">
+            <li class="col-4">
+                <small>Sales</small>
+                <h6>456</h6>
+            </li>
+            <li class="col-4">
+                <small>Order</small>
+                <h6>1350</h6>
+            </li>
+            <li class="col-4">
+                <small>Revenue</small>
+                <h6>$2.13B</h6>
+            </li>
+        </ul>
+    </div>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs">
+        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#menu">Menu</a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Chat"><i class="icon-book-open"></i></a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#setting"><i class="icon-settings"></i></a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#question"><i class="icon-question"></i></a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content p-l-0 p-r-0">
+        <div class="tab-pane active" id="menu">
+            <nav id="left-sidebar-nav" class="sidebar-nav">
+                <ul id="main-menu" class="metismenu">
+                    <li class="active">
+                        <a href="#Dashboard" class="has-arrow"><i class="icon-home"></i> <span>Dashboard</span></a>
+                        <ul>
+                            <li class="active"><a asp-controller="Dashboard" asp-action="Analytical">Analytical</a></li>
+                            <li><a asp-controller="Dashboard" asp-action="Demographic">Demographic</a></li>
+                            <li><a asp-controller="Dashboard" asp-action="Hospital">Hospital</a></li>
+                            <li><a asp-controller="Dashboard" asp-action="University">University</a></li>
+                            <li><a asp-controller="Dashboard" asp-action="RealEstate">Real Estate</a></li>
+                            <li><a asp-controller="Dashboard" asp-action="Project">Project</a></li>
+                            <li><a asp-controller="Dashboard" asp-action="Cryptocurrency">Cryptocurrency</a></li>
+                            <li><a asp-controller="Dashboard" asp-action="eCommerce">eCommerce</a></li>
+                            <li><a asp-controller="Dashboard" asp-action="IoT">IoT</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#App" class="has-arrow"><i class="icon-grid"></i> <span>App</span></a>
+                        <ul>
+                            <li><a asp-controller="App" asp-action="Inbox">Inbox</a></li>
+                            <li><a asp-controller="App" asp-action="Chat">Chat</a></li>
+                            <li><a asp-controller="App" asp-action="Calendar">Calendar</a></li>
+                            <li><a asp-controller="App" asp-action="ContactList">Contact list</a></li>
+                            <li><a asp-controller="App" asp-action="ContactCard">Contact Card <span class="badge badge-warning float-right">New</span></a></li>
+                            <li><a asp-controller="App" asp-action="TaskBoard">Taskboard</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#FileManager" class="has-arrow"><i class="icon-folder"></i> <span>File Manager</span></a>
+                        <ul>
+                            <li><a asp-controller="FileManager" asp-action="Dashboard">Dashboard</a></li>
+                            <li><a asp-controller="FileManager" asp-action="Documents">Documents</a></li>
+                            <li><a asp-controller="FileManager" asp-action="Media">Media</a></li>
+                            <li><a asp-controller="FileManager" asp-action="Images">Images</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#Blog" class="has-arrow"><i class="icon-globe"></i> <span>Blog</span></a>
+                        <ul>
+                            <li><a asp-controller="Blog" asp-action="Dashboard">Dashboard</a></li>
+                            <li><a asp-controller="Blog" asp-action="NewPost">New Post</a></li>
+                            <li><a asp-controller="Blog" asp-action="BlogList">Blog List</a></li>
+                            <li><a asp-controller="Blog" asp-action="BlogDetail">Blog Detail</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#uiElements" class="has-arrow"><i class="icon-diamond"></i> <span>UI Elements</span></a>
+                        <ul>
+                            <li><a asp-controller="UIElements" asp-action="Typography">Typography</a></li>
+                            <li><a asp-controller="UIElements" asp-action="Tabs">Tabs</a></li>
+                            <li><a asp-controller="UIElements" asp-action="Buttons">Buttons</a></li>
+                            <li><a asp-controller="UIElements" asp-action="BootstrapUI">Bootstrap UI</a></li>
+                            <li><a asp-controller="UIElements" asp-action="Icons">Icons</a></li>
+                            <li><a asp-controller="UIElements" asp-action="Notifications">Notifications</a></li>
+                            <li><a asp-controller="UIElements" asp-action="Colors">Colors</a></li>
+                            <li><a asp-controller="UIElements" asp-action="Dialogs">Dialogs</a></li>
+                            <li><a asp-controller="UIElements" asp-action="ListGroup">List Group</a></li>
+                            <li><a asp-controller="UIElements" asp-action="MediaObject">Media Object</a></li>
+                            <li><a asp-controller="UIElements" asp-action="Modals">Modals</a></li>
+                            <li><a asp-controller="UIElements" asp-action="Nestable">Nestable</a></li>
+                            <li><a asp-controller="UIElements" asp-action="ProgressBars">Progress Bars</a></li>
+                            <li><a asp-controller="UIElements" asp-action="RangeSliders">Range Sliders</a></li>
+                            <li><a asp-controller="UIElements" asp-action="TreeView">Treeview</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#Widgets" class="has-arrow"><i class="icon-puzzle"></i> <span>Widgets</span></a>
+                        <ul>
+                            <li><a asp-controller="Widget" asp-action="Statistics">Statistics</a></li>
+                            <li><a asp-controller="Widget" asp-action="Data">Data</a></li>
+                            <li><a asp-controller="Widget" asp-action="Chart">Chart</a></li>
+                            <li><a asp-controller="Widget" asp-action="Weather">Weather</a></li>
+                            <li><a asp-controller="Widget" asp-action="Social">Social</a></li>
+                            <li><a asp-controller="Widget" asp-action="Blog">Blog</a></li>
+                            <li><a asp-controller="Widget" asp-action="eCommerce">eCommerce</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#Authentication" class="has-arrow"><i class="icon-lock"></i> <span>Authentication</span></a>
+                        <ul>
+                            <li><a asp-controller="Authentication" asp-action="Login">Login</a></li>
+                            <li><a asp-controller="Authentication" asp-action="Register">Register</a></li>
+                            <li><a asp-controller="Authentication" asp-action="Lockscreen">Lockscreen</a></li>
+                            <li><a asp-controller="Authentication" asp-action="ForgotPassword">Forgot Password</a></li>
+                            <li><a asp-controller="Authentication" asp-action="Page404">Page 404</a></li>
+                            <li><a asp-controller="Authentication" asp-action="Page403">Page 403</a></li>
+                            <li><a asp-controller="Authentication" asp-action="Page500">Page 500</a></li>
+                            <li><a asp-controller="Authentication" asp-action="Page503">Page 503</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#Pages" class="has-arrow"><i class="icon-docs"></i> <span>Pages</span></a>
+                        <ul>
+                            <li><a asp-controller="Page" asp-action="Blank">Blank Page</a> </li>
+                            <li><a asp-controller="Page" asp-action="Profile1">Profile <span class="badge badge-default float-right">v1</span></a></li>
+                            <li><a asp-controller="Page" asp-action="Profile2">Profile <span class="badge badge-warning float-right">v2</span></a></li>
+                            <li><a asp-controller="Page" asp-action="Gallery1">Image Gallery <span class="badge badge-default float-right">v1</span></a> </li>
+                            <li><a asp-controller="Page" asp-action="Gallery2">Image Gallery <span class="badge badge-warning float-right">v2</span></a> </li>
+                            <li><a asp-controller="Page" asp-action="Timeline">Timeline</a></li>
+                            <li><a asp-controller="Page" asp-action="HorizontalTimeline">Horizontal Timeline</a></li>
+                            <li><a asp-controller="Page" asp-action="Pricing">Pricing</a></li>
+                            <li><a asp-controller="Page" asp-action="Invoices1">Invoices</a></li>
+                            <li><a asp-controller="Page" asp-action="Invoices2">Invoices <span class="badge badge-warning float-right">v2</span></a></li>
+                            <li><a asp-controller="Page" asp-action="SearchResult">Search Results</a></li>
+                            <li><a asp-controller="Page" asp-action="HelperClass">Helper Classes</a></li>
+                            <li><a asp-controller="Page" asp-action="Teamsboard">Teams Board</a></li>
+                            <li><a asp-controller="Page" asp-action="ProjectList">Projects List</a></li>
+                            <li><a asp-controller="Page" asp-action="Maintenance">Maintenance</a></li>
+                            <li><a asp-controller="Page" asp-action="Testimonials">Testimonials</a></li>
+                            <li><a asp-controller="Page" asp-action="FAQ">FAQ</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#forms" class="has-arrow"><i class="icon-pencil"></i> <span>Forms</span></a>
+                        <ul>
+                            <li><a asp-controller="Form" asp-action="Validation">Form Validation</a></li>
+                            <li><a asp-controller="Form" asp-action="Advanced">Advanced Elements</a></li>
+                            <li><a asp-controller="Form" asp-action="Basic">Basic Elements</a></li>
+                            <li><a asp-controller="Form" asp-action="Wizard">Form Wizard</a></li>
+
+                            <li><a asp-controller="Form" asp-action="Dragdropupload">Drag &amp; Drop Upload</a></li>
+
+                            <li><a asp-controller="Form" asp-action="Cropping">Image Cropping</a></li>
+                            <li><a asp-controller="Form" asp-action="Summernote">Summernote</a></li>
+                            <li><a asp-controller="Form" asp-action="CKEditors">CKEditor</a></li>
+                            <li><a asp-controller="Form" asp-action="Markdown">Markdown</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#Tables" class="has-arrow"><i class="icon-tag"></i> <span>Tables</span></a>
+                        <ul>
+                            <li><a asp-controller="Table" asp-action="Basic">Tables Example<span class="badge badge-info float-right">New</span></a> </li>
+                            <li><a asp-controller="Table" asp-action="Normal">Normal Tables</a> </li>
+                            <li><a asp-controller="Table" asp-action="JQuery">Jquery Datatables</a> </li>
+                            <li><a asp-controller="Table" asp-action="Editable">Editable Tables</a> </li>
+                            <li><a asp-controller="Table" asp-action="Color">Tables Color</a> </li>
+                            <li><a asp-controller="Table" asp-action="Filter">Table Filter <span class="badge badge-info float-right">New</span></a> </li>
+                            <li><a asp-controller="Table" asp-action="Dragger">Table dragger <span class="badge badge-info float-right">New</span></a> </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#charts" class="has-arrow"><i class="icon-bar-chart"></i> <span>Charts</span></a>
+                        <ul>
+                            <li><a asp-controller="Chart" asp-action="Morris">Morris</a> </li>
+                            <li><a asp-controller="Chart" asp-action="Flot">Flot</a> </li>
+                            <li><a asp-controller="Chart" asp-action="ChartJs">ChartJS</a> </li>
+                            <li><a asp-controller="Chart" asp-action="JqueryKnob">Jquery Knob</a> </li>
+
+                            <li><a asp-controller="Chart" asp-action="Sparkline">Sparkline Chart</a></li>
+                            <li><a asp-controller="Chart" asp-action="Peity">Peity</a></li>
+                            <li><a asp-controller="Chart" asp-action="C3">C3 Charts</a></li>
+                            <li><a asp-controller="Chart" asp-action="Gauges">Gauges</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#Maps" class="has-arrow"><i class="icon-map"></i> <span>Maps</span></a>
+                        <ul>
+                            <li><a asp-controller="Map" asp-action="Google">Google Map</a></li>
+                            <li><a asp-controller="Map" asp-action="Yandex">Yandex Map</a></li>
+                            <li><a asp-controller="Map" asp-action="JVector">jVector Map</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="tab-pane p-l-15 p-r-15" id="Chat">
+            <form>
+                <div class="input-group m-b-20">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="icon-magnifier"></i></span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="Search...">
+                </div>
+            </form>
+            <ul class="right_chat list-unstyled">
+                <li class="online">
+                    <a href="javascript:void(0);">
+                        <div class="media">
+                            <img class="media-object " src="~/images/xs/avatar4.jpg" alt="">
+                            <div class="media-body">
+                                <span class="name">Chris Fox</span>
+                                <span class="message">Designer, Blogger</span>
+                                <span class="badge badge-outline status"></span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="online">
+                    <a href="javascript:void(0);">
+                        <div class="media">
+                            <img class="media-object " src="~/images/xs/avatar5.jpg" alt="">
+                            <div class="media-body">
+                                <span class="name">Joge Lucky</span>
+                                <span class="message">Java Developer</span>
+                                <span class="badge badge-outline status"></span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="offline">
+                    <a href="javascript:void(0);">
+                        <div class="media">
+                            <img class="media-object " src="~/images/xs/avatar2.jpg" alt="">
+                            <div class="media-body">
+                                <span class="name">Isabella</span>
+                                <span class="message">CEO, Thememakker</span>
+                                <span class="badge badge-outline status"></span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="offline">
+                    <a href="javascript:void(0);">
+                        <div class="media">
+                            <img class="media-object " src="~/images/xs/avatar1.jpg" alt="">
+                            <div class="media-body">
+                                <span class="name">Folisise Chosielie</span>
+                                <span class="message">Art director, Movie Cut</span>
+                                <span class="badge badge-outline status"></span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="online">
+                    <a href="javascript:void(0);">
+                        <div class="media">
+                            <img class="media-object " src="~/images/xs/avatar3.jpg" alt="">
+                            <div class="media-body">
+                                <span class="name">Alexander</span>
+                                <span class="message">Writter, Mag Editor</span>
+                                <span class="badge badge-outline status"></span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane p-l-15 p-r-15" id="setting">
+            <h6>Choose Mode</h6>
+            <ul class="choose-mode list-unstyled">
+                <li data-mode="light">
+                    <div class="white"></div>
+                    <span>Light</span>
+                </li>
+                <li data-mode="dark">
+                    <div class="black"></div>
+                    <span>Dark</span>
+                </li>
+            </ul>
+            <h6>Choose Skin</h6>
+            <ul class="choose-skin list-unstyled">
+                <li data-theme="purple">
+                    <div class="purple"></div>
+                    <span>Purple</span>
+                </li>
+                <li data-theme="blue">
+                    <div class="blue"></div>
+                    <span>Blue</span>
+                </li>
+                <li data-theme="cyan">
+                    <div class="cyan"></div>
+                    <span>Cyan</span>
+                </li>
+                <li data-theme="green">
+                    <div class="green"></div>
+                    <span>Green</span>
+                </li>
+                <li data-theme="orange">
+                    <div class="orange"></div>
+                    <span>Orange</span>
+                </li>
+                <li data-theme="blush">
+                    <div class="blush"></div>
+                    <span>Blush</span>
+                </li>
+            </ul>
+            <hr>
+            <h6>General Settings</h6>
+            <ul class="setting-list list-unstyled">
+                <li>
+                    <label class="fancy-checkbox">
+                        <input type="checkbox" name="checkbox">
+                        <span>Report Panel Usag</span>
+                    </label>
+                </li>
+                <li>
+                    <label class="fancy-checkbox">
+                        <input type="checkbox" name="checkbox" checked>
+                        <span>Email Redirect</span>
+                    </label>
+                </li>
+                <li>
+                    <label class="fancy-checkbox">
+                        <input type="checkbox" name="checkbox" checked>
+                        <span>Notifications</span>
+                    </label>
+                </li>
+                <li>
+                    <label class="fancy-checkbox">
+                        <input type="checkbox" name="checkbox">
+                        <span>Auto Updates</span>
+                    </label>
+                </li>
+                <li>
+                    <label class="fancy-checkbox">
+                        <input type="checkbox" name="checkbox">
+                        <span>Offline</span>
+                    </label>
+                </li>
+                <li>
+                    <label class="fancy-checkbox">
+                        <input type="checkbox" name="checkbox">
+                        <span>Location Permission</span>
+                    </label>
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane p-l-15 p-r-15" id="question">
+            <form>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="icon-magnifier"></i></span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="Search...">
+                </div>
+            </form>
+            <ul class="list-unstyled question">
+                <li class="menu-heading">HOW-TO</li>
+                <li><a href="javascript:void(0);">How to Create Campaign</a></li>
+                <li><a href="javascript:void(0);">Boost Your Sales</a></li>
+                <li><a href="javascript:void(0);">Website Analytics</a></li>
+                <li class="menu-heading">ACCOUNT</li>
+                <li><a href="javascript:void(0);">Cearet New Account</a></li>
+                <li><a href="javascript:void(0);">Change Password?</a></li>
+                <li><a href="javascript:void(0);">Privacy &amp; Policy</a></li>
+                <li class="menu-heading">BILLING</li>
+                <li><a href="javascript:void(0);">Payment info</a></li>
+                <li><a href="javascript:void(0);">Auto-Renewal</a></li>
+                <li class="menu-button m-t-30">
+                    <a href="javascript:void(0);" class="btn btn-primary"><i class="icon-question"></i> Need Help?</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</sidebar>
