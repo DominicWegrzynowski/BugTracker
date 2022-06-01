@@ -7,10 +7,22 @@
 @inject UserManager<BTUser> UserManager
 @inject IBTRolesService RolesService
 @inject IBTProjectService ProjectService
+@inject IBTCompanyInfoService CompanyInfoService
 @{
     ViewData["Title"] = "Dashboard";
     BTUser user = await UserManager.GetUserAsync(User);
     int companyId = User.Identity.GetCompanyId().Value;
+
+    Company company = await CompanyInfoService.GetCompanyInfoByIdAsync(companyId);
+
+    int allUsers = (await UserManager.GetUsersInRoleAsync(nameof(Roles.Admin))).Count +
+                   (await UserManager.GetUsersInRoleAsync(nameof(Roles.ProjectManager))).Count +
+                   (await UserManager.GetUsersInRoleAsync(nameof(Roles.Developer))).Count +
+                   (await UserManager.GetUsersInRoleAsync(nameof(Roles.Submitter))).Count;
+
+    int developersCount = (await UserManager.GetUsersInRoleAsync(nameof(Roles.Developer))).Count;
+
+
 }
 
 @section VendorCSS {
@@ -18,6 +30,7 @@
     <link rel="stylesheet" href="~/vendor/jvectormap/jquery-jvectormap-2.0.3.min.css" />
     <link rel="stylesheet" href="~/vendor/morrisjs/morris.min.css" />
     <link rel="stylesheet" href="~/vendor/nestable/jquery-nestable.css" />
+    <link rel="stylesheet" href="~/vendor/jquery-datatable/dataTables.bootstrap4.min.css">
 
 }
 
@@ -73,496 +86,813 @@
 
 @*Second Row*@
 <div class="row clearfix">
-    <div class="col-lg-3 col-md-6">
-        <div class="card">
-            <div class="header">
-                <h2>My Stats</h2>
-            </div>
-            <div class="body">
-                <div class="list-group list-widget">
-                    <a asp-controller="App" asp-action="Inbox" class="list-group-item">
-                        <span class="badge badge-success">0</span>
-                        <i class="bi bi-person-fill"></i>New Users
-                    </a>
-                    <a href="javascript:void(0);" class="list-group-item">
-                        <span class="badge badge-info">364</span>
-                        <i class="bi bi-people-fill"></i> Total Users
-                    </a>
-                    <a href="javascript:void(0);" class="list-group-item">
-                        <span class="badge badge-warning">12</span>
-                        <i class="bi bi-ticket-perforated"></i> Tickets in Development
-                    </a>
-                    <a href="javascript:void(0);" class="list-group-item">
-                        <span class="badge badge-danger">54</span>
-                        <i class="bi bi-code-slash"></i> Total Developers
-                    </a>
+    <div class="col-lg-3 col-md-12 col-sm-12">
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-6">
+                <div class="card top_counter h-100 pt-3">
+                    <div class="body">
+                        <div class="icon"><i class="fa fa-user"></i> </div>
+                        <div class="content">
+                            <div class="text">New Users</div>
+                            <h5 class="number">0</h5>
+                        </div>
+                        <hr />
+                    </div>
+                    
+                    <div class="body mt-0 pt-0">
+                        <div class="icon"><i class="fa fa-users"></i> </div>
+                        <div class="content">
+                            <div class="text">Total Users</div>
+                            <h5 class="number">@allUsers</h5>
+                        </div>
+                        <hr />
+                    </div>
+                    
+                    <div class="body mt-0 pt-0">
+                        <div class="icon"><i class="fa fa-ticket"></i> </div>
+                        <div class="content">
+                            <div class="text">Tickets in Development</div>
+                            <h5 class="number">@Model.Tickets.Where(t => t.TicketStatus.Name == "Development").Count()</h5>
+                        </div>
+                        <hr />
+                    </div>
+                    
+                    <div class="body mt-0 pt-0">
+                        <div class="icon"><i class="fa fa-code"></i> </div>
+                        <div class="content">
+                            <div class="text">Total Developers</div>
+                            <h5 class="number">@developersCount</h5>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6">
-        <div class="card">
+        <div class="card h-100 pt-3">
             <div class="header">
-                <h2>Company Data</h2>
+                <h2>Company Data
+                    <small>@company.Name</small>
+                </h2>
             </div>
             <div class="body">
                 <div class="list-group list-widget">
-                    <a asp-controller="App" asp-action="Inbox" class="list-group-item">
-                        <span class="badge badge-success">654</span>
-                        <i class="bi bi-people-fill"></i>Members
-                    </a>
-                    <a href="javascript:void(0);" class="list-group-item">
-                        <span class="badge badge-info">364</span>
-                        <i class="bi bi-folder2-open"></i> Projects
-                    </a>
-                    <a href="javascript:void(0);" class="list-group-item">
-                        <span class="badge badge-warning">12</span>
-                        <i class="fa fa-phone text-muted"></i> Tickets
-                    </a>
-                    <a href="javascript:void(0);" class="list-group-item">
-                        <span class="badge badge-danger">54</span>
-                        <i class="bi bi-bell-fill"></i> Notifications
-                    </a>
+                    <div class="list-group-item">
+                        <span class="badge badge-success">@allUsers</span>
+                        <i class="fa fa-users text-muted"></i>Members
+                    </div>
+                    <div href="javascript:void(0);" class="list-group-item">
+                        <span class="badge badge-info">@Model.Projects.Count</span>
+                        <i class="fa fa-folder text-muted"></i> Projects
+                    </div>
+                    <div class="list-group-item">
+                        <span class="badge badge-warning">@Model.Tickets.Count</span>
+                        <i class="fa fa-ticket text-muted"></i> Tickets
+                    </div>
+                    <div class="list-group-item">
+                        <span class="badge badge-danger">0</span>
+                        <i class="fa fa-bell text-muted"></i> Notifications
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card h-100">
+            <div class="header">
+                <h2>Priority Projects<small>Project Priorities</small></h2>
+            </div>
+            <div class="body">
+                <div class="sparkline-pie text-center">@Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Urgent)).Count(),@Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.High)).Count(),@Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Medium)).Count(), @Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Low)).Count()</div>
+                <div class="stats-report text-center">
+                    <div class="stat-item">
+                        <h5>@nameof(BTProjectPriority.Urgent)</h5>
+                        <b class="col-black">@(Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Urgent)).Count() / Model.Projects.Count * 100)%</b>
+                    </div>
+                    <div class="stat-item">
+                        <h5>@nameof(BTProjectPriority.High)</h5>
+                        <b class="col-black">@(Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.High)).Count() / Model.Projects.Count * 100)%</b>
+                    </div>
+                    <div class="stat-item">
+                        <h5>@nameof(BTProjectPriority.Medium)</h5>
+                        <b class="col-black">@(Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Medium)).Count() / Model.Projects.Count * 100)%</b>
+                    </div>
+                    <div class="stat-item">
+                        <h5>@nameof(BTProjectPriority.Low)</h5>
+                        <b class="col-black">@(Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Low)).Count() / Model.Projects.Count * 100)%</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="card">
+            <div class="header">
+                <h2>Top Products</h2>
+            </div>
+            <div class="body">
+                <div id="chart-roles" class="chartist text-center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Third Row*@
+<div class="row clearfix mt-4">
+    <div class="col-lg-4 col-md-12">
+        <div class="card">
+            <div class="header">
+                <h2>Basic Example 6</h2>
+            </div>
+            <div class="body table-responsive">
+                <table class="table table-hover m-b-0">
+                    <tbody>
+                        <tr>
+                            <th><i class="fa fa-circle text-success"></i></th>
+                            <td>Twitter</td>
+                            <td><span>862 Records</span></td>
+                            <td>35% <i class="fa fa-caret-up "></i></td>
+                            <td><span class="sparkbar">5,8,6,3,5,9,2</span></td>
+                        </tr>
+                        <tr>
+                            <th><i class="fa fa-circle text-info"></i></th>
+                            <td>Facebook</td>
+                            <td><span>451 Records</span></td>
+                            <td>15% <i class="fa fa-caret-up "></i></td>
+                            <td><span class="sparkbar">8,2,1,5,-2,6,-4</span></td>
+                        </tr>
+                        <tr>
+                            <th><i class="fa fa-circle text-warning"></i></th>
+                            <td>Mailchimp</td>
+                            <td><span>502 Records</span></td>
+                            <td>20% <i class="fa fa-caret-down"></i></td>
+                            <td><span class="sparkbar">2,3,3,-2,-8,4,8</span></td>
+                        </tr>
+                        <tr>
+                            <th><i class="fa fa-circle text-danger"></i></th>
+                            <td>Google</td>
+                            <td><span>502 Records</span></td>
+                            <td>20% <i class="fa fa-caret-up "></i></td>
+                            <td><span class="sparkbar">5,5,5,6,3,2,1</span></td>
+                        </tr>
+                        <tr>
+                            <th><i class="fa fa-circle "></i></th>
+                            <td>Other</td>
+                            <td><span>237 Records</span></td>
+                            <td>10% <i class="fa fa-caret-down"></i></td>
+                            <td><span class="sparkbar">5,8,6,3,5,9,2</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8 col-md-12">
+        <div class="card">
+            <div class="header">
+                <h2>Basic Example 7</h2>
+            </div>
+            <div class="body table-responsive social_media_table">
+                <table class="table table-hover m-b-0">
+                    <tbody>
+                        <tr>
+                            <td>Twitter</td>
+                            <td><span>862 Records</span></td>
+                            <td><i class="icon-bubble text-info"><span class="m-l-5">241</span></i></td>
+                            <td><i class="icon-like text-success"><span class="m-l-5">595</span></i></td>
+                            <td style="width: 150px;">
+                                <div class="progress progress-xs">
+                                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%;"> <span class="sr-only">40% Complete</span> </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Facebook</td>
+                            <td><span>451 Records</span></td>
+                            <td><i class="icon-bubble text-info"><span class="m-l-5">540</span></i></td>
+                            <td><i class="icon-like text-success"><span class="m-l-5">1K</span></i></td>
+                            <td>
+                                <div class="progress progress-xs">
+                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="width: 15%;"> <span class="sr-only">15% Complete</span> </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>LinkedIn</td>
+                            <td><span>502 Records</span></td>
+                            <td><i class="icon-bubble text-info"><span class="m-l-5">102</span></i></td>
+                            <td><i class="icon-like text-success"><span class="m-l-5">201</span></i></td>
+                            <td>
+                                <div class="progress progress-xs">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"> <span class="sr-only">100% Complete</span> </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Google</td>
+                            <td><span>502 Records</span></td>
+                            <td><i class="icon-bubble text-info"><span class="m-l-5">21</span></i></td>
+                            <td><i class="icon-like text-success"><span class="m-l-5">28</span></i></td>
+                            <td>
+                                <div class="progress progress-xs">
+                                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style="width: 85%;"> <span class="sr-only">85% Complete</span> </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Other</td>
+                            <td><span>237 Records</span></td>
+                            <td><i class="icon-bubble text-info"><span class="m-l-5">9</span></i></td>
+                            <td><i class="icon-like text-success"><span class="m-l-5">15</span></i></td>
+                            <td>
+                                <div class="progress progress-xs">
+                                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%;"> <span class="sr-only">40% Complete</span> </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="card">
+            <div class="header">
+                <h2>Tickets</h2>
+            </div>
+            <div class="body">
+                <div class="table-responsive">
+                    <table class="table table-hover js-basic-example dataTable table-custom mb-0">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Title</th>
+                                <th>Developer</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(Ticket ticket in Model.Tickets)
+                            {
+                                <tr>
+                                    <td>@ticket.Title</td>
+                                    @if(ticket.DeveloperUser is null && ( User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)) ) )
+                                    {
+                                        <td><a asp-controller="Tickets" asp-action="AssignDeveloper" asp-route-id="@ticket.Id" class="btn btn-sm btn-info">Assign Dev</a></td>
+                                    }
+                                    else if(ticket.DeveloperUser is null)
+                                    {
+                                        <td></td>
+                                    }
+                                    else
+                                    {
+                                        <td>@ticket.DeveloperUser.FullName</td>
+                                    }
+                                    <td>
+                                        @if(ticket.TicketStatus.Name == nameof(BTTicketStatus.New))
+                                        {
+                                            <span class="badge badge-primary">New</span>
+                                        }
+                                        @if(ticket.TicketStatus.Name == nameof(BTTicketStatus.Development))
+                                        {
+                                            <span class="badge badge-info">Development</span>
+                                        }
+                                        @if(ticket.TicketStatus.Name == nameof(BTTicketStatus.Resolved))
+                                        {
+                                            <span class="badge badge-success">Resolved</span>
+                                        }
+                                        @if(ticket.TicketStatus.Name == nameof(BTTicketStatus.Testing))
+                                        {
+                                            <span class="badge badge-warning">Testing</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if(ticket.TicketPriority.Name == nameof(BTTicketPriority.Urgent))
+                                        {
+                                            <span class="badge badge-default">Urgent</span>
+                                        }
+                                        @if(ticket.TicketPriority.Name == nameof(BTTicketPriority.High))
+                                        {
+                                            <span class="badge badge-default">High</span>
+                                        }
+                                        @if(ticket.TicketPriority.Name == nameof(BTTicketPriority.Medium))
+                                        {
+                                            <span class="badge badge-default">Medium</span>
+                                        }
+                                        @if(ticket.TicketPriority.Name == nameof(BTTicketPriority.Low))
+                                        {
+                                            <span class="badge badge-default">Low</span>
+                                        } 
+                                    </td>
+                                    <td>@ticket.Created.ToString("MM-dd-yyyy")</td>
+                                    <td>
+                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-info"><i class="icon-eye"></i></a>
+                                        <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-warning"><i class="icon-pencil"></i></a>
+                                        <a class="btn btn-sm btn-outline-danger" asp-controller="Tickets" asp-action="Archive" asp-route-id="@ticket.Id"><i class="icon-drawer"></i></a>
+                                    </td>
+                                    
+                                </tr>
+                            }
+                            
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+
 @section Scripts {
     <script src="~/bundles/jvectormap.bundle.js"></script> <!-- JVectorMap Plugin Js -->
-    <script src="~/bundles/morrisscripts.bundle.js"></script> <!-- Morris Plugin Js -->
+  
     <script src="~/bundles/knob.bundle.js"></script> <!-- Jquery Knob-->
     <script src="~/vendor/nestable/jquery.nestable.js"></script> <!-- Jquery Nestable -->
-
     <script src="~/js/pages/ui/sortable-nestable.js"></script>
-    <script src="~/js/index6.js"></script>
+    <script src="~/js/index4.js"></script>
+    <script src="~/bundles/datatablescripts.bundle.js"></script>
+    <script src="~/js/pages/tables/jquery-datatable.js"></script>
+    <script src="~/js/index7.js"></script>
+
+
+
+    <script>
+        @{
+            
+        }
+
+
+        $(function() {
+            "use strict";
+
+                // top products =================
+                var dataStackedBar = {
+                    labels: ['P1','P2','P3','P4','P5','P6','P7'],
+                    series: [
+                        [,3205,4520,2351,5632,3205,4520],
+                        [2541,2583,1592,2674,2323,1592,2674],
+                        [1212,5214,2325,4235,2519,1212,5214],
+                    ]
+                };
+                new Chartist.Bar('#chart-roles', dataStackedBar, {
+                    height: "250px",
+                    stackBars: true,
+                    axisX: {
+                        showGrid: false
+                    },
+                    axisY: {
+                        labelInterpolationFnc: function(value) {
+                            return value;
+                        }
+                    },
+                    plugins: [
+                        Chartist.plugins.tooltip({
+                            appendToBody: true
+                        }),
+                        Chartist.plugins.legend({
+                            legendNames: ['Developers', 'Submitters', 'Project Managers']
+                        })
+                    ]
+                }).on('draw', function(data) {
+                        if (data.type === 'bar') {
+                            data.element.attr({
+                                style: 'stroke-width: 20px'
+                            });
+                        }
+                });
+        });
+    </script>
+
 
 }
 
-<div >
-            <h1 class="app-page-title">Dashboard</h1>
+        <div >
+        <h1 class="app-page-title">Dashboard</h1>
 
-            @*Admin Dashboard*@
-            @if(User.IsInRole(nameof(Roles.Admin)))
-            {
-                <!--TOP ROW-->
-                <!--GENERAL STATS-->
-                <div class="row g-4 mb-4">
-                    <div class="col-6 col-lg-3">
-                        <div class="app-card app-card-stat shadow-sm h-100">
-                            <a asp-action="AllProjects" asp-controller="Projects">
-                                <div class="card-body p-3 p-lg-4">
-                                    <h4 class="stats-type mb-1">Active Projects</h4>
-                                    <div class="stats-figure">@Model.Projects.Where(p => p.StartDate < DateTime.Now && p.EndDate > DateTime.Now).Count()</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-3">
-                        <div class="app-card app-card-stat shadow-sm h-100">
-                            <a asp-action="AllTickets" asp-controller="Tickets">
-                                <div class="card-body p-3 p-lg-4">
-                                    <h4 class="stats-type mb-1">Total Tickets</h4>
-                                    <div class="stats-figure">@Model.Tickets.Count()</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-3">
-                        <div class="app-card app-card-stat shadow-sm h-100">
-                            <a asp-action="UnassignedTickets" asp-controller="Tickets">
-                                <div class="card-body p-3 p-lg-4">
-                                    <h4 class="stats-type mb-1">Unassigned Tickets</h4>
-                                    <div class="stats-figure">@Model.Tickets.Where(t => string.IsNullOrEmpty(t.DeveloperUserId)).Count()</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-3">
-                        <div class="app-card app-card-stat shadow-sm h-100">
-                            <div class="card-body p-3 p-lg-4">
-                                <h4 class="stats-type mb-1">Analytics</h4>
-                                <div class="stats-figure">@(Model.Projects.Count() + Model.Tickets.Count() + Model.Members.Count())</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--SECOND ROW-->
-                <!--USER STATS-->
-                <div class="row g-4 mb-4">
-                    <div class="col-6 col-lg-3">
-                        <div class="app-card app-card-stat shadow-sm h-100">
-                            <div class="card-body p-3 p-lg-4">
-                                <div class="row d-flex">
-                                    <div class="col-2">
-                                        <span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
-                                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                                            </svg>
-                                        </span>
-                                    </div>
-                                    <div class="col-10">
-                                        <div class="row">
-                                            <div class="col-5">
-                                                <p class="small">New Users</p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-2">
-                                                <h5 class=""><strong>0</strong></h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+        @*Admin Dashboard*@
+        @if(User.IsInRole(nameof(Roles.Admin)))
+        {
+        <!--TOP ROW-->
+        <!--GENERAL STATS-->
+        <div class="row g-4 mb-4">
+        <div class="col-6 col-lg-3">
+        <div class="app-card app-card-stat shadow-sm h-100">
+        <a asp-action="AllProjects" asp-controller="Projects">
+        <div class="card-body p-3 p-lg-4">
+        <h4 class="stats-type mb-1">Active Projects</h4>
+        <div class="stats-figure">@Model.Projects.Where(p => p.StartDate < DateTime.Now && p.EndDate > DateTime.Now).Count()</div>
+        </div>
+        </a>
+        </div>
+        </div>
+        <div class="col-6 col-lg-3">
+        <div class="app-card app-card-stat shadow-sm h-100">
+        <a asp-action="AllTickets" asp-controller="Tickets">
+        <div class="card-body p-3 p-lg-4">
+        <h4 class="stats-type mb-1">Total Tickets</h4>
+        <div class="stats-figure">@Model.Tickets.Count()</div>
+        </div>
+        </a>
+        </div>
+        </div>
+        <div class="col-6 col-lg-3">
+        <div class="app-card app-card-stat shadow-sm h-100">
+        <a asp-action="UnassignedTickets" asp-controller="Tickets">
+        <div class="card-body p-3 p-lg-4">
+        <h4 class="stats-type mb-1">Unassigned Tickets</h4>
+        <div class="stats-figure">@Model.Tickets.Where(t => string.IsNullOrEmpty(t.DeveloperUserId)).Count()</div>
+        </div>
+        </a>
+        </div>
+        </div>
+        <div class="col-6 col-lg-3">
+        <div class="app-card app-card-stat shadow-sm h-100">
+        <div class="card-body p-3 p-lg-4">
+        <h4 class="stats-type mb-1">Analytics</h4>
+        <div class="stats-figure">@(Model.Projects.Count() + Model.Tickets.Count() + Model.Members.Count())</div>
+        </div>
+        </div>
+        </div>
+        </div>
+        <!--SECOND ROW-->
+        <!--USER STATS-->
+        <div class="row g-4 mb-4">
+        <div class="col-6 col-lg-3">
+        <div class="app-card app-card-stat shadow-sm h-100">
+        <div class="card-body p-3 p-lg-4">
+        <div class="row d-flex">
+        <div class="col-2">
+        <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+            </svg>
+        </span>
+        </div>
+        <div class="col-10">
+        <div class="row">
+            <div class="col-5">
+                <p class="small">New Users</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                <h5 class=""><strong>0</strong></h5>
+            </div>
+        </div>
+        </div>
+        </div>
 
-                                <hr />
+        <hr />
 
-                                <div class="row d-flex">
-                                    <div class="col-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
-                                            <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                                            <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
-                                            <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
-                                        </svg>
-                                    </div>
-                                    <div class="col-10">
-                                        <div class="row">
-                                            <div class="col-5">
-                                                <p class="small">Total Users</p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-2">
-                                                <h5 class=""><strong>0</strong></h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+        <div class="row d-flex">
+        <div class="col-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+            <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+            <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
+            <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+        </svg>
+        </div>
+        <div class="col-10">
+        <div class="row">
+            <div class="col-5">
+                <p class="small">Total Users</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                <h5 class=""><strong>0</strong></h5>
+            </div>
+        </div>
+        </div>
+        </div>
 
-                                <hr />
+        <hr />
 
-                                <div class="row d-flex">
-                                    <div class="col-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-ticket-perforated" viewBox="0 0 16 16">
-                                            <path d="M4 4.85v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Z"/>
-                                            <path d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3h-13ZM1 4.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v1.05a2.5 2.5 0 0 0 0 4.9v1.05a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-1.05a2.5 2.5 0 0 0 0-4.9V4.5Z"/>
-                                        </svg>
-                                    </div>
-                                    <div class="col-10">
-                                        <div class="row d-flex">
-                                            <div class="col-12">
-                                                <p class="small text-start">Tickets in Development</p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-2 ">
-                                                <h5 class=""><strong>@Model.Tickets.Where(t => t.DeveloperUserId is not null).Count()</strong></h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+        <div class="row d-flex">
+        <div class="col-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-ticket-perforated" viewBox="0 0 16 16">
+            <path d="M4 4.85v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Z"/>
+            <path d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3h-13ZM1 4.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v1.05a2.5 2.5 0 0 0 0 4.9v1.05a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-1.05a2.5 2.5 0 0 0 0-4.9V4.5Z"/>
+        </svg>
+        </div>
+        <div class="col-10">
+        <div class="row d-flex">
+            <div class="col-12">
+                <p class="small text-start">Tickets in Development</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2 ">
+                <h5 class=""><strong>@Model.Tickets.Where(t => t.DeveloperUserId is not null).Count()</strong></h5>
+            </div>
+        </div>
+        </div>
+        </div>
 
-                                <hr />
+        <hr />
 
-                                <div class="row d-flex">
-                                    <div class="col-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-code-slash" viewBox="0 0 16 16">
-                                            <path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294l4-13zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0zm6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0z"/>
-                                        </svg>
-                                    </div>
-                                    <div class="col-10">
-                                        <div class="row">
-                                            <div class="col-7">
-                                                <p class="small">Total Developers</p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-2">
+        <div class="row d-flex">
+        <div class="col-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-code-slash" viewBox="0 0 16 16">
+            <path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294l4-13zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0zm6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0z"/>
+        </svg>
+        </div>
+        <div class="col-10">
+        <div class="row">
+            <div class="col-7">
+                <p class="small">Total Developers</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
 
                                            
-                                            @{
-                                                //Counting devs 
-                                                List<BTUser> developers = await RolesService.GetUsersInRoleAsync(nameof(Roles.Developer), companyId);
+            @{
+                //Counting devs 
+                List<BTUser> developers = await RolesService.GetUsersInRoleAsync(nameof(Roles.Developer), companyId);
 
-                                                int developerCount = 0;
+                int developerCount = 0;
 
-                                                foreach(BTUser developer in developers)
-                                                {
-                                                    developerCount++;
-                                                }
+                foreach(BTUser developer in developers)
+                {
+                    developerCount++;
+                }
 
-                                            }
+            }
 
-                                                <h5 class=""><strong>@developerCount</strong></h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-3">
-                        <div class="app-card app-card-stat shadow-sm h-200" style="height:100%;">
-                            <div class="card-body p-3 p-lg-4">
-                                    <div class="pb-3">
-                                       <h5 class="">Company Data</h5>
-                                       <h6 class="">@Model.Company.Name</h6>
-                                    </div>
-                                <div class="row pt-2 pb-1 d-flex">
-                                    <div class="col-2">
-                                        <span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
-                                                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                                                <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
-                                                <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
-                                            </svg>
-                                        </span>
-                                    </div>
-                                    <div class="col-8 align-content-start justify-content-start text-start">
-                                            <!--LINK TO LIST OF MEMBERS(needs to be developed)-->
-                                        <a href="#">
-                                            <p>Members</p>
-                                        </a>
-                                    </div>
-                                    <div class="col-2"> 
-                                        <p class="btn-outline-danger">@Model.Members.Count()</p>
-                                    </div>
-                                </div>
+                <h5 class=""><strong>@developerCount</strong></h5>
+            </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="col-6 col-lg-3">
+        <div class="app-card app-card-stat shadow-sm h-200" style="height:100%;">
+        <div class="card-body p-3 p-lg-4">
+        <div class="pb-3">
+        <h5 class="">Company Data</h5>
+        <h6 class="">@Model.Company.Name</h6>
+        </div>
+        <div class="row pt-2 pb-1 d-flex">
+        <div class="col-2">
+        <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
+                <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+            </svg>
+        </span>
+        </div>
+        <div class="col-8 align-content-start justify-content-start text-start">
+            <!--LINK TO LIST OF MEMBERS(needs to be developed)-->
+        <a href="#">
+            <p>Members</p>
+        </a>
+        </div>
+        <div class="col-2"> 
+        <p class="btn-outline-danger">@Model.Members.Count()</p>
+        </div>
+        </div>
 
-                                   <hr />
+        <hr />
 
-                                   <div class="row pt-2 d-flex">
-                                        <div class="col-2">
-                                            <span>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder2-open" viewBox="0 0 16 16">
-                                                  <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14V3.5zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5V6zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7H1.633z"/>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <div class="col-8 align-content-start justify-content-start text-start">
-                                             <!--LINK TO LIST OF MEMBERS(needs to be developed)-->
-                                            <a asp-action="AllProjects" asp-controller="Projects">
-                                                <p>Projects</p>
-                                            </a>
-                                        </div>
-                                        <div class="col-2"> 
-                                            <p class="btn-outline-warning">@Model.Projects.Count()</p>
-                                        </div>
-                                   </div>
+        <div class="row pt-2 d-flex">
+        <div class="col-2">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder2-open" viewBox="0 0 16 16">
+                    <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14V3.5zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5V6zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7H1.633z"/>
+                </svg>
+            </span>
+        </div>
+        <div class="col-8 align-content-start justify-content-start text-start">
+                <!--LINK TO LIST OF MEMBERS(needs to be developed)-->
+            <a asp-action="AllProjects" asp-controller="Projects">
+                <p>Projects</p>
+            </a>
+        </div>
+        <div class="col-2"> 
+            <p class="btn-outline-warning">@Model.Projects.Count()</p>
+        </div>
+        </div>
 
-                                   <hr />
+        <hr />
 
-                                   <div class="row pt-2 d-flex">
-                                        <div class="col-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-ticket-perforated" viewBox="0 0 16 16">
-                                              <path d="M4 4.85v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Z"/>
-                                              <path d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3h-13ZM1 4.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v1.05a2.5 2.5 0 0 0 0 4.9v1.05a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-1.05a2.5 2.5 0 0 0 0-4.9V4.5Z"/>
-                                            </svg>
-                                        </div>
-                                        <div class="col-8 align-content-start justify-content-start text-start">
-                                             <!--LINK TO LIST OF MEMBERS(needs to be developed)-->
-                                            <a asp-action="AllTickets" asp-controller="Tickets">
-                                                <p>Tickets</p>
-                                            </a>
-                                        </div>
-                                        <div class="col-2"> 
-                                            <p class="btn-outline-danger">@Model.Tickets.Count()</p>
-                                        </div>
-                                   </div>
+        <div class="row pt-2 d-flex">
+        <div class="col-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-ticket-perforated" viewBox="0 0 16 16">
+                <path d="M4 4.85v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Zm-7 1.8v.9h1v-.9H4Zm7 0v.9h1v-.9h-1Z"/>
+                <path d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3h-13ZM1 4.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v1.05a2.5 2.5 0 0 0 0 4.9v1.05a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-1.05a2.5 2.5 0 0 0 0-4.9V4.5Z"/>
+            </svg>
+        </div>
+        <div class="col-8 align-content-start justify-content-start text-start">
+                <!--LINK TO LIST OF MEMBERS(needs to be developed)-->
+            <a asp-action="AllTickets" asp-controller="Tickets">
+                <p>Tickets</p>
+            </a>
+        </div>
+        <div class="col-2"> 
+            <p class="btn-outline-danger">@Model.Tickets.Count()</p>
+        </div>
+        </div>
 
-                                   <hr />
+        <hr />
 
-                                   <div class="row pt-2 d-flex">
-                                        <div class="col-2">
-                                            <span>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
-                                                  <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                                                  <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
-                                                  <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <div class="col-8 align-content-start justify-content-start text-start">
-                                             <!--LINK TO LIST OF MEMBERS(needs to be developed)-->
-                                            <a href="# ">
-                                                <p>Notifications</p>
-                                            </a>
-                                        </div>
-                                        <div class="col-2"> 
-                                            <p class="btn-outline-danger">0</p>
-                                        </div>
-                                   </div>
+        <div class="row pt-2 d-flex">
+        <div class="col-2">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                    <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
+                    <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+                </svg>
+            </span>
+        </div>
+        <div class="col-8 align-content-start justify-content-start text-start">
+                <!--LINK TO LIST OF MEMBERS(needs to be developed)-->
+            <a href="# ">
+                <p>Notifications</p>
+            </a>
+        </div>
+        <div class="col-2"> 
+            <p class="btn-outline-danger">0</p>
+        </div>
+        </div>
 
-                                </div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-3">
-                        <div class="app-card app-card-chart shadow-sm h-100">
-                            <div class=" p-4 text-center">
-                                    <h5 class="">Priority Projects</h5>
-                            </div> 
-                            <div class="app-card-body mt-4  h-100">
-                                <div class="chart-container">
-                                    <canvas height="220" id="chart-pie"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                     <div class="col-6 col-lg-3">
-                        <div class="app-card app-card-stat shadow-sm h-100">
-                            <div class=" p-4 text-center">
-                                    <h5 class="">Project Ticket Percentage</h5>
-                            </div> 
-                            <div class="app-card-body mt-4 p-0 h-100" style="height: 400%">
-                                <div class="chart-container">
-                                    <canvas height="250"  id="chart-doughnut"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @*<!--THIRD ROW-->
-                <!--PROJECTS BY TICKET PRIORITY COUNTS BAR CHART-->
-                <div class="row mb-4">
-                    <div class="col">
-                        <div class="app-card app-card-stat shadow-sm h-100">
-                            <div class="card-body p-3 p-lg-4">
-                                <canvas id="am-chart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                *@
-                <!--FOURTH ROW-->
-                <!--Members and Projects Table-->
-                <div class="row g-4 mb-4">
-                    <div class="col-5">
-                        <div class="app-card app-card-orders-table  shadow-sm mb-2 h-100">
-                            <div class="card-body">
-                                <div class="p-2 text-center">
-                                    <h5 class="">Members</h5>
-                                </div>
-                                <div class="table-responsive">
-                                    <table id="membersTable" class="table app-table-hover mb-0 text-start">
-                                        <thead>
-                                            <tr>
-                                                <th class="cell">Avatar</th>
-                                                <th class="cell">Name</th>
-                                                <th class="cell">Projects</th>
-                                                <th class="cell">Role</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
+        </div>
+        </div>
+        </div>
+        <div class="col-6 col-lg-3">
+        <div class="app-card app-card-chart shadow-sm h-100">
+        <div class=" p-4 text-center">
+        <h5 class="">Priority Projects</h5>
+        </div> 
+        <div class="app-card-body mt-4  h-100">
+        <div class="chart-container">
+        <canvas height="220" id="chart-pie"></canvas>
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="col-6 col-lg-3">
+        <div class="app-card app-card-stat shadow-sm h-100">
+        <div class=" p-4 text-center">
+        <h5 class="">Project Ticket Percentage</h5>
+        </div> 
+        <div class="app-card-body mt-4 p-0 h-100" style="height: 400%">
+        <div class="chart-container">
+        <canvas height="250"  id="chart-doughnut"></canvas>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        @*<!--THIRD ROW-->
+        <!--PROJECTS BY TICKET PRIORITY COUNTS BAR CHART-->
+        <div class="row mb-4">
+        <div class="col">
+        <div class="app-card app-card-stat shadow-sm h-100">
+        <div class="card-body p-3 p-lg-4">
+        <canvas id="am-chart"></canvas>
+        </div>
+        </div>
+        </div>
+        </div>
+        *@
+        <!--FOURTH ROW-->
+        <!--Members and Projects Table-->
+        <div class="row g-4 mb-4">
+        <div class="col-5">
+        <div class="app-card app-card-orders-table  shadow-sm mb-2 h-100">
+        <div class="card-body">
+        <div class="p-2 text-center">
+        <h5 class="">Members</h5>
+        </div>
+        <div class="table-responsive">
+            <table id="membersTable" class="table app-table-hover mb-0 text-start">
+                <thead>
+                    <tr>
+                        <th class="cell">Avatar</th>
+                        <th class="cell">Name</th>
+                        <th class="cell">Projects</th>
+                        <th class="cell">Role</th>
+                    </tr>
+                </thead>
+                <tbody>
                                     
-                                            @for(int i =0; i < Model.Members.Count(); i++)
-                                            {     
-                                                <tr>
-                                                    @if(Model.Members[i].AvatarFileData is null)
-                                                    {
-                                                        <td class="cell">
-                                                            <img class="rounded-circle" style="width:30px;height:30px;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td class="cell">
-                                                            <img class="rounded-circle" style="width:60px;height:60px;" src="data:image/*;base64,@(Convert.ToBase64String(Model.Members[i].AvatarFileData))" alt="@Model.Members[i].FullName's avatar'" />
-                                                        </td>
-                                                    }
+                    @for(int i =0; i < Model.Members.Count(); i++)
+                    {     
+                        <tr>
+                            @if(Model.Members[i].AvatarFileData is null)
+                            {
+                                <td class="cell">
+                                    <img class="rounded-circle" style="width:30px;height:30px;" src="https://cdn.icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="cell">
+                                    <img class="rounded-circle" style="width:60px;height:60px;" src="data:image/*;base64,@(Convert.ToBase64String(Model.Members[i].AvatarFileData))" alt="@Model.Members[i].FullName's avatar'" />
+                                </td>
+                            }
 
-                                                    <td class="cell">
-                                                        @Model.Members[i].FullName
-                                                    </td>
+                            <td class="cell">
+                                @Model.Members[i].FullName
+                            </td>
 
-                                                    @if(Model.Members[i].Projects is null)
-                                                    {
-                                                        <td class="cell">
-                                                            0
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td class="cell">
-                                                            @Model.Members[i].Projects.Count()
-                                                        </td>
-                                                    }
+                            @if(Model.Members[i].Projects is null)
+                            {
+                                <td class="cell">
+                                    0
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="cell">
+                                    @Model.Members[i].Projects.Count()
+                                </td>
+                            }
 
-                                                    <td class="cell">
-                                                            @Model.Roles[i]
-                                                    </td>
+                            <td class="cell">
+                                    @Model.Roles[i]
+                            </td>
 
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-7">
-                        <div class="app-card app-card-orders-table  shadow-sm mb-2 h-100">
-                            <div class="card-body">
-                                <div class="p-2 text-center">
-                                    <h5 class="">Projects</h5>
-                                </div>
-                                <div class="table-responsive">
-								    <table id="projectsTable" class="table app-table-hover mb-0 text-left">
-									    <thead>
-										    <tr>
-											    <th class="cell">Project</th>
-											    <th class="cell">End Date</th>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="col-7">
+        <div class="app-card app-card-orders-table  shadow-sm mb-2 h-100">
+        <div class="card-body">
+        <div class="p-2 text-center">
+        <h5 class="">Projects</h5>
+        </div>
+        <div class="table-responsive">
+        <table id="projectsTable" class="table app-table-hover mb-0 text-left">
+        <thead>
+	        <tr>
+		        <th class="cell">Project</th>
+		        <th class="cell">End Date</th>
 												
-											    <th class="cell">Project Manager</th>
-											    <th class="cell">Team</th>
+		        <th class="cell">Project Manager</th>
+		        <th class="cell">Team</th>
 												
-											    <th class="cell"></th>
-										    </tr>
-									    </thead>
-									    <tbody>
-									    @foreach(Project project in Model.Projects.Where(m => m.Archived == false))
-									    {
+		        <th class="cell"></th>
+	        </tr>
+        </thead>
+        <tbody>
+        @foreach(Project project in Model.Projects.Where(m => m.Archived == false))
+        {
 											
-											    <tr>
-												    <td class="cell">
-													    <span class="">@project.Name</span>
-													    <span class="note">Created @project.StartDate.ToString("MM.dd.yy")</span>
-												    </td>
-												    <td class="cell"><span class="truncate">@project.StartDate.ToString("MM.dd.yy")</span></td>
+		        <tr>
+			        <td class="cell">
+				        <span class="">@project.Name</span>
+				        <span class="note">Created @project.StartDate.ToString("MM.dd.yy")</span>
+			        </td>
+			        <td class="cell"><span class="truncate">@project.StartDate.ToString("MM.dd.yy")</span></td>
 													
-												    <td class="cell">
-													    @{
-														    var projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
-													    }
+			        <td class="cell">
+				        @{
+					        var projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
+				        }
 
-													    @if (projectManager is not null)
-													    {
-														    @if (projectManager.AvatarFileData is null)
-														    {
-															    <img class="rounded-circle shadow-sm" style="width:35px;height:35px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-														    }
-														    else
-														    {
-															    <img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(projectManager.AvatarFileData))" alt="@projectManager.FullName's avatar'" />
-														    }
-														    <span class="note">@projectManager.FullName</span>
-													    }
-													    else
-													    {
-														    <span class="truncate">Not Assigned</span>
-													    }
-												    </td>
-												    <td class="cell">
-													    @foreach (BTUser member in project.Members)
-													    {
+				        @if (projectManager is not null)
+				        {
+					        @if (projectManager.AvatarFileData is null)
+					        {
+						        <img class="rounded-circle shadow-sm" style="width:35px;height:35px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
+					        }
+					        else
+					        {
+						        <img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(projectManager.AvatarFileData))" alt="@projectManager.FullName's avatar'" />
+					        }
+					        <span class="note">@projectManager.FullName</span>
+				        }
+				        else
+				        {
+					        <span class="truncate">Not Assigned</span>
+				        }
+			        </td>
+			        <td class="cell">
+				        @foreach (BTUser member in project.Members)
+				        {
 
-														    @if (member.AvatarFileData is null)
-														    {
-															    <img class="rounded-circle shadow-sm" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-														    }
-														    else
-														    {
-															    <img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" alt="@member.FullName's avatar'" />
+					        @if (member.AvatarFileData is null)
+					        {
+						        <img class="rounded-circle shadow-sm" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
+					        }
+					        else
+					        {
+						        <img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" alt="@member.FullName's avatar'" />
 														    }
 													    }
 												    </td>

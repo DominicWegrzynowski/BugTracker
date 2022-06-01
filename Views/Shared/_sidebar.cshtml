@@ -1,11 +1,33 @@
-﻿<sidebar class="">
+﻿@using BugTracker.Models.Enums
+@using BugTracker.Services.Interfaces
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<BTUser> SignInManager
+@inject UserManager<BTUser> UserManager
+@inject IBTRolesService RolesService
+
+@{
+    BTUser user = await UserManager.GetUserAsync(User);
+    IEnumerable<string> roles = await RolesService.GetUserRolesAsync(user);
+    string userRole = roles.FirstOrDefault();
+}
+
+
+<sidebar class="">
     <div class="user-account">
-        <img src="~/images/user.png" class="rounded-circle user-photo" alt="User Profile Picture">
+        @if (user.AvatarFileData is null)
+        {
+            <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" class="rounded-circle user-photo" alt="Default Avatar">
+        }
+        else
+        {
+            <img src="data:image/*;base64,@(Convert.ToBase64String(user.AvatarFileData))" class="rounded-circle user-photo" alt="@user.FullName's Avatar" /> 
+        }
         <div class="dropdown">
             <span>Welcome,</span>
-            <a href="javascript:void(0);" class="dropdown-toggle user-name" data-toggle="dropdown"><strong>Alizee Thomas</strong></a>
+            <a href="javascript:void(0);" class="dropdown-toggle user-name" data-toggle="dropdown"><strong>@user.FullName</strong></a>
+            <span class="badge badge-primary">@userRole</span>
             <ul class="dropdown-menu dropdown-menu-right account">
-                <li><a asp-controller="Page" asp-action="Profile2"><i class="icon-user"></i>My Profile</a></li>
+                <li><a asp-controller="Home" asp-action="UserProfile" asp-route-id="@user.Id"><i class="icon-user"></i>My Profile</a></li>
                 <li><a asp-controller="App" asp-action="Inbox"><i class="icon-envelope-open"></i>Messages</a></li>
                 <li><a href="javascript:void(0);"><i class="icon-settings"></i>Settings</a></li>
                 <li class="divider"></li>
@@ -30,10 +52,8 @@
     </div>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs">
-        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#menu">Menu</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Chat"><i class="icon-book-open"></i></a></li>
+        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#menu">Project</a></li>
         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#setting"><i class="icon-settings"></i></a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#question"><i class="icon-question"></i></a></li>
     </ul>
 
     <!-- Tab panes -->
@@ -41,165 +61,69 @@
         <div class="tab-pane active" id="menu">
             <nav id="left-sidebar-nav" class="sidebar-nav">
                 <ul id="main-menu" class="metismenu">
+                    @*Dashboard*@
                     <li class="active">
-                        <a href="#Dashboard" class="has-arrow"><i class="icon-home"></i> <span>Dashboard</span></a>
-                        <ul>
-                            <li class="active"><a asp-controller="Dashboard" asp-action="Analytical">Analytical</a></li>
-                            <li><a asp-controller="Dashboard" asp-action="Demographic">Demographic</a></li>
-                            <li><a asp-controller="Dashboard" asp-action="Hospital">Hospital</a></li>
-                            <li><a asp-controller="Dashboard" asp-action="University">University</a></li>
-                            <li><a asp-controller="Dashboard" asp-action="RealEstate">Real Estate</a></li>
-                            <li><a asp-controller="Dashboard" asp-action="Project">Project</a></li>
-                            <li><a asp-controller="Dashboard" asp-action="Cryptocurrency">Cryptocurrency</a></li>
-                            <li><a asp-controller="Dashboard" asp-action="eCommerce">eCommerce</a></li>
-                            <li><a asp-controller="Dashboard" asp-action="IoT">IoT</a></li>
-                        </ul>
+                        <a asp-action="Dashboard" asp-controller="Home"><i class="icon-speedometer"></i> <span>Dashboard</span></a>
                     </li>
+                    @*Notifications*@
                     <li>
-                        <a href="#App" class="has-arrow"><i class="icon-grid"></i> <span>App</span></a>
-                        <ul>
-                            <li><a asp-controller="App" asp-action="Inbox">Inbox</a></li>
-                            <li><a asp-controller="App" asp-action="Chat">Chat</a></li>
-                            <li><a asp-controller="App" asp-action="Calendar">Calendar</a></li>
-                            <li><a asp-controller="App" asp-action="ContactList">Contact list</a></li>
-                            <li><a asp-controller="App" asp-action="ContactCard">Contact Card <span class="badge badge-warning float-right">New</span></a></li>
-                            <li><a asp-controller="App" asp-action="TaskBoard">Taskboard</a></li>
-                        </ul>
+                        <a asp-action="Notifications" asp-controller="Notifications"><i class="icon-envelope"></i> <span>Notification Inbox</span></a>
+                        
                     </li>
+                    @*Projects*@
                     <li>
-                        <a href="#FileManager" class="has-arrow"><i class="icon-folder"></i> <span>File Manager</span></a>
+                        <a class="has-arrow"><i class="icon-puzzle"></i> <span>Projects</span></a>
                         <ul>
-                            <li><a asp-controller="FileManager" asp-action="Dashboard">Dashboard</a></li>
-                            <li><a asp-controller="FileManager" asp-action="Documents">Documents</a></li>
-                            <li><a asp-controller="FileManager" asp-action="Media">Media</a></li>
-                            <li><a asp-controller="FileManager" asp-action="Images">Images</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#Blog" class="has-arrow"><i class="icon-globe"></i> <span>Blog</span></a>
-                        <ul>
-                            <li><a asp-controller="Blog" asp-action="Dashboard">Dashboard</a></li>
-                            <li><a asp-controller="Blog" asp-action="NewPost">New Post</a></li>
-                            <li><a asp-controller="Blog" asp-action="BlogList">Blog List</a></li>
-                            <li><a asp-controller="Blog" asp-action="BlogDetail">Blog Detail</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#uiElements" class="has-arrow"><i class="icon-diamond"></i> <span>UI Elements</span></a>
-                        <ul>
-                            <li><a asp-controller="UIElements" asp-action="Typography">Typography</a></li>
-                            <li><a asp-controller="UIElements" asp-action="Tabs">Tabs</a></li>
-                            <li><a asp-controller="UIElements" asp-action="Buttons">Buttons</a></li>
-                            <li><a asp-controller="UIElements" asp-action="BootstrapUI">Bootstrap UI</a></li>
-                            <li><a asp-controller="UIElements" asp-action="Icons">Icons</a></li>
-                            <li><a asp-controller="UIElements" asp-action="Notifications">Notifications</a></li>
-                            <li><a asp-controller="UIElements" asp-action="Colors">Colors</a></li>
-                            <li><a asp-controller="UIElements" asp-action="Dialogs">Dialogs</a></li>
-                            <li><a asp-controller="UIElements" asp-action="ListGroup">List Group</a></li>
-                            <li><a asp-controller="UIElements" asp-action="MediaObject">Media Object</a></li>
-                            <li><a asp-controller="UIElements" asp-action="Modals">Modals</a></li>
-                            <li><a asp-controller="UIElements" asp-action="Nestable">Nestable</a></li>
-                            <li><a asp-controller="UIElements" asp-action="ProgressBars">Progress Bars</a></li>
-                            <li><a asp-controller="UIElements" asp-action="RangeSliders">Range Sliders</a></li>
-                            <li><a asp-controller="UIElements" asp-action="TreeView">Treeview</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#Widgets" class="has-arrow"><i class="icon-puzzle"></i> <span>Widgets</span></a>
-                        <ul>
-                            <li><a asp-controller="Widget" asp-action="Statistics">Statistics</a></li>
-                            <li><a asp-controller="Widget" asp-action="Data">Data</a></li>
-                            <li><a asp-controller="Widget" asp-action="Chart">Chart</a></li>
-                            <li><a asp-controller="Widget" asp-action="Weather">Weather</a></li>
-                            <li><a asp-controller="Widget" asp-action="Social">Social</a></li>
-                            <li><a asp-controller="Widget" asp-action="Blog">Blog</a></li>
-                            <li><a asp-controller="Widget" asp-action="eCommerce">eCommerce</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#Authentication" class="has-arrow"><i class="icon-lock"></i> <span>Authentication</span></a>
-                        <ul>
-                            <li><a asp-controller="Authentication" asp-action="Login">Login</a></li>
-                            <li><a asp-controller="Authentication" asp-action="Register">Register</a></li>
-                            <li><a asp-controller="Authentication" asp-action="Lockscreen">Lockscreen</a></li>
-                            <li><a asp-controller="Authentication" asp-action="ForgotPassword">Forgot Password</a></li>
-                            <li><a asp-controller="Authentication" asp-action="Page404">Page 404</a></li>
-                            <li><a asp-controller="Authentication" asp-action="Page403">Page 403</a></li>
-                            <li><a asp-controller="Authentication" asp-action="Page500">Page 500</a></li>
-                            <li><a asp-controller="Authentication" asp-action="Page503">Page 503</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#Pages" class="has-arrow"><i class="icon-docs"></i> <span>Pages</span></a>
-                        <ul>
-                            <li><a asp-controller="Page" asp-action="Blank">Blank Page</a> </li>
-                            <li><a asp-controller="Page" asp-action="Profile1">Profile <span class="badge badge-default float-right">v1</span></a></li>
-                            <li><a asp-controller="Page" asp-action="Profile2">Profile <span class="badge badge-warning float-right">v2</span></a></li>
-                            <li><a asp-controller="Page" asp-action="Gallery1">Image Gallery <span class="badge badge-default float-right">v1</span></a> </li>
-                            <li><a asp-controller="Page" asp-action="Gallery2">Image Gallery <span class="badge badge-warning float-right">v2</span></a> </li>
-                            <li><a asp-controller="Page" asp-action="Timeline">Timeline</a></li>
-                            <li><a asp-controller="Page" asp-action="HorizontalTimeline">Horizontal Timeline</a></li>
-                            <li><a asp-controller="Page" asp-action="Pricing">Pricing</a></li>
-                            <li><a asp-controller="Page" asp-action="Invoices1">Invoices</a></li>
-                            <li><a asp-controller="Page" asp-action="Invoices2">Invoices <span class="badge badge-warning float-right">v2</span></a></li>
-                            <li><a asp-controller="Page" asp-action="SearchResult">Search Results</a></li>
-                            <li><a asp-controller="Page" asp-action="HelperClass">Helper Classes</a></li>
-                            <li><a asp-controller="Page" asp-action="Teamsboard">Teams Board</a></li>
-                            <li><a asp-controller="Page" asp-action="ProjectList">Projects List</a></li>
-                            <li><a asp-controller="Page" asp-action="Maintenance">Maintenance</a></li>
-                            <li><a asp-controller="Page" asp-action="Testimonials">Testimonials</a></li>
-                            <li><a asp-controller="Page" asp-action="FAQ">FAQ</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#forms" class="has-arrow"><i class="icon-pencil"></i> <span>Forms</span></a>
-                        <ul>
-                            <li><a asp-controller="Form" asp-action="Validation">Form Validation</a></li>
-                            <li><a asp-controller="Form" asp-action="Advanced">Advanced Elements</a></li>
-                            <li><a asp-controller="Form" asp-action="Basic">Basic Elements</a></li>
-                            <li><a asp-controller="Form" asp-action="Wizard">Form Wizard</a></li>
+                            <li><a asp-action="AllProjects" asp-controller="Projects">All Projects</a></li>
+                            <li><a asp-controller="Projects" asp-action="MyProjects">My Projects</a></li>
+                            @if(User.IsInRole(nameof(Roles.Admin)))
+                            {
+                                <li><a asp-action="Create" asp-controller="Projects">Add Project</a></li>
+                                <li><a asp-action="ManageProjects" asp-controller="Projects">Manage Projects</a></li>
 
-                            <li><a asp-controller="Form" asp-action="Dragdropupload">Drag &amp; Drop Upload</a></li>
+                            }
+                            <li><a asp-controller="Projects" asp-action="ArchivedProjects">Archived Projects</a></li>
+                        </ul>
+                    </li>
+                    @*Tickets*@
+                    <li>
+                        <a  class="has-arrow"><i class="icon-tag"></i> <span>Tickets</span></a>
+                        <ul>
+                            <li><a asp-controller="Tickets" asp-action="AllTickets">All Tickets</a></li>
+                            <li><a asp-controller="Tickets" asp-action="MyTickets">My Tickets</a></li>
+                            @if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+                            {
+                                <li><a asp-controller="Tickets" asp-action="AssignDeveloper">Assign Tickets</a></li>
+                                <li><a asp-controller="Tickets" asp-action="Create">Add Ticket</a></li>
+                                <li><a asp-controller="Tickets" asp-action="UnassignedTickets">Unassigned Tickets</a></li>
 
-                            <li><a asp-controller="Form" asp-action="Cropping">Image Cropping</a></li>
-                            <li><a asp-controller="Form" asp-action="Summernote">Summernote</a></li>
-                            <li><a asp-controller="Form" asp-action="CKEditors">CKEditor</a></li>
-                            <li><a asp-controller="Form" asp-action="Markdown">Markdown</a></li>
+                            }
+                            <li><a asp-controller="Tickets" asp-action="ArchivedTickets">Ticket Archive</a></li>
                         </ul>
                     </li>
+                    @*Admin*@
                     <li>
-                        <a href="#Tables" class="has-arrow"><i class="icon-tag"></i> <span>Tables</span></a>
-                        <ul>
-                            <li><a asp-controller="Table" asp-action="Basic">Tables Example<span class="badge badge-info float-right">New</span></a> </li>
-                            <li><a asp-controller="Table" asp-action="Normal">Normal Tables</a> </li>
-                            <li><a asp-controller="Table" asp-action="JQuery">Jquery Datatables</a> </li>
-                            <li><a asp-controller="Table" asp-action="Editable">Editable Tables</a> </li>
-                            <li><a asp-controller="Table" asp-action="Color">Tables Color</a> </li>
-                            <li><a asp-controller="Table" asp-action="Filter">Table Filter <span class="badge badge-info float-right">New</span></a> </li>
-                            <li><a asp-controller="Table" asp-action="Dragger">Table dragger <span class="badge badge-info float-right">New</span></a> </li>
+                        @if(User.IsInRole(nameof(Roles.Admin)))
+                        {
+                            <a class="has-arrow"><i class="icon-diamond"></i> <span>Admin</span></a>
+                            <ul>
+                                <li><a asp-controller="Invites" asp-action="Create"><i class=" icon-user-follow float-left"></i>Company Invite</a></li>
+                                <li><a asp-controller="UserRoles" asp-action="ManageUserRoles"><i class=" icon-user float-left"></i>Manage Roles</a></li>
+                                <li><a asp-controller="Projects" asp-action="AssignPM">Assign Project Manager</a></li>
+                                <li><a asp-controller="Projects" asp-action="Mange Projects">Manage Projects</a></li>
+                                <li><a asp-controller="Tickets" asp-action="AssignDeveloper" asp-route-id="">Assign Developer</a></li>
+                                <li><a asp-controller="Home" asp-action="MemberProfiles">Assign Project Manager</a></li>
+                            </ul>
+                        }
+                        @if(User.IsInRole(nameof(Roles.ProjectManager)))
+                        {
+                            <a class="has-arrow"><i class="icon-diamond"></i> <span>Project Manager</span></a>
+                            <ul>
+                            <li><a asp-controller="Projects" asp-action="Mange Projects">Manage Projects</a></li>
+                            <li><a asp-controller="Tickets" asp-action="AssignDeveloper">Assign Tickets</a></li>
                         </ul>
-                    </li>
-                    <li>
-                        <a href="#charts" class="has-arrow"><i class="icon-bar-chart"></i> <span>Charts</span></a>
-                        <ul>
-                            <li><a asp-controller="Chart" asp-action="Morris">Morris</a> </li>
-                            <li><a asp-controller="Chart" asp-action="Flot">Flot</a> </li>
-                            <li><a asp-controller="Chart" asp-action="ChartJs">ChartJS</a> </li>
-                            <li><a asp-controller="Chart" asp-action="JqueryKnob">Jquery Knob</a> </li>
-
-                            <li><a asp-controller="Chart" asp-action="Sparkline">Sparkline Chart</a></li>
-                            <li><a asp-controller="Chart" asp-action="Peity">Peity</a></li>
-                            <li><a asp-controller="Chart" asp-action="C3">C3 Charts</a></li>
-                            <li><a asp-controller="Chart" asp-action="Gauges">Gauges</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#Maps" class="has-arrow"><i class="icon-map"></i> <span>Maps</span></a>
-                        <ul>
-                            <li><a asp-controller="Map" asp-action="Google">Google Map</a></li>
-                            <li><a asp-controller="Map" asp-action="Yandex">Yandex Map</a></li>
-                            <li><a asp-controller="Map" asp-action="JVector">jVector Map</a></li>
-                        </ul>
+                        }
+                        
                     </li>
                 </ul>
             </nav>

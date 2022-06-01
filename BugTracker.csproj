@@ -18,6 +18,8 @@
     <Compile Remove="wwwroot\chart.js\**" />
     <Compile Remove="wwwroot\fontawesome\**" />
     <Compile Remove="wwwroot\img\**" />
+    <Compile Remove="wwwroot\scss\app\**" />
+    <Compile Remove="wwwroot\scss\bootstrap\**" />
     <Content Remove="Views\ProjectPriorities\**" />
     <Content Remove="Views\TicketAttachments\**" />
     <Content Remove="Views\TicketComments\**" />
@@ -29,6 +31,8 @@
     <Content Remove="wwwroot\chart.js\**" />
     <Content Remove="wwwroot\fontawesome\**" />
     <Content Remove="wwwroot\img\**" />
+    <Content Remove="wwwroot\scss\app\**" />
+    <Content Remove="wwwroot\scss\bootstrap\**" />
     <EmbeddedResource Remove="Views\ProjectPriorities\**" />
     <EmbeddedResource Remove="Views\TicketAttachments\**" />
     <EmbeddedResource Remove="Views\TicketComments\**" />
@@ -40,6 +44,8 @@
     <EmbeddedResource Remove="wwwroot\chart.js\**" />
     <EmbeddedResource Remove="wwwroot\fontawesome\**" />
     <EmbeddedResource Remove="wwwroot\img\**" />
+    <EmbeddedResource Remove="wwwroot\scss\app\**" />
+    <EmbeddedResource Remove="wwwroot\scss\bootstrap\**" />
     <None Remove="Views\ProjectPriorities\**" />
     <None Remove="Views\TicketAttachments\**" />
     <None Remove="Views\TicketComments\**" />
@@ -51,6 +57,8 @@
     <None Remove="wwwroot\chart.js\**" />
     <None Remove="wwwroot\fontawesome\**" />
     <None Remove="wwwroot\img\**" />
+    <None Remove="wwwroot\scss\app\**" />
+    <None Remove="wwwroot\scss\bootstrap\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -78,100 +86,6 @@
 	  <PackageReference Include="MimeKit" Version="3.1.0" />
     <PackageReference Include="Npgsql" Version="5.0.10" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.6" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\scss\app\styles.scss" />
-    <None Include="wwwroot\scss\app\_app.scss" />
-    <None Include="wwwroot\scss\app\_auth.scss" />
-    <None Include="wwwroot\scss\app\_base.scss" />
-    <None Include="wwwroot\scss\app\_header.scss" />
-    <None Include="wwwroot\scss\app\_mixins.scss" />
-    <None Include="wwwroot\scss\app\_sidepanel.scss" />
-    <None Include="wwwroot\scss\bootstrap\.DS_Store" />
-    <None Include="wwwroot\scss\bootstrap\scss\bootstrap-grid.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\bootstrap-reboot.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\bootstrap-utilities.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\bootstrap.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\forms\_floating-labels.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\forms\_form-check.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\forms\_form-control.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\forms\_form-range.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\forms\_form-select.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\forms\_form-text.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\forms\_input-group.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\forms\_labels.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\forms\_validation.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\helpers\_clearfix.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\helpers\_colored-links.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\helpers\_position.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\helpers\_ratio.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\helpers\_stretched-link.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\helpers\_text-truncation.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\helpers\_visually-hidden.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_alert.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_border-radius.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_box-shadow.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_breakpoints.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_buttons.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_caret.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_clearfix.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_color-scheme.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_container.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_deprecate.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_forms.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_gradients.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_grid.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_image.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_list-group.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_lists.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_pagination.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_reset-text.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_resize.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_table-variants.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_text-truncate.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_transition.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_utilities.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\mixins\_visually-hidden.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\utilities\_api.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\vendor\_rfs.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_accordion.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_alert.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_badge.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_breadcrumb.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_button-group.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_buttons.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_card.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_carousel.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_close.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_containers.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_dropdown.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_forms.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_functions.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_grid.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_helpers.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_images.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_list-group.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_mixins.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_modal.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_nav.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_navbar.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_offcanvas.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_pagination.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_popover.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_progress.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_reboot.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_root.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_spinners.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_tables.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_toasts.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_tooltip.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_transitions.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_type.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_utilities.scss" />
-    <None Include="wwwroot\scss\bootstrap\scss\_variables.scss" />
-    <None Include="wwwroot\scss\config.codekit3" />
-    <None Include="wwwroot\scss\portal.scss" />
   </ItemGroup>
 
 </Project>

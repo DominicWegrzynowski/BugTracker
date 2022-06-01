@@ -16,17 +16,9 @@
         <div id="navbar-menu">
             <ul class="nav navbar-nav">
                 <li>
-                    <a asp-controller="FileManager" asp-action="Dashboard" class="icon-menu d-none d-sm-block d-md-none d-lg-block"><i class="fa fa-folder-open-o"></i></a>
+                    <a class="btn btn-primary" asp-controller="Tickets" asp-action="Create">New Ticket</a>
                 </li>
-                <li>
-                    <a asp-controller="App" asp-action="Calendar" class="icon-menu d-none d-sm-block d-md-none d-lg-block"><i class="icon-calendar"></i></a>
-                </li>
-                <li>
-                    <a asp-controller="App" asp-action="Chat" class="icon-menu d-none d-sm-block"><i class="icon-bubbles"></i></a>
-                </li>
-                <li>
-                    <a asp-controller="App" asp-action="Inbox" class="icon-menu d-none d-sm-block"><i class="icon-envelope"></i><span class="notification-dot"></span></a>
-                </li>
+               
                 <li class="dropdown">
                     <a href="javascript:void(0);" class="dropdown-toggle icon-menu" data-toggle="dropdown">
                         <i class="icon-bell"></i>
@@ -104,7 +96,8 @@
                     </ul>
                 </li>
                 <li>
-                    <a asp-controller="Authentication" asp-action="Login" class="icon-menu"><i class="icon-login"></i></a>
+                    <a href="javascript:document.getElementById('logoutForm').submit();" class="icon-menu"><i class="icon-login"></i></a>
+                    <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"></form>
                 </li>
             </ul>
         </div>

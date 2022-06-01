@@ -3,7 +3,7 @@ $(function() {
     MorrisBarChart();
 
 });
-//======
+
 function MorrisBarChart() {
     Morris.Bar({
         element: 'm_bar_chart',
@@ -131,10 +131,11 @@ $('.knob2').knob({
 $('.sparkline-pie').sparkline('html', {
     type: 'pie',
     offset: 90,
-    width: '100px',
-    height: '100px',
-    sliceColors: ['#02b5b2', '#445771', '#ffcd55']
-})
+    width: '200px',
+    height: '200px',
+    sliceColors: ['#02b5b2', '#445771', '#ffcd55', '#7c69ef'],
+
+});
 
 $('.sparkbar').sparkline('html', { type: 'bar' });
 
