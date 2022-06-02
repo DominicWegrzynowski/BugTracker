@@ -11,569 +11,122 @@
     BTUser btUser = await UserManager.GetUserAsync(User);
 }
 
-@*Template Table*@
-<div class="app-wrapper">
-	    
-	    <div class="app-content pt-3 p-md-3 p-lg-4">
-		    <div class="container-xl">
-			@if(Model.Any())
-			{
-			    <div class="row g-3 mb-4 align-items-center justify-content-between">
-				    <div class="col-auto">
-			            <h1 class="app-page-title mb-0">Projects</h1>
-				    </div>
-			    </div>
-			   
-			    
-			    <nav id="orders-table-tab" class="orders-table-tab app-nav-tabs nav shadow-sm flex-column flex-sm-row mb-4">
-				    <a class="flex-sm-fill text-sm-center nav-link active" id="orders-all-tab" data-bs-toggle="tab" href="#orders-all" role="tab" aria-controls="orders-all" aria-selected="true">All</a>
-				    <a class="flex-sm-fill text-sm-center nav-link"  id="orders-paid-tab" data-bs-toggle="tab" href="#orders-paid" role="tab" aria-controls="orders-paid" aria-selected="false">Active</a>
-				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-pending-tab" data-bs-toggle="tab" href="#orders-pending" role="tab" aria-controls="orders-pending" aria-selected="false">Inactive</a>
-				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#orders-cancelled" role="tab" aria-controls="orders-cancelled" aria-selected="false">Archived</a>
-				</nav>
-				
-				
-				<div class="tab-content" id="orders-table-tab-content">
-					@*All Projects*@
-					<div class="tab-pane fade active show" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
-					    <div class="app-card app-card-orders-table shadow-sm mb-5">
-						    <div class="app-card-body pt-3 ps-3 pe-3">
-							    <div class="table-responsive p-2">
-							        <table id="allProjects" class="table app-table-hover mb-0 text-left">
-										<thead>
-											<tr>
-												<th class="cell">Project</th>
-												<th class="cell">End Date</th>
-												<th class="cell">Progress</th>
-												<th class="cell">Project Manager</th>
-												<th class="cell">Team</th>
-												<th class="cell">Status</th>
-												<th class="cell"></th>
-											</tr>
-										</thead>
-										<tbody>
-										@foreach(Project project in Model.Where(m => m.Archived == false))
-										{
-											<tr>
-												<td class="cell">
-													<span class="fw-bold">@project.Name</span>
-													<span class="note">Created @project.StartDate.ToString("MM.dd.yy")</span>
-												</td>
-												<td class="cell"><span class="truncate">@project.StartDate.ToString("MM.dd.yy")</span></td>
-												<td class="cell ">
-													<div class="progress">
-														@* Razor code block *@
-														@{
-															var start = project.StartDate.DateTime;
-															var end = project.EndDate.DateTime;
-															var today = DateTime.Now;
-															var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
-														}
-														<div class="progress-bar progress-bar-striped bg-primary" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
-															@* Use Progress Bar code variable here *@
-															<span class="progress-value">@percent%</span>
-														</div>
-													</div>
-												</td>
-												<td class="cell">
-													@{
-                                                        var projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
-                                                    }
-
-                                                    @if (projectManager is not null)
-                                                    {
-                                                        @if (projectManager.AvatarFileData is null)
-                                                        {
-                                                            <img class="rounded-circle shadow-sm" style="width:35px;height:35px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-                                                        }
-                                                        else
-                                                        {
-                                                            <img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(projectManager.AvatarFileData))" alt="@projectManager.FullName's avatar'" />
-														}
-														<span class="note">@projectManager.FullName</span>
-													}
-													else
-													{
-														<span class="truncate">Not Assigned</span>
-													}
-												</td>
-												<td class="cell">
-													@foreach(BTUser member in project.Members)
-													{
-                                                    
-														@if(member.AvatarFileData is null)
-														{ 
-															<img class="rounded-circle shadow-sm" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-														}
-														else
-														{
-															<img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" alt="@member.FullName's avatar'" />
-														}
-													}
-												</td>
-												<td class="cell">
-													
-														@if (DateTime.Now >= project.EndDate)
-														{
-														<span class="badge bg-warning">Inactive</span>
-														}
-														else
-														{
-															<span class="badge bg-success">Active</span>
-														}
-												</td>
-												<td class="cell text-center">
-													<a class="btn-sm app-btn-secondary me-2" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">
-														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-															<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-															<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-														</svg>
-													</a>
-													@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
-													{
-														<a class="btn-sm app-btn-secondary-warning me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
-															 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-																<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-																<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-															</svg>
-														</a>
-														<a class="btn-sm app-btn-secondary-danger g-2" asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id">
-															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-															  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-															  <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-															</svg>
-														</a>
-													}
-												</td>
-											</tr>
-										}
-		
-										</tbody>
-									</table>
-						        </div>
-						       
-						    </div>		
-						</div>
-			        </div>
-			        
-					@*Active Projects*@
-			        <div class="tab-pane fade" id="orders-paid" role="tabpanel" aria-labelledby="orders-paid-tab">
-					    <div class="app-card app-card-orders-table mb-5">
-						    <div class="app-card-body pt-3 ps-3 pe-3">
-							    <div class="table-responsive p-2">
-							        <table id="activeProjects" class="table app-table-hover mb-0 text-left">
-										<thead>
-											<tr>
-												<th class="cell">Project</th>
-												<th class="cell">End Date</th>
-												<th class="cell">Progress</th>
-												<th class="cell">Project Manager</th>
-												<th class="cell">Team</th>
-												<th class="cell">Status</th>
-												<th class="cell"></th>
-											</tr>
-										</thead>
-										<tbody>
-										@foreach(Project project in Model.Where(m => m.Archived == false && DateTime.Now < m.EndDate))
-										{
-											<tr>
-												<td class="cell">
-													<span class="fw-bold">@project.Name</span>
-													<span class="note">Created @project.StartDate.ToString("MM.dd.yy")</span>
-												</td>
-												<td class="cell"><span class="truncate">@project.StartDate.ToString("MM.dd.yy")</span></td>
-												<td class="cell">
-													<div class="progress">
-														@{
-															var start = project.StartDate.DateTime;
-															var end = project.EndDate.DateTime;
-															var today = DateTime.Now;
-															var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
-														}
-														<div class="progress-bar progress-bar-striped bg-primary" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
-															<span class="progress-value">@percent%</span>
-														</div>
-													</div>
-												</td>
-												<td class="cell">
-													@{
-                                                        var projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
-                                                    }
-
-                                                    @if (projectManager is not null)
-                                                    {
-                                                        @if (projectManager.AvatarFileData is null)
-                                                        {
-                                                            <img class="rounded-circle shadow-sm" style="width:35px;height:35px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-                                                        }
-                                                        else
-                                                        {
-                                                            <img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(projectManager.AvatarFileData))" alt="@projectManager.FullName's avatar'" />
-														}
-														<span class="note">@projectManager.FullName</span>
-													}
-													else
-													{
-														<span class="truncate">Not Assigned</span>
-													}
-												</td>
-												<td class="cell">
-													@foreach(BTUser member in project.Members)
-													{
-                                                    
-														@if(member.AvatarFileData is null)
-														{ 
-															<img class="rounded-circle shadow-sm" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-														}
-														else
-														{
-															<img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" alt="@member.FullName's avatar'" />
-														}
-													}
-												</td>
-												<td class="cell">
-													
-														@if (DateTime.Now >= project.EndDate)
-														{
-														<span class="badge bg-warning">Inactive</span>
-														}
-														else
-														{
-															<span class="badge bg-success">Active</span>
-														}
-												</td>
-												<td class="cell text-center">
-													<a class="btn-sm app-btn-secondary me-2" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">
-														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-															<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-															<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-														</svg>
-													</a>
-													@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
-													{
-														<a class="btn-sm app-btn-secondary-warning me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
-															 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-																<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-																<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-															</svg>
-														</a>
-														<a class="btn-sm app-btn-secondary-danger g-2" asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id">
-															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-															  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-															  <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-															</svg>
-														</a>
-													}
-												</td>
-											</tr>
-										}
-		
-										</tbody>
-									</table>
-						        </div>
-						    </div>		
-						</div>
-			        </div>
-			        
-					@*Inactive Projects*@
-			        <div class="tab-pane fade" id="orders-pending" role="tabpanel" aria-labelledby="orders-pending-tab">
-					    <div class="app-card app-card-orders-table mb-5">
-						    <div class="app-card-body pt-3 ps-3 pe-1">
-							@{
-								IEnumerable<Project> inactiveProjects;
-								inactiveProjects = Model.Where(m => DateTime.Now > m.EndDate);
-								IEnumerable<Project> test = inactiveProjects;
-							}
-							@if(inactiveProjects is null) 
-							{
-								<h3>No Inactive Projects</h3>
-							}
-							else 
-							{  
-							    <div class="table-responsive">
-							        <table id="inactiveProjects" class="table app-table-hover mb-0 text-left">
-										<thead>
-											<tr>
-												<th class="cell">Project</th>
-												<th class="cell">End Date</th>
-												<th class="cell">Progress</th>
-												<th class="cell">Project Manager</th>
-												<th class="cell">Team</th>
-												<th class="cell">Status</th>
-												<th class="cell"></th>
-											</tr>
-										</thead>
-										<tbody>
-										@foreach(Project project in Model.Where(m => m.Archived == false && DateTime.Now > m.EndDate))
-										{
-											<tr>
-												<td class="cell">
-													<span class="fw-bold">@project.Name</span>
-													<span class="note">Created @project.StartDate.ToString("MM.dd.yy")</span>
-												</td>
-												<td class="cell"><span class="truncate">@project.StartDate.ToString("MM.dd.yy")</span></td>
-												<td class="cell ">
-													<div class="progress">
-														@* Razor code block *@
-														@{
-															var start = project.StartDate.DateTime;
-															var end = project.EndDate.DateTime;
-															var today = DateTime.Now;
-															var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
-														}
-														<div class="progress-bar progress-bar-striped bg-primary" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
-															@* Use Progress Bar code variable here *@
-															<span class="progress-value">@percent%</span>
-														</div>
-													</div>
-												</td>
-												<td class="cell">
-													@{
-														var projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
-													}
-
-													@if (projectManager is not null)
-													{
-														@if (projectManager.AvatarFileData is null)
-														{
-															<img class="rounded-circle shadow-sm" style="width:35px;height:35px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-														}
-														else
-														{
-															<img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(projectManager.AvatarFileData))" alt="@projectManager.FullName's avatar'" />
-														}
-														<span class="note">@projectManager.FullName</span>
-													}
-													else
-													{
-														<span class="truncate">Not Assigned</span>
-													}
-												</td>
-												<td class="cell">
-													@foreach(BTUser member in project.Members)
-													{
-                                                    
-														@if(member.AvatarFileData is null)
-														{ 
-															<img class="rounded-circle shadow-sm" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-														}
-														else
-														{
-															<img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" alt="@member.FullName's avatar'" />
-														}
-													}
-												</td>
-												<td class="cell">
-													
-														@if (DateTime.Now >= project.EndDate)
-														{
-														<span class="badge bg-warning">Inactive</span>
-														}
-														else
-														{
-															<span class="badge bg-success">Active</span>
-														}
-												</td>
-												<td class="cell text-center">
-													<a class="btn-sm app-btn-secondary me-2" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">
-														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-															<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-															<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-														</svg>
-													</a>
-													@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
-													{
-														<a class="btn-sm app-btn-secondary-warning me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
-																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-																<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-																<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-															</svg>
-														</a>
-														<a class="btn-sm app-btn-secondary-primary g-2" asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id">
-															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-																<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-																<path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-															</svg>
-														</a>
-													}
-												</td>
-											</tr>
-										}
-										</tbody>
-									</table>
-								</div>
-							}
-						</div>	
-						</div>
-			        </div>
-
-					@*Archived Projects*@
-			        <div class="tab-pane fade" id="orders-cancelled" role="tabpanel" aria-labelledby="orders-cancelled-tab">
-					    <div class="app-card app-card-orders-table mb-5">
-						    <div class="app-card-body pt-3 ps-3 pe-3">
-								
-							@{
-								IEnumerable<Project> archivedProjects;
-								archivedProjects = Model.Where(m => m.Archived == true);
-							}
-
-							@if(archivedProjects is not null)
-							{ 
-								<div class="table-responsive">
-									<table id="archivedProjects" class="table app-table-hover mb-0 text-left">
-										<thead>
-											<tr>
-												<th class="cell">Project</th>
-												<th class="cell">End Date</th>
-												<th class="cell">Progress</th>
-												<th class="cell">Project Manager</th>
-												<th class="cell">Team</th>
-												<th class="cell">Status</th>
-												<th class="cell"></th>
-											</tr>
-										</thead>
-										<tbody>
-										@foreach(Project project in Model.Where(m => m.Archived == true))
-										{
-											
-												<tr>
-													<td class="cell">
-														<span class="fw-bold">@project.Name</span>
-														<span class="note">Created @project.StartDate.ToString("MM.dd.yy")</span>
-													</td>
-													<td class="cell"><span class="truncate">@project.StartDate.ToString("MM.dd.yy")</span></td>
-													<td class="cell ">
-														<div class="progress">
-															@* Razor code block *@
-															@{
-																var start = project.StartDate.DateTime;
-																var end = project.EndDate.DateTime;
-																var today = DateTime.Now;
-																var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
-															}
-															<div class="progress-bar progress-bar-striped bg-primary" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
-																@* Use Progress Bar code variable here *@
-																<span class="progress-value">@percent%</span>
-															</div>
-														</div>
-													</td>
-													<td class="cell">
-														@{
-															var projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
-														}
-
-														@if (projectManager is not null)
-														{
-															@if (projectManager.AvatarFileData is null)
-															{
-																<img class="rounded-circle shadow-sm" style="width:35px;height:35px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-															}
-															else
-															{
-																<img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(projectManager.AvatarFileData))" alt="@projectManager.FullName's avatar'" />
-															}
-															<span class="note">@projectManager.FullName</span>
-														}
-														else
-														{
-															<span class="truncate">Not Assigned</span>
-														}
-													</td>
-													<td class="cell">
-														@foreach (BTUser member in project.Members)
-														{
-
-															@if (member.AvatarFileData is null)
-															{
-																<img class="rounded-circle shadow-sm" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-															}
-															else
-															{
-																<img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" alt="@member.FullName's avatar'" />
-															}
-														}
-													</td>
-													<td class="cell">
-														<span class="badge bg-danger">Archived</span>
-													</td>
-													<td class="cell text-center">
-														<a class="btn-sm app-btn-secondary me-2" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">
-															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-																<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-																<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-															</svg>
-														</a>
-														@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
-														{
-															<a class="btn-sm app-btn-secondary-warning me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
-																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-																	<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-																	<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-																</svg>
-															</a>
-															<a class="btn-sm app-btn-secondary-danger g-2" asp-action="Restore" asp-controller="Projects" asp-route-id="@project.Id">
-																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
-																	<path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
-																	<path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
-																</svg>
-															</a>
-														}
-													</td>
-												</tr>
-										}
-										</tbody>
-									</table>
-								</div>
-							}
-							else
-							{
-								<h3>No Archived Projects</h3>	
-							}
-						</div>	
-						</div>
-			        </div>
-				</div>
-			}
-			else
-			{
-				<h3 class="text-muted text-center m-5">No Projects</h3>
-			}
-		    </div>
-	    </div>
-	    
-	    <footer class="app-footer">
-		    <div class="container text-center py-3">
-		         <!--/* This template is free as long as you keep the footer attribution link. If you'd like to use the template without the attribution link, you can buy the commercial license via our website: themes.3rdwavemedia.com Thank you for your support. :) */-->
-            <small class="copyright">Designed with <i class="fas fa-heart" style="color: #fb866a;"></i> by <a class="app-link" href="http://themes.3rdwavemedia.com" target="_blank">Xiaoying Riley</a> for developers</small>
-		       
-		    </div>
-	    </footer>	    
-</div>
-@section scripts{ 
-
-    <script>
-        $(document).ready(function () {
-            $("#allProjects").DataTable({
-                "scrollY" : "450px",
-                "scrollCollapse":true,
-                "paging": true
-            });
-			$("#activeProjects").DataTable({
-                "scrollY" : "450px",
-                "scrollCollapse":true,
-                "paging": true
-            }).columns.adjust().draw();
-			$("#inactiveProjects").DataTable({
-                "scrollY" : "450px",
-                "scrollCollapse":true,
-                "paging": true
-            }).columns.adjust().draw();
-			$("#archivedProjects").DataTable({
-                "scrollY" : "450px",
-                "scrollCollapse":true,
-                "paging": true
-            }).columns.adjust().draw();
-        });
-    </script>
-
+@section VendorCSS {
+    <link rel="stylesheet" href="~/vendor/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css">
+    <link rel="stylesheet" href="~/vendor/jquery-datatable/dataTables.bootstrap4.min.css">
 }
+
+
+<div class="row clearfix mt-4">
+	<div class="col-lg-12 col-md-12">
+		<div class="card">
+			<div class="body">
+                <div class="table-responsive">
+                    <table class="table table-hover js-basic-example dataTable table-custom mb-0">
+                        <thead>
+							<tr>
+								<th>Project</th>
+								<th>End Date</th>
+								<th>Progress</th>
+								<th>Project Manager</th>
+								<th>Team</th>
+								<th>Status</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (Project project in Model.Where(p => p.Archived == false))
+											{
+								<tr>
+									<td class="row">
+										<span class="col-12"><strong>@project.Name</strong></span>
+										<span class="col-12">Created @project.StartDate.ToString("MMMM dd, yyyy")</span>
+									</td>
+									<td>@project.EndDate.ToString("MMMM dd, yyyy")</td>
+									<td>
+										@{
+											var start = project.StartDate.DateTime;
+											var end = project.EndDate.DateTime;
+											var today = DateTime.Now;
+											var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
+										}
+										<div class="progress progress-xs progress-transparent custom-color-blue">
+											<div class="progress-bar" data-transitiongoal="87" style="width: @percent%;" aria-valuenow="@percent">
+											</div>
+										</div>
+										<span class="text-center">@percent% to completion</span>
+									</td>
+									@{
+										BTUser projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
+									}
+
+									@if(projectManager is null)
+									{
+										<td><strong>Unassigned</strong></td>
+									}
+
+									@if( projectManager is not null && projectManager.AvatarFileData is null)
+									{
+										<td>
+											<img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"  class="rounded-circle" style="width:40px;height:40px;"  title="@projectManager.FullName"  alt="Default Avatar" />
+											<span>@projectManager.FullName</span>
+										</td>
+									}
+									@if (projectManager is not null && projectManager.AvatarFileData is not null)
+									{
+										<td>
+											<img src="data:image/*;base64,@(Convert.ToBase64String(projectManager.AvatarFileData))"  class="rounded-circle" style="width:40px;height:40px;" title="@projectManager.FullName"  alt="@projectManager.FullName's Avatar" />
+											<span>@projectManager.FullName</span>
+										</td>
+									}
+									
+
+									<td>
+                                        <ul class="list-unstyled team-info pb-0 mb-0">
+                                            @foreach(BTUser member in project.Members)
+                                            {
+                                               @if(member.AvatarFileData is null)
+                                               {
+                                                   <li><img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" style="width:35px;height:35px;" title="@member.FullName"  alt="Default Avatar"></li>
+                                               }
+                                               @if(member.AvatarFileData is not null)
+                                                {
+                                                    <li><img src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))"  title="@member.FullName"  alt="@member.FullName's Avatar" /></li>
+                                                }
+                                            }
+                                        </ul>
+                                    </td>
+
+									@if(project.EndDate > DateTime.Now)
+									{
+										<td><span class="badge badge-success">Active</span></td>
+									}
+									@if(project.EndDate < DateTime.Now)
+									{
+										<td><span class="badge badge-default">Inactive</span></td>
+									}
+
+									<td>
+                                        <a asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id" class="btn btn-sm btn-outline-info"><i class="icon-eye"></i></a>
+                                        <a asp-controller="Projects" asp-action="Edit" asp-route-id="@project.Id" class="btn btn-sm btn-outline-secondary"><i class="icon-pencil"></i></a>
+                                        <a class="btn btn-sm btn-outline-danger" asp-controller="Projects" asp-action="Archive" asp-route-id="@project.Id"><i class="fa fa-file-archive-o"></i></a>
+                                    </td>
+
+								</tr>
+								
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts {
+    <script src="~/bundles/datatablescripts.bundle.js"></script>
+    <script src="~/js/pages/tables/jquery-datatable.js"></script>
+    
+}
+
