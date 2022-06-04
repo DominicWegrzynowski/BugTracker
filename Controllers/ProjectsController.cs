@@ -254,6 +254,7 @@ namespace BugTracker.Controllers
             AddProjectWithPMViewModel model = new();
 
             model.Project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
+            model.Project.CompanyId = companyId;
 
             model.PmList = new SelectList(await _rolesService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId), "Id", "FullName");
             model.PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
@@ -265,7 +266,7 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
+        public async Task<IActionResult> Edit([Bind("Project, PMList, PMId, PriorityList")]AddProjectWithPMViewModel model)
         {
             if (model is not null)
             {

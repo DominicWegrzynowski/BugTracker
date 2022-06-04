@@ -146,15 +146,11 @@
                                     </div>
                                 </li>
                              </ul>
-                            <br />
                         }
-
-
-                        
-
-
-
-
+                        @if(User.IsInRole(nameof(Roles.Admin)) || (User.IsInRole(nameof(Roles.ProjectManager)) && user.Id == projectManager.Id ))
+                        {
+                            <a class="btn btn-info text-center" asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@Model.Id">Manage Team</a>
+                        }
                     </div>
                 </div>
             </div>

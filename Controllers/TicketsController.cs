@@ -328,7 +328,7 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ProjectId,TicketStatusId,TicketTypeId,TicketPriorityId,OwnerUserId,DeveloperUserId,Title,Description,Created,Updated,Archived")] Ticket ticket)
         {
-                if (id != ticket.Id)
+            if (id != ticket.Id)
             {
                 return NotFound();
             }
