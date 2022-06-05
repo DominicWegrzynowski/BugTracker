@@ -9,274 +9,172 @@
 @{
     ViewData["Title"] = "All Tickets";
     BTUser user = await UserManager.GetUserAsync(User);
+
+    int resolvedTickets = Model.Where(t => t.TicketStatus.Name == "Resolved").Count();
+    
+    int openTickets = Model.Where(t => t.TicketStatus.Name != "Resolved" && t.Archived == false).Count();
+
+    int developmentTickets = Model.Where(t => t.TicketStatus.Name == "Development").Count();
+    
+
 }
 
-<style>
-    circle {
-      width: 100px;
-      margin: 6px 6px 20px;
-      display: inline-block;
-      position: relative;
-      text-align: center;
-      line-height: 1.2;
-    }
+@section VendorCSS {
+    <link rel="stylesheet" href="~/vendor/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css">
+    <link rel="stylesheet" href="~/vendor/jquery-datatable/dataTables.bootstrap4.min.css">
+}
 
-    .circle canvas {
-        vertical-align: top;
-    }
-
-    .circle strong {
-      position: absolute;
-      top: 23%;
-      left: 1%;
-      width: 100%;
-      text-align: center;
-      line-height: 40px;
-      font-size: 30px;
-      color: #3D3D3D;
-    }
-
-    .circle strong i {
-      font-style: normal;
-      font-size: 0.6em;
-      font-weight: normal;
-    }
-
-    .circle span {
-      display: block;
-      color: #aaa;
-      margin-top: 12px;
-    }
-
-</style>
-
-<div class="app-wrapper">
-    <div class="app-content pt-3 p-md-3 p-lg-4">
-        <div class="container-xl">
-            <h1 class="app-page-title">Tickets</h1>
-
-            <!--TOP ROW-->
-            <div class="row g-4 mb-4">
-                
-                <div class="col-6 col-lg-3">
-                    <div class="app-card app-card-stat shadow-sm h-100">
-                        <div class="card-body p-3 p-lg-4">
-                            <div class="circle">
-                                <div id="statusNewCircle">
-                                    <strong></strong>
-                                </div>
-                            </div>
-                            <h3 class="stats mt-2">@Model.Where(t => t.TicketStatus.Name == "New").Count()</h3>
-                            <h5 class="stats-type mb-1 ">Status: New</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-3">
-                    <div class="app-card app-card-stat shadow-sm h-100">
-                         <div class="card-body p-3 p-lg-4">
-                            <div class="circle">
-                                <div id="statusDevelopmentCircle">
-                                    <strong></strong>
-                                </div>
-                            </div>
-                            <h3 class="stats mt-2">@Model.Where(t => t.TicketStatus.Name == "Development").Count()</h3>
-                            <h4 class="stats-type mb-1 mt-3">Status: In Development</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-3">
-                    <div class="app-card app-card-stat shadow-sm h-100">
-                        <div class="card-body p-3 p-lg-4">
-                            <div class="circle">
-                                <div id="statusTestingCircle">
-                                    <strong></strong>
-                                </div>
-                            </div>
-                            <h3 class="stats mt-2">@Model.Where(t => t.TicketStatus.Name == "Testing").Count()</h3>
-                            <h5 class="stats-type mb-1 ">Status: Testing</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-3">
-                    <div class="app-card app-card-stat shadow-sm h-100">
-                        <div class="card-body p-3 p-lg-4">
-                            <div class="circle">
-                                <div id="statusResolvedCircle">
-                                    <strong></strong>
-                                </div>
-                            </div>
-                            <h3 class="stats mt-2">@Model.Where(t => t.TicketStatus.Name == "Resolved").Count()</h3>
-                            <h5 class="stats-type mb-1 ">Status: Resolved</h5>
-                        </div>
-                    </div>
-                </div>
+<div class="row clearfix">
+    <div class="col-lg-3">
+        <div class="card">
+            <div class="body text-center">
+                <h5 class="m-b-3">Open Tickets</h5>
+                <input readonly disabled type="text" class="knob" value="@openTickets" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#d9534f">
             </div>
-            <!--SECOND ROW-->
-            
-
-            @*FIFTH ROW*@
-            @*Tickets Table*@
-            <div class="row mb-1">
-                <div class="col">
-                    <div class="app-card app-card-orders-table shadow-sm mb-5">
-                        <div class="card-body pt-3 ps-3">
-                            <div class="table-responsive">
-                                <table id="ticketsTable" class="table app-table-hover mb-0 text-left">
-                                    <thead>
-                                        <tr>
-                                            <th class="cell">Title</th>
-                                            <th class="cell">Owner</th>
-                                            <th class="cell">Assigned to</th>
-                                            <th class="cell">Status</th>
-                                            <th class="cell">Priority</th>
-                                            <th class="cell">Date</th>
-                                            <th class="cell">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach(Ticket ticket in Model)
-                                        {     
-                                            <tr>
-                                                <td class="cell">@ticket.Title</td>
-                                                
-                                                @*Owner*@
-                                                @if(ticket.OwnerUserId is not null)
-                                                {
-                                                    <td class="cell">@ticket.OwnerUser.FullName</td>
-                                                }
-                                                else
-                                                {
-                                                    <td class="cell">SEEDED</td>
-                                                }
-
-                                                @*DeveloperUser*@
-                                                @if(ticket.DeveloperUserId is not null)
-                                                {
-                                                    <td class="cell">@ticket.DeveloperUser.FullName</td>
-                                                }
-                                                else
-                                                {
-                                                    <td class="cell"></td>
-                                                }
-
-                                                @*TicketStatus*@
-                                                @if(ticket.TicketStatus.Name == "New")
-                                                {
-                                                    <td class="cell">@ticket.TicketStatus.Name</td>
-                                                }
-                                                else
-                                                {
-                                                    <td class="cell">@ticket.TicketStatus.Name</td>
-                                                }
-
-                                                @*TicketPriority*@
-                                                <td class="cell">@ticket.TicketPriority.Name</td>
-                                            
-                                                @*TicketDate*@
-                                                <td class="cell">@ticket.Created.ToString("MM-dd-yyyy")</td>
-
-                                                @*Actions*@
-                                                <td class="cell text-center">
-												    <a class="btn-sm app-btn-secondary me-2" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id">
-													    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-														    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-														    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-													    </svg>
-												    </a>
-												    @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
-												    {
-													    <a class="btn-sm app-btn-secondary me-2" asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id">
-															    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-															    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-															    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-														    </svg>
-													    </a>
-													    <a class="btn-sm app-btn-secondary g-2" asp-action="Archive" asp-controller="Tickets" asp-route-id="@ticket.Id">
-														    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-															    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-															    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-														    </svg>
-													    </a>
-												    }
-											    </td>
-                                            </tr>
-
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card">
+            <div class="body text-center">
+                <h5 class="m-b-3">Resolved Tickets</h5>
+                <input readonly disabled type="text" class="knob" value="@resolvedTickets" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#5cb85c">
             </div>
-
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card">
+            <div class="body text-center">
+                <h5 class="m-b-3">Resolved Tickets</h5>
+                <input readonly disabled type="text" class="knob" value="93" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#5bc0de">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card">
+            <div class="body text-center">
+                <h5 class="m-b-3">Resolved Tickets</h5>
+                <input readonly disabled type="text" class="knob" value="93" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#8bc3fe">
+            </div>
         </div>
     </div>
 </div>
 
+
+
+@*Tickets Table*@
+<div class="row clearfix mt-2">
+    <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="body">
+                <div class="table-responsive">
+                    <table class="table table-hover js-basic-example dataTable table-custom mb-0">
+                        <thead>
+                            <tr>
+                                <th class="cell">Owner</th>
+                                <th class="cell">Assigned to</th>
+                                <th class="cell">Title</th>
+                                <th class="cell">Status</th>
+                                <th class="cell">Priority</th>
+                                <th class="cell">Date</th>
+                                <th class="cell">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(Ticket ticket in Model)
+                            {     
+                                <tr>            
+                                    @*Owner*@
+                                    @if(ticket.OwnerUserId is not null)
+                                    {
+                                        <td class="cell">@ticket.OwnerUser.FullName</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="cell">SEEDED</td>
+                                    }
+
+                                    @*DeveloperUser*@
+                                    @if(ticket.DeveloperUserId is not null)
+                                    {
+                                        <td class="cell">@ticket.DeveloperUser.FullName</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="cell"></td>
+                                    }
+                                    
+                                    @*Title*@
+                                    <td class="cell"><strong>@ticket.Title</strong></td>
+
+                                    @*TicketStatus*@
+                                    @if(ticket.TicketStatus.Name == "New")
+                                    {
+                                        <td class="cell"><span class="badge badge-success">@ticket.TicketStatus.Name</span></td>
+                                    }
+                                    @if(ticket.TicketStatus.Name == "Development")
+                                    {
+                                        <td class="cell"><span class="badge badge-info">@ticket.TicketStatus.Name</span></td>
+                                    }
+                                    @if(ticket.TicketStatus.Name == "Testing")
+                                    {
+                                        <td class="cell"><span class="badge badge-warning">@ticket.TicketStatus.Name</span></td>
+                                    }
+                                    @if(ticket.TicketStatus.Name == "Resolved")
+                                    {
+                                        <td class="cell"><span class="badge badge-default">@ticket.TicketStatus.Name</span></td>
+                                    }
+
+                                    @*TicketPriority*@
+                                    @if (ticket.TicketPriority.Name == "Low")
+                                    {
+                                        <td class="cell"><span class="badge badge-default">@ticket.TicketPriority.Name</span></td>
+                                    }
+                                    @if (ticket.TicketPriority.Name == "Medium")
+                                    {
+                                        <td class="cell"><span class="badge badge-info">@ticket.TicketPriority.Name</span></td>
+                                    }
+                                    @if (ticket.TicketPriority.Name == "High")
+                                    {
+                                        <td class="cell"><span class="badge badge-warning">@ticket.TicketPriority.Name</span></td>
+                                    }
+                                    @if (ticket.TicketPriority.Name == "Urgent")
+                                    {
+                                        <td class="cell"><span class="badge badge-danger">@ticket.TicketPriority.Name</span></td>
+                                    }
+
+                                    @*TicketDate*@
+                                    <td class="cell">@ticket.Created.ToString("MM-dd-yyyy")</td>
+
+                                    @*Actions*@
+                                    <td class="cell text-center">
+										<a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-info"><i class="icon-eye"></i></a>
+										@if(User.IsInRole(nameof(Roles.Admin)))
+										{
+											<a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-secondary"><i class="icon-pencil"></i></a>
+											<a class="btn btn-sm btn-outline-danger" asp-controller="Tickets" asp-action="Archive" asp-route-id="@ticket.Id"><i class="fa fa-file-archive-o"></i></a>
+										}
+									</td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+     
+
 @section scripts{ 
 
-    <script>
-        $(document).ready(function () {
-            $("#ticketsTable").DataTable({
-                "scrollY" : "450px",
-                "scrollCollapse":true,
-                "paging": true
-            });
-        });
-    </script>    
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-circle-progress/1.2.2/circle-progress.js"></script>
+    <script src="~/bundles/datatablescripts.bundle.js"></script>
+    <script src="~/js/pages/tables/jquery-datatable.js"></script>
     
-    <script>
-        $(document).ready(function () {
-            //New
-            $('#statusNewCircle').circleProgress({
-                value: @Model.Where(t => t.TicketStatus.Name == "New").Count() / @Model.Count(),
-                size: 100,
-                fill: {
-                    gradient: ["orange", "red"]
-                }
-            }).on('circle-animation-progress', function(event, progress) {
-                progress = @Model.Where(t => t.TicketStatus.Name == "New").Count() / @Model.Count();
-                $(this).find('strong').html(Math.round(100 * progress) + '<i>%</i>');
-            });
-            
-            //Development
-            $('#statusDevelopmentCircle').circleProgress({
-                value: @Model.Where(t => t.TicketStatus.Name == "Development").Count() / @Model.Count(),
-                size: 100,
-                fill: {
-                    gradient: ["lightblue", "blue"]
-                }
-            }).on('circle-animation-progress', function(event, progress) {
-                progress = @Model.Where(t => t.TicketStatus.Name == "Development").Count() / @Model.Count();
-                $(this).find('strong').html(Math.round(100 * progress) + '<i>%</i>');
-            });
-
-            //Testing
-            $('#statusTestingCircle').circleProgress({
-                value: @Model.Where(t => t.TicketStatus.Name == "Testing").Count() / @Model.Count(),
-                size: 100,
-                fill: {
-                    gradient: ["yellow", "gold"]
-                }
-            }).on('circle-animation-progress', function(event, progress) {
-                progress = @Model.Where(t => t.TicketStatus.Name == "Testing").Count() / @Model.Count();
-                $(this).find('strong').html(Math.round(100 * progress) + '<i>%</i>');
-            });
-
-            //Resolved
-            $('#statusResolvedCircle').circleProgress({
-                value: @Model.Where(t => t.TicketStatus.Name == "Resolved").Count() / @Model.Count(),
-                size: 100,
-                fill: {
-                    gradient: ["lightgreen", "green"]
-                }
-            }).on('circle-animation-progress', function(event, progress) {
-                progress = @Model.Where(t => t.TicketStatus.Name == "Resolved").Count() / @Model.Count();
-                $(this).find('strong').html(Math.round(100 * progress) + '<i>%</i>');
-            });
-        });
-    </script>
+    <script src="~/vendor/jquery-knob/jquery.knob.min.js"></script>
+    <script src="~/bundles/mainscripts.bundle.js"></script>
+    <script src="~/js/pages/charts/jquery-knob.js"></script>
+    
+   
 }
