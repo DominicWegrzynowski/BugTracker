@@ -24,7 +24,6 @@
 
     int developersCount = (await UserManager.GetUsersInRoleAsync(nameof(Roles.Developer))).Count;
 
-
 }
 
 @section VendorCSS {
@@ -303,7 +302,7 @@
                                     <td><span class="badge badge-danger">@project.EndDate.ToString("MM/dd/yyyy")</span></td>
                                     <td>
                                         <ul class="list-unstyled team-info pb-0 mb-0">
-                                            @foreach(BTUser member in project.Members)
+                                            @foreach(BTUser member in project.Members.Where(m => m.Id != projectManager.Id))
                                             {
                                                @if(member.AvatarFileData is null)
                                                {
@@ -410,9 +409,15 @@
                                     </td>
                                     <td>@ticket.Created.ToString("MM-dd-yyyy")</td>
                                     <td>
+                                        @{
+                                            BTUser projectManager = await ProjectService.GetProjectManagerAsync(ticket.Project.Id);
+                                        }
                                         <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-info"><i class="icon-eye"></i></a>
-                                        <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-secondary"><i class="icon-pencil"></i></a>
-                                        <a class="btn btn-sm btn-outline-danger" asp-controller="Tickets" asp-action="Archive" asp-route-id="@ticket.Id"><i class="fa fa-file-archive-o"></i></a>
+                                        @if (User.IsInRole(nameof(Roles.Admin)) || user.Id == projectManager.Id || user.Id == ticket.OwnerUserId)
+                                        {
+                                            <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-secondary"><i class="icon-pencil"></i></a>
+                                            <a class="btn btn-sm btn-outline-danger" asp-controller="Tickets" asp-action="Archive" asp-route-id="@ticket.Id"><i class="fa fa-file-archive-o"></i></a>
+                                        }
                                     </td>
                                     
                                 </tr>

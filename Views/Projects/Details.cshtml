@@ -225,8 +225,11 @@
 
 									<td>
                                         <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-info"><i class="icon-eye"></i></a>
-                                        <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-secondary"><i class="icon-pencil"></i></a>
-                                        <a class="btn btn-sm btn-outline-danger" asp-controller="Tickets" asp-action="Archive" asp-route-id="@ticket.Id"><i class="fa fa-file-archive-o"></i></a>
+                                        @if (User.IsInRole(nameof(Roles.Admin)) || user.Id == projectManager.Id || user.Id == ticket.OwnerUserId)
+                                        {
+                                            <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-secondary"><i class="icon-pencil"></i></a>
+                                            <a class="btn btn-sm btn-outline-danger" asp-controller="Tickets" asp-action="Archive" asp-route-id="@ticket.Id"><i class="fa fa-file-archive-o"></i></a>
+                                        }
                                     </td>
 
 								</tr>

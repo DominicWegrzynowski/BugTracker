@@ -31,7 +31,8 @@
                 <li><a asp-controller="App" asp-action="Inbox"><i class="icon-envelope-open"></i>Messages</a></li>
                 <li><a href="javascript:void(0);"><i class="icon-settings"></i>Settings</a></li>
                 <li class="divider"></li>
-                <li><a asp-controller="Authentication" asp-action="Login"><i class="icon-power"></i>Logout</a></li>
+                <li><a href="javascript:document.getElementById('logoutForm').submit();"><i class="icon-power"></i>Logout</a></li>
+                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"></form>
             </ul>
         </div>
         <hr>

@@ -1,250 +1,136 @@
 ﻿@model IEnumerable<BugTracker.Models.Project>
 @using BugTracker.Models.Enums
+@using Microsoft.AspNetCore.Identity
 @using BugTracker.Services.Interfaces
+
+@inject UserManager<BTUser> UserManager
 @inject IBTProjectService ProjectService
+
 @{
     ViewData["Title"] = "My Projects";
+    BTUser user = await UserManager.GetUserAsync(User);
 }
 
-<div class="app-wrapper">
-	    
-	    <div class="app-content pt-3 p-md-3 p-lg-4">
-		    <div class="container-xl">
-			@if (Model.Any())
-			{
-				<div class="row g-3 mb-4 align-items-center justify-content-between">
-					<div class="col-auto">
-						<h1 class="app-page-title mb-0">Projects</h1>
-					</div>
-				</div>
-				@*My Projects*@
-				<div class="app-card app-card-orders-table shadow-sm mb-5">
-					<div class="app-card-body pt-3 ps-3">
-						<div class="table-responsive">
-							<table id="myProjects" class="table app-table-hover">
-								<thead>
-									<tr>
-										<th class="cell">Project</th>
-										<th class="cell">End Date</th>
-										<th class="cell">Progress</th>
-										<th class="cell">Project Manager</th>
-										<th class="cell">Team</th>
-										<th class="cell">Status</th>
-										<th class="cell"></th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach (Project project in Model.Where(m => m.Archived == false))
-									{
-										<tr>
-											<td class="cell">
-												<span class="fw-bold">@project.Name</span>
-												<span class="note">Created @project.StartDate.ToString("MM.dd.yy")</span>
-											</td>
-											<td class="cell"><span class="truncate">@project.StartDate.ToString("MM.dd.yy")</span></td>
-											<td class="cell ">
-												<div class="progress">
-													@* Razor code block *@
-													@{
-														var start = project.StartDate.DateTime;
-														var end = project.EndDate.DateTime;
-														var today = DateTime.Now;
-														var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
-													}
-													<div class="progress-bar progress-bar-striped bg-primary" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
-														@* Use Progress Bar code variable here *@
-														<span class="progress-value">@percent%</span>
-													</div>
-												</div>
-											</td>
-											<td class="cell">
-												@{
-													var projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
-												}
+@section VendorCSS {
+    <link rel="stylesheet" href="~/vendor/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css">
+    <link rel="stylesheet" href="~/vendor/jquery-datatable/dataTables.bootstrap4.min.css">
+}
 
-												@if (projectManager is not null)
-												{
-													@if (projectManager.AvatarFileData is null)
-													{
-														<img class="rounded-circle shadow-sm" style="width:35px;height:35px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-													}
-													else
-													{
-														<img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(projectManager.AvatarFileData))" alt="@projectManager.FullName's avatar'" />
-													}
-													<span class="note">@projectManager.FullName</span>
-												}
-												else
-												{
-													<span class="truncate">Not Assigned</span>
-												}
-											</td>
-											<td class="cell">
-												@foreach (BTUser member in project.Members)
-												{
 
-													@if (member.AvatarFileData is null)
-													{
-														<img class="rounded-circle shadow-sm" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-													}
-													else
-													{
-														<img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" alt="@member.FullName's avatar'" />
-													}
-												}
-											</td>
-											<td class="cell">
+<div class="row clearfix mt-4">
+	<div class="col-lg-12 col-md-12">
+		<div class="card">
+			<div class="body">
+                <div class="table-responsive">
+                    <table class="table table-hover js-basic-example dataTable table-custom mb-0">
+                        <thead>
+							<tr>
+								<th>Project</th>
+								<th>End Date</th>
+								<th>Progress</th>
+								<th>Project Manager</th>
+								<th>Team</th>
+								<th>Status</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (Project project in Model.Where(p => p.Archived == false))
+							{
+								<tr>
+									<td class="row">
+										<span class="col-12"><strong>@project.Name</strong></span>
+										<span class="col-12">Created @project.StartDate.ToString("MMMM dd, yyyy")</span>
+									</td>
+									<td>@project.EndDate.ToString("MMMM dd, yyyy")</td>
+									<td>
+										@{
+											var start = project.StartDate.DateTime;
+											var end = project.EndDate.DateTime;
+											var today = DateTime.Now;
+											var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
+										}
+										<div class="progress progress-xs progress-transparent custom-color-blue">
+											<div class="progress-bar" data-transitiongoal="87" style="width: @percent%;" aria-valuenow="@percent">
+											</div>
+										</div>
+										<span class="text-center">@percent% to completion</span>
+									</td>
+									@{
+										BTUser projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
 
-												@if (DateTime.Now >= project.EndDate)
-												{
-													<span class="badge bg-warning">Inactive</span>
-												}
-												else
-												{
-													<span class="badge bg-success">Active</span>
-												}
-											</td>
-											<td class="cell text-center">
-												<a class="btn-sm app-btn-secondary me-2" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">
-													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-														<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-														<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-													</svg>
-												</a>
-												@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
-												{
-													<a class="btn-sm app-btn-secondary me-2" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">
-														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-															<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-															<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-														</svg>
-													</a>
-													<a class="btn-sm app-btn-secondary g-2" asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id">
-														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-															<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-															<path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-														</svg>
-													</a>
-												}
-											</td>
-										</tr>
+										Console.WriteLine(projectManager);
 									}
 
-								</tbody>
-							</table>
-						</div>
+									@if(projectManager is null)
+									{
+										<td><strong>Unassigned</strong></td>
+									}
 
-					</div>		
+									@if( projectManager is not null && projectManager.AvatarFileData is null)
+									{
+										<td>
+											<img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"  class="rounded-circle" style="width:40px;height:40px;"  title="@projectManager.FullName"  alt="Default Avatar" />
+											<span>@projectManager.FullName</span>
+										</td>
+									}
+									@if (projectManager is not null && projectManager.AvatarFileData is not null)
+									{
+										<td>
+											<img src="data:image/*;base64,@(Convert.ToBase64String(projectManager.AvatarFileData))"  class="rounded-circle" style="width:40px;height:40px;" title="@projectManager.FullName"  alt="@projectManager.FullName's Avatar" />
+											<span>@projectManager.FullName</span>
+										</td>
+									}
+									
+
+									<td>
+                                        <ul class="list-unstyled team-info pb-0 mb-0">
+                                            @foreach(BTUser member in project.Members.Where(m => m.Id != projectManager.Id))
+                                            {
+												@if(member.AvatarFileData is null)
+												{
+													<li><img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" style="width:35px;height:35px;" title="@member.FullName"  alt="Default Avatar"></li>
+												}
+												@if(member.AvatarFileData is not null)
+												{
+													<li><img src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))"  title="@member.FullName"  alt="@member.FullName's Avatar" /></li>
+												}
+                                            }
+                                        </ul>
+                                    </td>
+
+									@if(project.EndDate > DateTime.Now)
+									{
+										<td><span class="badge badge-success">Active</span></td>
+									}
+									@if(project.EndDate < DateTime.Now)
+									{
+										<td><span class="badge badge-default">Inactive</span></td>
+									}
+									<td>
+                                        <a asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id" class="btn btn-sm btn-outline-info"><i class="icon-eye"></i></a>
+										@if(User.IsInRole(nameof(Roles.Admin)))
+										{
+											<a asp-controller="Projects" asp-action="Edit" asp-route-id="@project.Id" class="btn btn-sm btn-outline-secondary"><i class="icon-pencil"></i></a>
+											<a class="btn btn-sm btn-outline-danger" asp-controller="Projects" asp-action="Archive" asp-route-id="@project.Id"><i class="fa fa-file-archive-o"></i></a>
+										}
+                                    </td>
+
+								</tr>
+								
+							}
+						</tbody>
+					</table>
 				</div>
-			}
-			else
-			{
-				<h3 class="text-muted text-center m-5">No Projects Assigned to You</h3>
-			}
+			</div>
 		</div>
-	    </div>    
+	</div>
 </div>
 
 
-@*@if(User.IsInRole(Roles.Admin.ToString()) || User.IsInRole(Roles.ProjectManager.ToString()))
-{
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-}*@
-
-@*<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-               @Html.DisplayNameFor(model => model.ImageFileData)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Archived)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Company)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProjectPriority)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @if(item.ImageFileData is not null)
-                {
-                    <img id="imageFileData" class="img-fluid img-thumbnail" style="width:100px;height:80px;" src="data:image/*;base64,@(Convert.ToBase64String(item.ImageFileData))">
-                }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Archived)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Company.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
-            </td>
-            <td>
-                
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
-                @if (User.IsInRole(Roles.Admin.ToString()) || User.IsInRole(Roles.ProjectManager.ToString()))
-                {
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
-                    @if(item.Archived)
-                    {
-                        <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
-                    }
-                    else
-                    {
-                        <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
-                    }
-                }
-            </td>
-        </tr>
+@section Scripts {
+    <script src="~/bundles/datatablescripts.bundle.js"></script>
+    <script src="~/js/pages/tables/jquery-datatable.js"></script>
+    
 }
-    </tbody>
-</table>
-*@
 
-@section scripts{ 
-
-    <script>
-        $(document).ready(function () {
-            $("#myProjects").DataTable({
-                "scrollY" : "450px",
-                "scrollCollapse":true,
-                "paging": true
-            });
-        });
-    </script>
-
-}
