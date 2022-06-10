@@ -12,6 +12,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using BugTracker.Models.ChartModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
@@ -88,6 +89,23 @@ namespace BugTracker.Controllers
 
             return View(allMembers);
 
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MemberProfile(string userId)
+        {
+            int companyId = User.Identity.GetCompanyId().Value; 
+            List<BTUser> companyMembers = await _companyService.GetAllMembersAsync(companyId);
+            BTUser member = companyMembers.Where(m => m.Id == userId).FirstOrDefault(); 
+
+            if(member is not null)
+            {
+                return View(member);
+            }
+            else
+            {
+                throw (new Exception());
+            }
         }
 
         [HttpPost]

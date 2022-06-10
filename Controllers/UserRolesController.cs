@@ -41,9 +41,10 @@ namespace BugTracker.Controllers
             foreach (BTUser user in users)
             {
                 ManageUserRolesViewModel viewModel = new();
-                viewModel.BTUser = user;
+                viewModel.Member = user;
                 IEnumerable<string> selectedRoles = await _rolesService.GetUserRolesAsync(user);
                 viewModel.Roles = new MultiSelectList(await _rolesService.GetRolesAsync(), "Name", "Name", selectedRoles);
+                viewModel.AssignedRoles = await _rolesService.GetUserRolesAsync(user);
 
                 model.Add(viewModel);
             }
@@ -56,12 +57,12 @@ namespace BugTracker.Controllers
         [Authorize(Roles="Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel member)
+        public async Task<IActionResult> ManageUserRoles([Bind("Member,Roles,SelectedRoles,AssignedRoles")]ManageUserRolesViewModel userVM)
         {
             int companyId = User.Identity.GetCompanyId().Value;            
-            BTUser user = (await _companyInfoService.GetAllMembersAsync(companyId)).FirstOrDefault(u => u.Id == member.BTUser.Id);
+            BTUser user = (await _companyInfoService.GetAllMembersAsync(companyId)).FirstOrDefault(u => u.Id == userVM.Member.Id);
             IEnumerable<string> roles = await _rolesService.GetUserRolesAsync(user);
-            string userRole = member.SelectedRoles.FirstOrDefault();
+            string userRole = userVM.SelectedRoles.FirstOrDefault();
 
             if(!string.IsNullOrEmpty(userRole))
             {

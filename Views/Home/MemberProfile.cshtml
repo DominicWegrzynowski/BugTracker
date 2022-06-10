@@ -1,0 +1,48 @@
+﻿@model BTUser
+@using BugTracker.Services.Interfaces
+
+@inject IBTRolesService RolesService
+
+@{
+    IEnumerable<string> roles = await RolesService.GetUserRolesAsync(Model);
+
+    string role = roles.FirstOrDefault();
+}
+
+<div class="row clearfix">
+    <div class="col-lg-4 col-md-12">
+        <div class="card profile-header">
+            <div class="body">
+                <div class="profile-image"> <img src="~/images/user.png" class="rounded-circle" alt=""> </div>
+                <div>
+                    <h4 class="m-b-0"><strong>@Model.FullName</strong></h4>
+                    <span class="badge badge-info">@role</span>
+
+                    <small class="text-muted">Email address:</small>
+                    <p>@Model.Email</p>
+                    <hr>
+                    <small class="text-muted">Mobile: </small>
+                    <p>@Model.PhoneNumber</p>
+                    <hr />
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="header">
+                <h2>Info</h2>
+            </div>
+            <div class="body">
+                <hr>
+                <small class="text-muted">Email address:</small>
+                <p>@Model.Email</p>
+                <hr>
+                <small class="text-muted">Mobile: </small>
+                <p>@Model.PhoneNumber</p>
+                <hr />
+            </div>
+        </div>
+    </div>
+</div>
