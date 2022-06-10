@@ -75,7 +75,12 @@
                                             <span class="badge badge-info">@role</span>
                                         }
                                     </td>
-
+                                    @*UPDATE:
+                                        -The model is not being passed into the controller upon subission of this form
+                                        -Why is this happening? 
+                                            -Route ID?
+                                            -hidden variables in form?
+                                    *@
                                     <form method="post" asp-action="ManageUserRoles" asp-controller="UserRoles">
                                         <input hidden asp-for="@membersVM.Member.Id" />
                                         <td>
