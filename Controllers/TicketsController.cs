@@ -62,7 +62,7 @@ namespace BugTracker.Controllers
 
                     ticketAttachment.Created = DateTimeOffset.Now;
                     ticketAttachment.UserId = _userManager.GetUserId(User);
-
+                    ticketAttachment.User = await _ticketService.GetUserById(ticketAttachment.UserId);
                     await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
 
                     await _historyService.AddHistoryAsync(ticketAttachment.TicketId, nameof(TicketAttachment), ticketAttachment.UserId);
@@ -93,6 +93,7 @@ namespace BugTracker.Controllers
 				try
 				{
                     ticketComment.UserId = _userManager.GetUserId(User);
+                    ticketComment.User = await _ticketService.GetUserById(ticketComment.UserId);
                     ticketComment.Created = DateTimeOffset.Now;
                     
                     await _ticketService.AddTicketCommentAsync(ticketComment);

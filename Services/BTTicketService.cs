@@ -18,10 +18,25 @@ namespace BugTracker.Services
         private readonly IBTRolesService _BTRolesService;
         private readonly IBTCompanyInfoService _BTCompanyInfoService;
         private readonly IBTProjectService _BTProjectService;
-        #endregion
+		#endregion
 
-        #region Constructor
-        public BTTicketService(ApplicationDbContext context, IBTRolesService bTRolesService, IBTCompanyInfoService bTCompanyInfoService, IBTProjectService bTProjectService)
+		#region GetUserById
+        public async Task<BTUser> GetUserById(string id)
+		{
+			try
+			{
+                return _context.Users.Where(u => u.Id == id).FirstOrDefault();
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+		}
+		#endregion
+
+
+		#region Constructor
+		public BTTicketService(ApplicationDbContext context, IBTRolesService bTRolesService, IBTCompanyInfoService bTCompanyInfoService, IBTProjectService bTProjectService)
         {
             _context = context;
             _BTRolesService = bTRolesService;

@@ -1,6 +1,8 @@
 ﻿using BugTracker.Data;
 using BugTracker.Models;
+using BugTracker.Models.Enums;
 using BugTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,17 +15,21 @@ namespace BugTracker.Services
     {
         #region Fields
         private readonly ApplicationDbContext _context;
-        #endregion
+        private readonly UserManager<BTUser> _userManager;
+        private readonly IBTRolesService _rolesService;
+		#endregion
 
-        #region Constructor
-        public BTTicketHistoryService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-        #endregion
+		#region Constructor
+		public BTTicketHistoryService(ApplicationDbContext context, UserManager<BTUser> userManager, IBTRolesService rolesService)
+		{
+			_context = context;
+			_userManager = userManager;
+			_rolesService = rolesService;
+		}
+		#endregion
 
-        #region Add History
-        public async Task AddHistoryAsync(Ticket oldTicket, Ticket newTicket, string userId)
+		#region Add History
+		public async Task AddHistoryAsync(Ticket oldTicket, Ticket newTicket, string userId)
         {
             //New ticket has been added
             if (oldTicket is null && newTicket is not null)
@@ -165,10 +171,10 @@ namespace BugTracker.Services
             }
 
         }
-        #endregion
+		#endregion
 
-        #region Add History(Overload)
-        public async Task AddHistoryAsync(int ticketId, string model, string userId)
+		#region Add History(Overload)
+		public async Task AddHistoryAsync(int ticketId, string model, string userId)
         {
             try
             {
