@@ -28,7 +28,7 @@
                 <div class="card">
                     <div class="body">
                         <h2>@Model.Title</h2>
-                        <p>@Model.Description</p>
+                        <p>@Html.Raw(Model.Description)</p>
                         @{
 							var start = Model.Project.StartDate.DateTime;
 							var end = Model.Project.EndDate.DateTime;
@@ -47,7 +47,6 @@
 							@if(Model.DeveloperUser is null)
 							{
 								<p>No developer assigned</p>
-								<a asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@Model.Id" class="btn btn-outline-primary">Assign Developer</a>
 							}
 							else
 							{
@@ -69,6 +68,16 @@
 								@Model.DeveloperUser.FullName
 							}
 						</div>
+						
+						@if(User.IsInRole(nameof(Roles.Admin)) || Model.DeveloperUserId == user.Id || projectManager.Id == user.Id)
+						{
+							<br />
+							<a class="btn btn-sm btn-outline-primary" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@Model.Id">Assign Developer</a>
+							<a class="btn btn-sm btn-outline-warning" asp-action="Edit" asp-controller="Tickets" asp-route-id="@Model.Id">Edit Ticket</a>
+							<a class="btn btn-sm btn-outline-danger"  asp-action="Archive" asp-controller="Tickets" asp-route-id="@Model.Id">Archive Ticket</a>
+						}
+						
+
                     </div>
                 </div>
             </div>
@@ -257,9 +266,15 @@
 													<img class="media-object" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="" style="width:45px;height:45px;"/>
 												}
 											
+											@{
+												ticketComment.User = Model.Project.Members.FirstOrDefault(m => m.Id == ticketComment.UserId);
+
+												var x = 9;
+											}
+
 										</div>
 										<div class="col-11 float-left">
-											<strong>@ticketComment.User.FullName</strong>
+											<strong>@ticketComment.User?.FullName</strong>
 											<br/>
 											<span class="text-muted" style="font-size:medium;">
 												<small>@ticketComment.Created.ToString("MM.dd.yyyy h:ss tt")</small>:
@@ -287,7 +302,7 @@
 						{
 							<div class="timeline-item blue" date-is="@history.Created.ToString("dd MMM yyyy")">
 								<h5>@history.Description</h5>
-								<span>By: <a asp-action="MemberProfile" asp-controller="Home" asp-route-userId="@history.User.Id" title="@history.User.FullName">@history.User.FullName</a></span>
+								<span>By: <a asp-action="MemberProfile" asp-controller="Home" asp-route-userId="@history.UserId" title="@history.User.FullName">@history.User.FullName</a></span>
 								@if(history.Description.Contains("New Ticket Created"))
 								{
 									<p>A new ticket was added.</p>

@@ -1,92 +1,98 @@
 ﻿@model BugTracker.Models.ViewModels.AddProjectWithPMViewModel;
 @using BugTracker.Models.Enums
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<BTUser> UserManager
+
 @{
     ViewData["Title"] = "Edit";
+
+    BTUser user = await UserManager.GetUserAsync(User);
 }
 
-<div class="app-wrapper">
-	<div class="app-content pt-3 p-md-3 p-lg-4">
-		<div class="container-xl">
-            <h3 class="d-flex justify-content-start">Edit Project</h3>
+@section VendorCSS {
+    <link rel="stylesheet" href="~/vendor/summernote/dist/summernote.css" />
+}
 
-			<div class="row g-3 mb-4 align-items-center justify-content-between">
-                <div class="col-6 text-start">
-                    <div class="app-card shadow-sm h-100 p-2">
-                        <div class="card-body">
-                            <form class="row g-3" asp-action="Edit" asp-controller="Projects" method="post" enctype="multipart/form-data">
-                                <input type="hidden" asp-for="Project.Id" />
-                                <input type="hidden" asp-for="Project.CompanyId" />
-                                <div class="form-group col-12">
-                                    <label asp-for="Project.Name" class="control-label"></label>
-                                    <input asp-for="Project.Name" class="form-control" />
-                                    <span asp-validation-for="Project.Name" class="text-danger"></span>
-                                </div>
-                                <div class="form-group col-12">
-                                    <label asp-for="Project.Description" class="control-label"></label>
-                                    <textarea asp-for="Project.Description" class="form-control" style="min-height: 70px;"></textarea>
-                                    <span asp-validation-for="Project.Description" class="text-danger"></span>
-                                </div>
-
-                                <div class="form-group col-6">
-                                    <label asp-for="Project.StartDate" class="control-label"></label>
-                                    <input asp-for="Project.StartDate" class="form-control" />
-                                    <span asp-validation-for="Project.StartDate" class="text-danger"></span>
-                                </div>
-                                <div class="form-group col-6">
-                                    <label asp-for="Project.EndDate" class="control-label"></label>
-                                    <input asp-for="Project.EndDate" class="form-control" />
-                                    <span asp-validation-for="Project.EndDate" class="text-danger"></span>
-                                </div>
-                                <div class="form-group col-12">
-                                    <label class="control-label">Choose a priority</label>
-                                    <select asp-for="Project.ProjectPriorityId" class ="form-control" asp-items="@Model.PriorityList"></select>
-                                </div>
+<div class="row clearfix">
+    <div class="col-6 text-start">
+        <div class="card">
+            <div class="body">
+                <form class="row g-3" asp-action="Edit" asp-controller="Projects" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="Project.Id" />
+                    <input type="hidden" asp-for="Project.CompanyId" />
+                    <div class="form-group col-12">
+                        <label asp-for="Project.Name" class="control-label"></label>
+                        <input asp-for="Project.Name" class="form-control" />
+                        <span asp-validation-for="Project.Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-12">
+                        <label asp-for="Project.Description" class="control-label"></label>
+                        <textarea asp-for="Project.Description" class="summernote"></textarea>
+                    </div>
+                    <div class="form-group col-6">
+                        <label asp-for="Project.StartDate" class="control-label"></label>
+                        <input asp-for="Project.StartDate" class="form-control" />
+                        <span asp-validation-for="Project.StartDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-6">
+                        <label asp-for="Project.EndDate" class="control-label"></label>
+                        <input asp-for="Project.EndDate" class="form-control" />
+                        <span asp-validation-for="Project.EndDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-12">
+                        <label class="control-label">Choose a priority</label>
+                        <select asp-for="Project.ProjectPriorityId" class ="form-control" asp-items="@Model.PriorityList"></select>
+                    </div>
             
-                                <div class="form-group col-6">
-                                    <label class="control-label">Project Image</label>
-                                    <input asp-for="Project.ImageFormFile" class="form-control" type="file" accept=".png,.jpg,.jpeg,.gif"
-                                           onchange="document.getElementById('imageFileData').src = window.URL.createObjectURL(this.files[0])"/>
-                                    <span asp-validation-for="Project.ImageFormFile"></span>
-                                </div>
-                                <div class="form-group col-6">
-                                    <label>Image Preview</label>
-                                    @if(Model.Project.ImageFileData is not null)
-                                    {
-                                        <img id="imageFileData" class="img-fluid img-thumbnail" style="width:100px;height:80px;" src="data:image/*;base64,@(Convert.ToBase64String(Model.Project.ImageFileData))">
-                                    }
-                                    else
-                                    {
+                    <div class="form-group col-6">
+                        <label class="control-label">Project Image</label>
+                        <input asp-for="Project.ImageFormFile" class="form-control" type="file" accept=".png,.jpg,.jpeg,.gif"
+                                onchange="document.getElementById('imageFileData').src = window.URL.createObjectURL(this.files[0])"/>
+                        <span asp-validation-for="Project.ImageFormFile"></span>
+                    </div>
+                    <div class="form-group col-6">
+                        <label>Image Preview</label>
+                        @if(Model.Project.ImageFileData is not null)
+                        {
+                            <img id="imageFileData" class="img-fluid img-thumbnail" style="width:100px;height:80px;" src="data:image/*;base64,@(Convert.ToBase64String(Model.Project.ImageFileData))">
+                        }
+                        else
+                        {
                                         
 
-                                    }
-                                </div>
-                                @if(User.IsInRole(Roles.Admin.ToString()))
-                                {
-                                    <div class="form-group">
-                                        <label class="control-label">Project Manager</label>
-                                        <select asp-for="PmId" class ="form-control" asp-items="@Model.PmList">
-                                            <option></option>
-                                        </select>
-                                    </div>
-                                }
-            
-                                <div class="form-group col-12 text-start">
-                                    <input type="submit" value="Submit Changes" class="btn btn-primary text-white" />
-                                </div>
-                            </form>
-                        </div>
+                        }
                     </div>
-                </div>
+                    @if(User.IsInRole(Roles.Admin.ToString()))
+                    {
+                        <div class="form-group col-12">
+                            <label class="control-label">Project Manager</label>
+                            <select asp-for="PmId" class ="form-control" asp-items="@Model.PmList">
+                                <option></option>
+                            </select>
+                        </div>
+                    }
+            
+                    <div class="form-group col-12 text-start">
+                        <input type="submit" value="Submit Changes" class="btn btn-primary text-white" />
+                    </div>
+
+                    <div class="form-group col-12 text-start">
+                        <a asp-action="Details" asp-controller="Projects" asp-route-id="@Model.Project.Id">Return to Details</a>
+                        |
+                        <a asp-action="AllProjects" asp-controller="Projects">Return to All Tickets</a>
+                        |
+                        <a asp-action="MyProjects" asp-controller="Projects" asp-route-id="@user.Id">Return to My Tickets</a>
+
+                    </div>
+                    
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-
-<hr />
-
-
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/vendor/summernote/dist/summernote.js"></script>
 }
