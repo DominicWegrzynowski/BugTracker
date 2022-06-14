@@ -201,6 +201,7 @@ namespace BugTracker.Controllers
                 
                 try
                 {
+
                     await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
                     
                 }
