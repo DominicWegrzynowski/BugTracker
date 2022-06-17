@@ -23,6 +23,8 @@
                    (await UserManager.GetUsersInRoleAsync(nameof(Roles.Submitter))).Count;
 
     int developersCount = (await UserManager.GetUsersInRoleAsync(nameof(Roles.Developer))).Count;
+    int submittersCount = (await UserManager.GetUsersInRoleAsync(nameof(Roles.Submitter))).Count;
+    int projectManagersCount = (await UserManager.GetUsersInRoleAsync(nameof(Roles.Submitter))).Count;
 
 }
 
@@ -91,8 +93,8 @@
     <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
         <div class="row clearfix">
             <div class="col-lg-12 col-md-12">
-                <div class="card top_counter h-100 pt-3">
-                    <div class="body">
+                <div class="card top_counter h-100 pt-2">
+                    <div class="body pb-0">
                         <div class="icon"><i class="fa fa-user"></i> </div>
                         <div class="content">
                             <div class="text">New Users</div>
@@ -100,8 +102,7 @@
                         </div>
                         <hr />
                     </div>
-                    
-                    <div class="body mt-0 pt-0">
+                    <div class="body mt-0 pt-0 pb-0">
                         <div class="icon"><i class="fa fa-users"></i> </div>
                         <div class="content">
                             <div class="text">Total Users</div>
@@ -110,7 +111,7 @@
                         <hr />
                     </div>
                     
-                    <div class="body mt-0 pt-0">
+                    <div class="body mt-0 pt-0 pb-0">
                         <div class="icon"><i class="fa fa-ticket"></i> </div>
                         <div class="content">
                             <div class="text">Tickets in Development</div>
@@ -119,7 +120,7 @@
                         <hr />
                     </div>
                     
-                    <div class="body mt-0 pt-0">
+                    <div class="body mt-0 pt-0 pb-0">
                         <div class="icon"><i class="fa fa-code"></i> </div>
                         <div class="content">
                             <div class="text">Total Developers</div>
@@ -132,14 +133,14 @@
     </div>
     @*Card 2 Stats*@
     <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
-        <div class="card h-100 pt-3">
+        <div class="card">
             <div class="header">
                 <h2>Company Data
                     <small>@company.Name</small>
                 </h2>
             </div>
             <div class="body">
-                <div class="list-group list-widget">
+                <div class="list-group list-widget pt-0 pb-0">
                     <div class="list-group-item">
                         <span class="badge badge-success">@allUsers</span>
                         <i class="fa fa-users text-muted"></i>Members
@@ -162,7 +163,7 @@
     </div>
     @*Card 3 Pie Chart*@
     <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
-        <div class="card h-100">
+        <div class="card">
             <div class="header">
                 <h2>Priority Projects<small>Project Priorities</small></h2>
             </div>
@@ -192,12 +193,9 @@
     
     @*Card 4 Stacked Chart*@
     <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
-        <div class="card">
-            <div class="header">
-                <h2>Top Products</h2>
-            </div>
+        <div class="card ">
             <div class="body">
-                <div id="chart-roles" class="ct-chart text-center"></div>
+                <div id="role-comp-chart" class="ct-chart"></div>
             </div>
         </div>
     </div>
@@ -441,52 +439,53 @@
     <script src="~/js/index4.js"></script>
     <script src="~/bundles/datatablescripts.bundle.js"></script>
     <script src="~/js/pages/tables/jquery-datatable.js"></script>
-    <script src="~/js/index7.js"></script>
+    <script src="~/js/index.js"></script>
 
 
+    <script src="~/bundles/chartist.bundle.js"></script>
+    <script src="~/js/pages/charts/chartjs.js"></script>
+   
 
     <script>
-        
         $(function() {
-            "use strict";
-
-                // top products =================
-                var dataStackedBar = {
-                    labels: ['P1','P2','P3','P4','P5','P6','P7'],
-                    series: [
-                        [1231,3205,4520,2351,5632,3205,4520],
-                        [2541,2583,1592,2674,2323,1592,2674],
-                        [1212,5214,2325,4235,2519,1212,5214],
-                    ]
-                };
-                new Chartist.Bar('#chart-roles', dataStackedBar, {
-                    height: "250px",
-                    stackBars: true,
-                    axisX: {
-                        showGrid: false
-                    },
-                    axisY: {
-                        labelInterpolationFnc: function(value) {
-                            return value;
-                        }
-                    },
-                    plugins: [
-                        Chartist.plugins.tooltip({
-                            appendToBody: true
-                        }),
-                        Chartist.plugins.legend({
-                            legendNames: ['Developers', 'Submitters', 'Project Managers']
-                        })
-                    ]
-                }).on('draw', function(data) {
-                        if (data.type === 'bar') {
-                            data.element.attr({
-                                style: 'stroke-width: 20px'
-                            });
-                        }
-                });
+            // stacked bar chart
+            var dataStackedBar = {
+                labels: ['P1', 'P2', 'P3', 'P4', 'P5', 'P6'],
+                series: [
+                    [235, 320, 40, 251, 295, 95],
+                    [241, 253, 192, 264, 305, 185],
+                    [122, 521, 225, 425, 215, 237],
+                ]
+            };
+            new Chartist.Bar('#role-comp-chart', dataStackedBar, {
+                height: "250px",
+                stackBars: true,
+                axisX: {
+                    showGrid: false
+                },
+                axisY: {
+                    labelInterpolationFnc: function (value) {
+                        return value;
+                    }
+                },
+                plugins: [
+                    Chartist.plugins.tooltip({
+                        appendToBody: true
+                    }),
+                    Chartist.plugins.legend({
+                        legendNames: ['Submitters', 'Developers', 'PMs']
+                    })
+                ]
+            }).on('draw', function (data) {
+                if (data.type === 'bar') {
+                    data.element.attr({
+                        style: 'stroke-width: 20px'
+                    });
+                }
+            });
         });
     </script>
+
 }
 
 
