@@ -26,6 +26,43 @@
     int submittersCount = (await UserManager.GetUsersInRoleAsync(nameof(Roles.Submitter))).Count;
     int projectManagersCount = (await UserManager.GetUsersInRoleAsync(nameof(Roles.Submitter))).Count;
 
+
+    //                                                  p1, p2, p3, p4, p5
+    //Make a list of developer counts in all projects. [2,  4,  6,  7 , 1]
+    List<int> projectsDeveloperCount = new();
+    List<int> projectsSubmitterCount = new();
+    List<int> projectsProjectManagerCount = new();
+
+    //make 3 lists containing allmembers by role
+    
+    foreach(Project project in Model.Projects)
+    {
+        IList<BTUser> allDevelopers = await UserManager.GetUsersInRoleAsync(nameof(Roles.Developer));
+        IList<BTUser> allSubmitters = await UserManager.GetUsersInRoleAsync(nameof(Roles.Submitter));
+        IList<BTUser> allProjectManagers = await UserManager.GetUsersInRoleAsync(nameof(Roles.ProjectManager));
+
+        //loop through each list of role based members and see if they are in the project
+        //Add a item to the projectsDeveloperCount and increment that item by 1
+
+        foreach(BTUser developer in allDevelopers)
+        {
+
+            if(project.Members.Contains(developer))
+            {
+            
+            }
+        }
+
+
+
+        
+    }
+    
+
+    
+    
+
+
 }
 
 @section VendorCSS {
@@ -440,8 +477,6 @@
     <script src="~/bundles/datatablescripts.bundle.js"></script>
     <script src="~/js/pages/tables/jquery-datatable.js"></script>
     <script src="~/js/index.js"></script>
-
-
     <script src="~/bundles/chartist.bundle.js"></script>
     <script src="~/js/pages/charts/chartjs.js"></script>
    
@@ -452,9 +487,9 @@
             var dataStackedBar = {
                 labels: ['P1', 'P2', 'P3', 'P4', 'P5', 'P6'],
                 series: [
-                    [235, 320, 40, 251, 295, 95],
-                    [241, 253, 192, 264, 305, 185],
-                    [122, 521, 225, 425, 215, 237],
+                    [235, 320, 40, 251, 295, 95], //Developers
+                    [241, 253, 192, 264, 305, 185], //Submitters
+                    [122, 521, 225, 425, 215, 237], //PMs
                 ]
             };
             new Chartist.Bar('#role-comp-chart', dataStackedBar, {
