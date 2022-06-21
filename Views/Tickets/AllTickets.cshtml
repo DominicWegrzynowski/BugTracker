@@ -11,12 +11,12 @@
     BTUser user = await UserManager.GetUserAsync(User);
 
     int resolvedTickets = Model.Where(t => t.TicketStatus.Name == "Resolved").Count();
-    
+
     int openTickets = Model.Where(t => t.TicketStatus.Name != "Resolved" && t.Archived == false).Count();
 
     int developmentTickets = Model.Where(t => t.TicketStatus.Name == "Development").Count();
-    
 
+    int urgentTickets = Model.Where(t => t.TicketPriority.Name == "Urgent").Count();
 }
 
 @section VendorCSS {
@@ -44,16 +44,16 @@
     <div class="col-lg-3">
         <div class="card">
             <div class="body text-center">
-                <h5 class="m-b-3">Resolved Tickets</h5>
-                <input readonly disabled type="text" class="knob" value="93" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#5bc0de">
+                <h5 class="m-b-3">Development Tickets</h5>
+                <input readonly disabled type="text" class="knob" value="@developmentTickets" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#5bc0de">
             </div>
         </div>
     </div>
     <div class="col-lg-3">
         <div class="card">
             <div class="body text-center">
-                <h5 class="m-b-3">Resolved Tickets</h5>
-                <input readonly disabled type="text" class="knob" value="93" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#8bc3fe">
+                <h5 class="m-b-3">Urgent Tickets</h5>
+                <input readonly disabled type="text" class="knob" value="@urgentTickets" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#8bc3fe">
             </div>
         </div>
     </div>
