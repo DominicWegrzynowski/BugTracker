@@ -26,49 +26,33 @@
     int submittersCount = (await UserManager.GetUsersInRoleAsync(nameof(Roles.Submitter))).Count;
     int projectManagersCount = (await UserManager.GetUsersInRoleAsync(nameof(Roles.Submitter))).Count;
 
-
-    //                                                  p1, p2, p3, p4, p5
-    //Make a list of developer counts in all projects. [2,  4,  6,  7 , 1]
     List<int> projectsDeveloperCount = new();
     List<int> projectsSubmitterCount = new();
     List<int> projectsProjectManagerCount = new();
-
-    //make 3 lists containing allmembers by role
-    
+    List<string> legendProjectNames = new();
+    int projectNameCount = 0;
+   
     foreach(Project project in Model.Projects)
     {
-        IList<BTUser> allDevelopers = await UserManager.GetUsersInRoleAsync(nameof(Roles.Developer));
-        IList<BTUser> allSubmitters = await UserManager.GetUsersInRoleAsync(nameof(Roles.Submitter));
-        IList<BTUser> allProjectManagers = await UserManager.GetUsersInRoleAsync(nameof(Roles.ProjectManager));
+        List<BTUser> devsOnProject = await ProjectService.GetProjectMembersByRoleAsync(project.Id, nameof(Roles.Developer));
+        List<BTUser> submittersOnProject = await ProjectService.GetProjectMembersByRoleAsync(project.Id, nameof(Roles.Submitter));
+        List<BTUser> pmsOnProject = await ProjectService.GetProjectMembersByRoleAsync(project.Id, nameof(Roles.ProjectManager));
 
-        //loop through each list of role based members and see if they are in the project
-        //Add a item to the projectsDeveloperCount and increment that item by 1
+        projectsDeveloperCount.Add(devsOnProject.Count);
+        projectsSubmitterCount.Add(submittersOnProject.Count);
+        projectsProjectManagerCount.Add(pmsOnProject.Count);
 
-        foreach(BTUser developer in allDevelopers)
-        {
-
-            if(project.Members.Contains(developer))
-            {
-            
-            }
-        }
-
-
-
-        
+        //Update Project name 
+        projectNameCount++;
+        string projectLegendName = $"P{projectNameCount}";
+        legendProjectNames.Add(projectLegendName);
     }
-    
-
-    
-    
-
 
 }
 
 @section VendorCSS {
     <link rel="stylesheet" href="~/vendor/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css">
     <link rel="stylesheet" href="~/vendor/jvectormap/jquery-jvectormap-2.0.3.min.css" />
-    <link rel="stylesheet" href="~/vendor/morrisjs/morris.min.css" />
     <link rel="stylesheet" href="~/vendor/nestable/jquery-nestable.css" />
     <link rel="stylesheet" href="~/vendor/jquery-datatable/dataTables.bootstrap4.min.css">
 
@@ -127,7 +111,7 @@
 @*Second Row : Charts/Data Points*@
 <div class="row clearfix">
     @*Card 1 Stats*@
-    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+    <div class="col-lg-3 col-md-6 col-sm-12 mb-1">
         <div class="row clearfix">
             <div class="col-lg-12 col-md-12">
                 <div class="card top_counter h-100 pt-2">
@@ -169,15 +153,15 @@
         </div>
     </div>
     @*Card 2 Stats*@
-    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+    <div class="col-lg-3 col-md-6 col-sm-12 mb-1">
         <div class="card">
-            <div class="header">
+            <div class="header pb-0 mb-1">
                 <h2>Company Data
                     <small>@company.Name</small>
                 </h2>
             </div>
             <div class="body">
-                <div class="list-group list-widget pt-0 pb-0">
+                <div class="list-group list-widget pt-0 pb-1 mt-0">
                     <div class="list-group-item">
                         <span class="badge badge-success">@allUsers</span>
                         <i class="fa fa-users text-muted"></i>Members
@@ -199,29 +183,46 @@
         </div>
     </div>
     @*Card 3 Pie Chart*@
-    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+    <div class="col-lg-3 col-md-6 col-sm-12 mb-1">
         <div class="card">
             <div class="header">
                 <h2>Priority Projects<small>Project Priorities</small></h2>
             </div>
-            <div class="body">
+
+            @{
+                decimal x = Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Urgent)).Count() / Model.Projects.Count * 100;
+
+                decimal urgentCount = Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Urgent)).Count();
+                decimal highCount = Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.High)).Count();
+                decimal mediumCount = Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Medium)).Count();
+                decimal lowCount = Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Low)).Count();
+
+                decimal projectCount = Model.Projects.Count;
+
+                decimal urgentPercent = (urgentCount / projectCount) * 100;
+                decimal highPercent = (highCount / projectCount) * 100;
+                decimal mediumPercent = (mediumCount / projectCount) * 100;
+                decimal lowPercent = (lowCount / projectCount) * 100;
+            }
+
+            <div class="body mt-0 pt-0">
                 <div class="sparkline-pie text-center">@Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Urgent)).Count(),@Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.High)).Count(),@Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Medium)).Count(), @Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Low)).Count()</div>
                 <div class="stats-report text-center">
                     <div class="stat-item">
                         <h5>@nameof(BTProjectPriority.Urgent)</h5>
-                        <b class="col-black">@(Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Urgent)).Count() / Model.Projects.Count * 100)%</b>
+                        <b class="col-black">@urgentPercent%</b>
                     </div>
                     <div class="stat-item">
                         <h5>@nameof(BTProjectPriority.High)</h5>
-                        <b class="col-black">@(Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.High)).Count() / Model.Projects.Count * 100)%</b>
+                        <b class="col-black">@highPercent%</b>
                     </div>
                     <div class="stat-item">
                         <h5>@nameof(BTProjectPriority.Medium)</h5>
-                        <b class="col-black">@(Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Medium)).Count() / Model.Projects.Count * 100)%</b>
+                        <b class="col-black">@mediumPercent%</b>
                     </div>
                     <div class="stat-item">
                         <h5>@nameof(BTProjectPriority.Low)</h5>
-                        <b class="col-black">@(Model.Projects.Where(p => p.ProjectPriority.Name == nameof(BTProjectPriority.Low)).Count() / Model.Projects.Count * 100)%</b>
+                        <b class="col-black">@lowPercent%</b>
                     </div>
                 </div>
             </div>
@@ -229,9 +230,12 @@
     </div>
     
     @*Card 4 Stacked Chart*@
-    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+    <div class="col-lg-3 col-md-6 col-sm-12 mb-1">
         <div class="card ">
-            <div class="body">
+            <div class="header mb-1 pb-0">
+                 <h2>Roles by Project</h2>
+            </div>
+            <div class="body mt-0 pt-0">
                 <div id="role-comp-chart" class="ct-chart"></div>
             </div>
         </div>
@@ -239,7 +243,7 @@
 </div>
 
 @*Third Row : Tables*@
-<div class="row clearfix mt-4">
+<div class="row clearfix">
     @*Members Table*@
     <div class="col-lg-5 col-md-12">
         <div class="card">
@@ -469,7 +473,7 @@
 
 @section Scripts {
     <script src="~/bundles/jvectormap.bundle.js"></script> <!-- JVectorMap Plugin Js -->
-    <script src="~/bundles/morrisscripts.bundle.js"></script>
+    
     <script src="~/bundles/knob.bundle.js"></script> <!-- Jquery Knob-->
     <script src="~/vendor/nestable/jquery.nestable.js"></script> <!-- Jquery Nestable -->
     <script src="~/js/pages/ui/sortable-nestable.js"></script>
@@ -479,17 +483,17 @@
     <script src="~/js/index.js"></script>
     <script src="~/bundles/chartist.bundle.js"></script>
     <script src="~/js/pages/charts/chartjs.js"></script>
-   
+  
 
     <script>
         $(function() {
             // stacked bar chart
             var dataStackedBar = {
-                labels: ['P1', 'P2', 'P3', 'P4', 'P5', 'P6'],
+                labels: @Html.Raw(Json.Serialize(legendProjectNames)),
                 series: [
-                    [235, 320, 40, 251, 295, 95], //Developers
-                    [241, 253, 192, 264, 305, 185], //Submitters
-                    [122, 521, 225, 425, 215, 237], //PMs
+                    @Html.Raw(Json.Serialize(projectsDeveloperCount)),
+                    @Html.Raw(Json.Serialize(projectsProjectManagerCount)),
+                    @Html.Raw(Json.Serialize(projectsSubmitterCount)),
                 ]
             };
             new Chartist.Bar('#role-comp-chart', dataStackedBar, {

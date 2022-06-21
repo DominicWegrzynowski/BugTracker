@@ -31,7 +31,7 @@
                 <div class="card">
                     <div class="body">
                         <h2>@Model.Name</h2>
-                        <p>@Model.Description</p>
+                        <p>@Html.Raw(Model.Description)</p>
                         @{
 							var start = Model.StartDate.DateTime;
 							var end = Model.EndDate.DateTime;
