@@ -48,10 +48,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach(ManageUserRolesViewModel membersVM in Model.Where(m => !m.AssignedRoles.Contains(nameof(Roles.Admin))))
-                            {     
+                            
+
+                            @foreach(var member in Model.Where(m => !m.AssignedRoles.Contains(nameof(Roles.Admin))))
+                            {
                                 <tr>
-                                    @if(membersVM.Member.AvatarFileData is null)
+                                    @if(member.BTUser.AvatarFileData is null)
                                     {
                                         <td >
                                             <img class="rounded-circle" style="width:30px;height:30px;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
@@ -60,13 +62,13 @@
                                     else
                                     {
                                         <td class="cell">
-                                            <img class="rounded-circle" style="width:60px;height:60px;" src="data:image/*;base64,@(Convert.ToBase64String(membersVM.Member.AvatarFileData))" alt="@membersVM.Member.FullName's avatar'" />
+                                            <img class="rounded-circle" style="width:60px;height:60px;" src="data:image/*;base64,@(Convert.ToBase64String(member.BTUser.AvatarFileData))" alt="@member.BTUser.FullName's avatar'" />
                                         </td>
                                     }
-                                    <td><strong>@membersVM.Member.FullName</strong> <br /> @membersVM.Member.Email.ToLower()</td>
+                                    <td><strong>@member.BTUser.FullName</strong> <br /> @member.BTUser.Email.ToLower()</td>
 
                                     @{
-                                        var memberRoles = await RolesService.GetUserRolesAsync(membersVM.Member);
+                                        var memberRoles = await RolesService.GetUserRolesAsync(member.BTUser);
                                     }
                                                 
                                     <td>
@@ -82,13 +84,15 @@
                                             -hidden variables in form?
                                     *@
                                     <form method="post" asp-action="ManageUserRoles" asp-controller="UserRoles">
-                                        <input hidden asp-for="@membersVM.Member.Id" />
+                                        <input hidden asp-for="@member.BTUser" />
+                                        <input hidden asp-for="@member.Roles" />
+                                        <input hidden asp-for="@member.AssignedRoles" />
                                         <td>
-                                            <select asp-for="@membersVM.SelectedRoles" asp-items="@membersVM.Roles" id="multiselect1" class="multiselect multiselect-custom" multiple="multiple">
+                                            <select asp-for="@member.SelectedRoles" asp-items="@member.Roles" id="multiselect1" class="multiselect multiselect-custom" multiple="multiple">
                                                 
                                             </select>
                                         </td>
-                                        <td><button class="btn btn-outline-success" type="submit">Submit</button></td>
+                                        <td><input class="btn btn-outline-success" value="Assign Role" type="submit" /></td>
                                     </form>
                                     
                                 </tr>
@@ -102,37 +106,6 @@
     </div>
 </div>
 
-
-@*Other Template*@
-<div class="row clearfix">
-    @foreach(ManageUserRolesViewModel memberModel in Model)
-    {
-        <div class="col-lg-3 col-md-12 col-sm-12">
-            <div class="row clearfix">
-                <div class="card top_counter h-100 pt-3">
-                    <div class="body">
-                        <h4>@memberModel.Member.FullName</h4>
-                        <hr/>
-                        <form asp-action="ManageUserRoles" asp-controller="UserRoles" method=post>
-                            <input type="hidden" asp-for="@memberModel.Member.Id"/> 
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <select asp-for="@memberModel.SelectedRoles" id="optgroup" class="ms" multiple="multiple" asp-items="@memberModel.Roles"></select>
-                                        <hr />
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="submit" value="Assign Role" class="btn btn-primary text-white" />
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>              
-    }
-</div>
 
 @section scripts{ 
     <script src="~/bundles/datatablescripts.bundle.js"></script>
