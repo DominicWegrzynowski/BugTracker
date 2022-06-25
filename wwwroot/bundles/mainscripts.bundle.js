@@ -58,7 +58,6 @@ function setModeFromSession() {
 	
 	var mode = sessionStorage.getItem('lucidThemeMode');
 	var $logo = $('.img-responsive.logo');
-	var $iotAppliences = $('.iot-appliances-widget');
 
 	if (mode == null) {
 		mode = 'light';
@@ -72,19 +71,10 @@ function setModeFromSession() {
 	if (mode == 'light') {
 		$body.removeClass('full-dark');
 		$logo.attr('src', '/images/BugTrackerHeader.svg');
-		if ($iotAppliences) {
-			$('.iot-appliances-widget.air-conditionar').attr('src', '/images/air-conditioner.png');
-			$('.iot-appliances-widget.fridge').attr('src', '/images/fridge.png');
-			$('.iot-appliances-widget.washing-machine').attr('src', '/images/washing-machine.png');
-		}
+		
 	} else {
 		$body.addClass('full-dark');
 		$logo.attr('src', '/images/logo-white.svg');
-		if ($iotAppliences) {
-			$('.iot-appliances-widget.air-conditionar').attr('src', '/images/air-conditioner-grey.png');
-			$('.iot-appliances-widget.fridge').attr('src', '/images/fridge-grey.png');
-			$('.iot-appliances-widget.washing-machine').attr('src', '/images/washing-machine-grey.png');
-		}
     }
 }
 
@@ -94,7 +84,7 @@ function modeChanger() {
 		var $body = $('body');
 		var $this = $(this);
 		var $logo = $('.img-responsive.logo');
-		var $iotAppliences = $('.iot-appliances-widget');
+		
 
 		
 		var existTheme = $('.choose-mode li.active').data('mode');
@@ -102,19 +92,11 @@ function modeChanger() {
 		if (existTheme == 'dark') {
 			$body.removeClass('full-dark');
 			$logo.attr('src', '/images/BugTrackerHeader.svg');
-			if ($iotAppliences) {
-				$('.iot-appliances-widget.air-conditionar').attr('src', '/images/air-conditioner.png');
-				$('.iot-appliances-widget.fridge').attr('src', '/images/fridge.png');
-				$('.iot-appliances-widget.washing-machine').attr('src', '/images/washing-machine.png');
-			}
+			
 		} else {
 			$body.addClass('full-dark');
-			$logo.attr('src', '/images/logo-white.svg');
-			if ($iotAppliences) {
-				$('.iot-appliances-widget.air-conditionar').attr('src', '/images/air-conditioner-grey.png');
-				$('.iot-appliances-widget.fridge').attr('src', '/images/fridge-grey.png');
-				$('.iot-appliances-widget.washing-machine').attr('src', '/images/washing-machine-grey.png');
-			}
+			$logo.attr('src', '/images/BugTrackerHeader.svg');
+			
 		}
 		$this.addClass('active');
 		
