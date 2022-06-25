@@ -71,7 +71,7 @@ function setModeFromSession() {
 
 	if (mode == 'light') {
 		$body.removeClass('full-dark');
-		$logo.attr('src', '/images/logo.svg');
+		$logo.attr('src', '/images/BugTrackerHeader.svg');
 		if ($iotAppliences) {
 			$('.iot-appliances-widget.air-conditionar').attr('src', '/images/air-conditioner.png');
 			$('.iot-appliances-widget.fridge').attr('src', '/images/fridge.png');
@@ -101,7 +101,7 @@ function modeChanger() {
 		$('.choose-mode li').removeClass('active');
 		if (existTheme == 'dark') {
 			$body.removeClass('full-dark');
-			$logo.attr('src', '/images/logo.svg');
+			$logo.attr('src', '/images/BugTrackerHeader.svg');
 			if ($iotAppliences) {
 				$('.iot-appliances-widget.air-conditionar').attr('src', '/images/air-conditioner.png');
 				$('.iot-appliances-widget.fridge').attr('src', '/images/fridge.png');
@@ -233,9 +233,9 @@ $(document).ready(function() {
 
 	$(window).on('load resize', function() {
 		if($(window).innerWidth() < 420) {
-			$('.navbar-brand logo.svg').attr('src', '../../images/logo-icon.svg');
+			$('.navbar-brand BugTrackerHeader.svg').attr('src', '../../images/logo-icon.svg');
 		} else {
-			$('.navbar-brand logo-icon.svg').attr('src', '../../images/logo.svg');
+			$('.navbar-brand logo-icon.svg').attr('src', '../../images/BugTrackerHeader.svg');
 		}
 	});
 

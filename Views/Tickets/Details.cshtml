@@ -50,8 +50,6 @@
 							}
 							else
 							{
-								
-							
 								@if(Model.DeveloperUser.AvatarFileData is null)
 								{
 									<a asp-action="MemberProfile" asp-controller="Home" asp-route-userId="@Model.DeveloperUser?.Id">
@@ -68,11 +66,14 @@
 								@Model.DeveloperUser.FullName
 							}
 						</div>
-						
+						<br />
+						@if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+						{
+							<a class="btn btn-sm btn-outline-primary" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@Model.Id">Assign Developer</a>
+						}
 						@if(User.IsInRole(nameof(Roles.Admin)) || Model.DeveloperUserId == user.Id || projectManager.Id == user.Id)
 						{
-							<br />
-							<a class="btn btn-sm btn-outline-primary" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@Model.Id">Assign Developer</a>
+							
 							<a class="btn btn-sm btn-outline-warning" asp-action="Edit" asp-controller="Tickets" asp-route-id="@Model.Id">Edit Ticket</a>
 							<a class="btn btn-sm btn-outline-danger"  asp-action="Archive" asp-controller="Tickets" asp-route-id="@Model.Id">Archive Ticket</a>
 						}
