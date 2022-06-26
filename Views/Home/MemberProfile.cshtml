@@ -1,48 +1,108 @@
 ﻿@model BTUser
+@using BugTracker.Extensions
 @using BugTracker.Services.Interfaces
 
 @inject IBTRolesService RolesService
-
+@inject IBTProjectService ProjectsService
 @{
     IEnumerable<string> roles = await RolesService.GetUserRolesAsync(Model);
 
     string role = roles.FirstOrDefault();
+
+    int companyId = User.Identity.GetCompanyId().Value;
+
+    List<Project> allProjects = await ProjectsService.GetAllProjectsByCompanyAsync(companyId);
+    List<Project> memberProjects = new();
+    foreach(Project project in allProjects)
+    {
+        if((await ProjectsService.IsUserOnProjectAsync(Model.Id, project.Id)) == true)
+        {
+            memberProjects.Add(project);
+        }
+    }
+
+    ViewData["Title"] = "Member Profile";
+    ViewData["MainMenu"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
 }
 
 <div class="row clearfix">
     <div class="col-lg-4 col-md-12">
         <div class="card profile-header">
             <div class="body">
-                <div class="profile-image"> <img src="~/images/user.png" class="rounded-circle" alt=""> </div>
+
+                 @if (Model.AvatarFileData is null)
+                {
+                    <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" class="profile-image" alt="Default Avatar">
+                }
+                else
+                {
+                    <img src="data:image/*;base64,@(Convert.ToBase64String(Model.AvatarFileData))" class="profile-image" alt="@Model.FullName's Avatar" /> 
+                }
+
                 <div>
                     <h4 class="m-b-0"><strong>@Model.FullName</strong></h4>
                     <span class="badge badge-info">@role</span>
-
+                    <br />
                     <small class="text-muted">Email address:</small>
                     <p>@Model.Email</p>
-                    <hr>
                     <small class="text-muted">Mobile: </small>
-                    <p>@Model.PhoneNumber</p>
-                    <hr />
+                    @if(Model.PhoneNumber is null)
+                    {
+                        <p>No phone number</p>
+                    }
+                    else
+                    {
+                        <p>@Model.PhoneNumber</p>
+                    }
 
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<div class="row clearfix">
+    @foreach(Project project in memberProjects)
+    {    
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <div class="header">
+                    <h2>@project.Name<small>@project.ProjectPriority.Name</small></h2>
+                </div>
+                <div class="body">
+                    <p style="overflow-y:auto;max-height:100px;min-height:100px;">@project.Description</p>
+                    <ul class="list-unstyled team-info m-t-20">
+                        <li class="m-r-15"><small class="text-muted">Team</small></li>
+                        @foreach(BTUser member in project.Members)
+                        {
+                            @if(member.AvatarFileData is null)
+						    {
+							    <li><a asp-action="MemberProfile" asp-controller="Home" asp-route-userId="@member.Id"><img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" style="width:35px;height:35px;" title="@member.FullName"  alt="Default Avatar"></a></li>
+						    }
+						    @if(member.AvatarFileData is not null)
+						    {
+							        <li><a asp-action="MemberProfile" asp-controller="Home" asp-route-userId="@member.Id"><img src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))"  title="@member.FullName"  alt="@member.FullName's Avatar" /></a></li>
+						    }
+                        }
 
+                        @if(project.Members.Count < 1)
+                        {
+                            <li><span><strong>No Assigned Members</strong></span></li>
+                        }
 
-        <div class="card">
-            <div class="header">
-                <h2>Info</h2>
-            </div>
-            <div class="body">
-                <hr>
-                <small class="text-muted">Email address:</small>
-                <p>@Model.Email</p>
-                <hr>
-                <small class="text-muted">Mobile: </small>
-                <p>@Model.PhoneNumber</p>
-                <hr />
+                        <a asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@project.Id" class="btn btn-sm btn-info float-right">Manage Team</a>
+                    </ul>
+                    <div class="progress progress-xs progress-transparent custom-color-blue">
+                        <div class="progress-bar" data-transitiongoal="87"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-7">
+                            <small>TICKETS: @project.Tickets.Count</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    }
 </div>

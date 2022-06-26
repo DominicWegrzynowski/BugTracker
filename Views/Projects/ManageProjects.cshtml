@@ -7,13 +7,7 @@
 @inject IBTProjectService ProjectService
 
 @{
-    ViewData["Title"] = "All Projects";
-    BTUser btUser = await UserManager.GetUserAsync(User);
-}
-
-
-
-@{
+     BTUser btUser = await UserManager.GetUserAsync(User);
     ViewData["Title"] = "Manage Projects";
     ViewData["MainMenu"] = "Page";
     Layout = "~/Views/Shared/_Layout.cshtml";
