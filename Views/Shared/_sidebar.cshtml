@@ -79,7 +79,6 @@
                             <li><a asp-controller="Tickets" asp-action="MyTickets">My Tickets</a></li>
                             @if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
                             {
-                                <li><a asp-controller="Tickets" asp-action="AssignDeveloper">Assign Tickets</a></li>
                                 <li><a asp-controller="Tickets" asp-action="Create">Add Ticket</a></li>
                                 <li><a asp-controller="Tickets" asp-action="UnassignedTickets">Unassigned Tickets</a></li>
 
@@ -95,10 +94,7 @@
                             <ul>
                                 <li><a asp-controller="Invites" asp-action="Create"><i class=" icon-user-follow float-left"></i>Company Invite</a></li>
                                 <li><a asp-controller="UserRoles" asp-action="ManageUserRoles"><i class=" icon-user float-left"></i>Manage Roles</a></li>
-                                <li><a asp-controller="Projects" asp-action="AssignPM">Assign Project Manager</a></li>
-                                <li><a asp-controller="Projects" asp-action="Mange Projects">Manage Projects</a></li>
-                                <li><a asp-controller="Tickets" asp-action="AssignDeveloper" asp-route-id="">Assign Developer</a></li>
-                                <li><a asp-controller="Home" asp-action="MemberProfiles">Assign Project Manager</a></li>
+                                <li><a asp-controller="Projects" asp-action="">ManageProjects</a></li>
                             </ul>
                         }
                         @if(User.IsInRole(nameof(Roles.ProjectManager)))
