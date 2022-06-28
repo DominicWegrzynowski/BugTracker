@@ -154,7 +154,7 @@ namespace BugTracker.Controllers
 
                 foreach (Ticket ticket in tickets)
                 {
-                    if (await _projectService.IsAssignedProjectManagerAsync(userId, ticket.Id))
+                    if (await _projectService.IsAssignedProjectManagerAsync(userId, ticket.ProjectId))
                     {
                         pmTickets.Add(ticket);
                     }
@@ -170,8 +170,6 @@ namespace BugTracker.Controllers
         {
             AssignDeveloperViewModel model = new();
 
-            
-
             model.Ticket = await _ticketService.GetTicketByIdAsync(id);
             try
             {
@@ -183,8 +181,6 @@ namespace BugTracker.Controllers
                 
             }
             
-            
-
             return View(model);
         }
 

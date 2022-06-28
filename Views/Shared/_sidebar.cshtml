@@ -86,7 +86,7 @@
                             <li><a asp-controller="Tickets" asp-action="ArchivedTickets">Ticket Archive</a></li>
                         </ul>
                     </li>
-                    @*Admin*@
+                    @*Admin/PM*@
                     <li>
                         @if(User.IsInRole(nameof(Roles.Admin)))
                         {
@@ -101,7 +101,7 @@
                         {
                             <a class="has-arrow"><i class="icon-diamond"></i> <span>Project Manager</span></a>
                             <ul>
-                            <li><a asp-controller="Projects" asp-action="Mange Projects">Manage Projects</a></li>
+                            <li><a asp-controller="Projects" asp-action="ManageProjects">Manage Projects</a></li>
                             <li><a asp-controller="Tickets" asp-action="AssignDeveloper">Assign Tickets</a></li>
                         </ul>
                         }

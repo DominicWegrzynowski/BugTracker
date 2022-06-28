@@ -34,7 +34,6 @@ namespace BugTracker.Services
 		}
 		#endregion
 
-
 		#region Constructor
 		public BTTicketService(ApplicationDbContext context, IBTRolesService bTRolesService, IBTCompanyInfoService bTCompanyInfoService, IBTProjectService bTProjectService)
         {
@@ -258,6 +257,7 @@ namespace BugTracker.Services
 
         }
         #endregion
+
         #region Get Archived Tickets
         public async Task<List<Ticket>> GetArchivedTicketsAsync(int companyId)
         {
