@@ -11,122 +11,127 @@
     BTUser user = await UserManager.GetUserAsync(User);
 }
 
-<div class="app-wrapper">
-    <div class="app-content pt-3 p-md-3 p-lg-4">
-        <div class="container-xl">
-            <h1 class="app-page-title">Archived Tickets</h1>
+@section VendorCSS {
+    <link rel="stylesheet" href="~/vendor/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css">
+    <link rel="stylesheet" href="~/vendor/jquery-datatable/dataTables.bootstrap4.min.css">
+}
 
 
-            @*FIFTH ROW*@
-            @*Tickets Table*@
-            <div class="row mb-1">
-                <div class="col">
-                    <div class="app-card app-card-orders-table shadow-sm mb-5">
-                        <div class="card-body pt-3 ps-3">
-                            <div class="table-responsive">
-                                <table id="archivedTicketsTable" class="table app-table-hover mb-0 text-left">
-                                    <thead>
-                                        <tr>
-                                            <th class="cell">Title</th>
-                                            <th class="cell">Owner</th>
-                                            <th class="cell">Assigned to</th>
-                                            <th class="cell">Status</th>
-                                            <th class="cell">Priority</th>
-                                            <th class="cell">Date</th>
-                                            <th class="cell">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach(Ticket ticket in Model)
-                                        {     
-                                            <tr>
-                                                <td class="cell">@ticket.Title</td>
-                                                
-                                                @*Owner*@
-                                                @if(ticket.OwnerUserId is not null)
-                                                {
-                                                    <td class="cell">@ticket.OwnerUser.FullName</td>
-                                                }
-                                                else
-                                                {
-                                                    <td class="cell">SEEDED</td>
-                                                }
 
-                                                @*DeveloperUser*@
-                                                @if(ticket.DeveloperUserId is not null)
-                                                {
-                                                    <td class="cell">@ticket.DeveloperUser.FullName</td>
-                                                }
-                                                else
-                                                {
-                                                    <td class="cell"></td>
-                                                }
+@*Tickets Table*@
+<div class="row clearfix mt-2">
+    <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="body">
+                <div class="table-responsive">
+                    <table class="table table-hover js-basic-example dataTable table-custom mb-0">
+                        <thead>
+                            <tr>
+                                <th class="cell">Assigned by</th>
+                                <th class="cell">Assigned to</th>
+                                <th class="cell">Title</th>
+                                <th class="cell">Status</th>
+                                <th class="cell">Priority</th>
+                                <th class="cell">Date</th>
+                                <th class="cell">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(Ticket ticket in Model)
+                            {     
+                                <tr>            
+                                    @*Owner*@
+                                    @if(ticket.OwnerUserId is not null)
+                                    {
+                                        <td class="cell">@ticket.OwnerUser.FullName</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="cell">SEEDED</td>
+                                    }
 
-                                                @*TicketStatus*@
-                                                @if(ticket.TicketStatus.Name == "New")
-                                                {
-                                                    <td class="cell">@ticket.TicketStatus.Name</td>
-                                                }
-                                                else
-                                                {
-                                                    <td class="cell">@ticket.TicketStatus.Name</td>
-                                                }
+                                    @*DeveloperUser*@
+                                    @if(ticket.DeveloperUserId is not null)
+                                    {
+                                        <td class="cell">@ticket.DeveloperUser.FullName</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="cell"></td>
+                                    }
+                                    
+                                    @*Title*@
+                                    <td class="cell"><strong>@ticket.Title</strong></td>
 
-                                                @*TicketPriority*@
-                                                <td class="cell">@ticket.TicketPriority.Name</td>
-                                            
-                                                @*TicketDate*@
-                                                <td class="cell">@ticket.Created.ToString("MM-dd-yyyy")</td>
+                                    @*TicketStatus*@
+                                    @if(ticket.TicketStatus.Name == "New")
+                                    {
+                                        <td class="cell"><span class="badge badge-success">@ticket.TicketStatus.Name</span></td>
+                                    }
+                                    @if(ticket.TicketStatus.Name == "Development")
+                                    {
+                                        <td class="cell"><span class="badge badge-info">@ticket.TicketStatus.Name</span></td>
+                                    }
+                                    @if(ticket.TicketStatus.Name == "Testing")
+                                    {
+                                        <td class="cell"><span class="badge badge-warning">@ticket.TicketStatus.Name</span></td>
+                                    }
+                                    @if(ticket.TicketStatus.Name == "Resolved")
+                                    {
+                                        <td class="cell"><span class="badge badge-default">@ticket.TicketStatus.Name</span></td>
+                                    }
 
-                                                @*Actions*@
-                                                <td class="cell text-center">
-												    <a class="btn-sm app-btn-secondary me-2" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id">
-													    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-														    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-														    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-													    </svg>
-												    </a>
-												    @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Admin)))
-												    {
-													    <a class="btn-sm app-btn-secondary me-2" asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id">
-															    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-															    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-															    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-														    </svg>
-													    </a>
-													    <a class="btn-sm app-btn-secondary g-2" asp-action="Archive" asp-controller="Tickets" asp-route-id="@ticket.Id">
-														    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-															    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-															    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-														    </svg>
-													    </a>
-												    }
-											    </td>
-                                            </tr>
+                                    @*TicketPriority*@
+                                    @if (ticket.TicketPriority.Name == "Low")
+                                    {
+                                        <td class="cell"><span class="badge badge-default">@ticket.TicketPriority.Name</span></td>
+                                    }
+                                    @if (ticket.TicketPriority.Name == "Medium")
+                                    {
+                                        <td class="cell"><span class="badge badge-info">@ticket.TicketPriority.Name</span></td>
+                                    }
+                                    @if (ticket.TicketPriority.Name == "High")
+                                    {
+                                        <td class="cell"><span class="badge badge-warning">@ticket.TicketPriority.Name</span></td>
+                                    }
+                                    @if (ticket.TicketPriority.Name == "Urgent")
+                                    {
+                                        <td class="cell"><span class="badge badge-danger">@ticket.TicketPriority.Name</span></td>
+                                    }
 
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                                    @*TicketDate*@
+                                    <td class="cell">@ticket.Created.ToString("MM-dd-yyyy")</td>
+
+                                    @*Actions*@
+                                    <td class="cell text-center">
+										<a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-info"><i class="icon-eye"></i></a>
+										@if(User.IsInRole(nameof(Roles.Admin)))
+										{
+											<a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-secondary"><i class="icon-pencil"></i></a>
+											<a class="btn btn-sm btn-outline-success" asp-controller="Tickets" asp-action="Restore" asp-route-id="@ticket.Id"><i class="icon-action-redo"></i></a>
+										}
+									</td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
 
+     
 
 @section scripts{ 
 
-    <script>
-        $(document).ready(function () {
-            $("#archivedTicketsTable").DataTable({
-                "scrollY" : "450px",
-                "scrollCollapse":true,
-                "paging": true
-            });
-        });
-    </script>   
+    <script src="~/bundles/datatablescripts.bundle.js"></script>
+    <script src="~/js/pages/tables/jquery-datatable.js"></script>
+    
+    <script src="~/vendor/jquery-knob/jquery.knob.min.js"></script>
+    <script src="~/bundles/mainscripts.bundle.js"></script>
+    <script src="~/js/pages/charts/jquery-knob.js"></script>
+    
+   
 }

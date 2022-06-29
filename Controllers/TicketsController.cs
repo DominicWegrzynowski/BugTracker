@@ -62,7 +62,7 @@ namespace BugTracker.Controllers
 
                     ticketAttachment.Created = DateTimeOffset.Now;
                     ticketAttachment.UserId = _userManager.GetUserId(User);
-
+                    ticketAttachment.User = await _ticketService.GetUserById(ticketAttachment.UserId);
                     await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
 
                     await _historyService.AddHistoryAsync(ticketAttachment.TicketId, nameof(TicketAttachment), ticketAttachment.UserId);
@@ -86,15 +86,16 @@ namespace BugTracker.Controllers
         // POST: 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddTicketComment([Bind("Id,TicketId,Comment")]TicketComment ticketComment)
+        public async Task<IActionResult> AddTicketComment([Bind("Id,TicketId,Comment,User")]TicketComment ticketComment)
 		{
 			if (ModelState.IsValid)
 			{
 				try
 				{
                     ticketComment.UserId = _userManager.GetUserId(User);
+                    ticketComment.User = await _ticketService.GetUserById(ticketComment.UserId);
                     ticketComment.Created = DateTimeOffset.Now;
-
+                    
                     await _ticketService.AddTicketCommentAsync(ticketComment);
 
                     await _historyService.AddHistoryAsync(ticketComment.TicketId, nameof(TicketComment), ticketComment.UserId);
@@ -153,7 +154,7 @@ namespace BugTracker.Controllers
 
                 foreach (Ticket ticket in tickets)
                 {
-                    if (await _projectService.IsAssignedProjectManagerAsync(userId, ticket.Id))
+                    if (await _projectService.IsAssignedProjectManagerAsync(userId, ticket.ProjectId))
                     {
                         pmTickets.Add(ticket);
                     }
@@ -169,8 +170,6 @@ namespace BugTracker.Controllers
         {
             AssignDeveloperViewModel model = new();
 
-            
-
             model.Ticket = await _ticketService.GetTicketByIdAsync(id);
             try
             {
@@ -182,8 +181,6 @@ namespace BugTracker.Controllers
                 
             }
             
-            
-
             return View(model);
         }
 
@@ -200,6 +197,7 @@ namespace BugTracker.Controllers
                 
                 try
                 {
+
                     await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
                     
                 }
@@ -225,7 +223,7 @@ namespace BugTracker.Controllers
             }
 
             Ticket ticket = await _ticketService.GetTicketByIdAsync(id.Value);
-            
+
             if (ticket == null)
             {
                 return NotFound();
@@ -278,7 +276,7 @@ namespace BugTracker.Controllers
                     await _historyService.AddHistoryAsync(null, newTicket, user.Id);
 
                     //TODO: Ticket Notification
-                    return RedirectToAction(nameof(AllTickets));
+                    return RedirectToAction(nameof(Details), new { Id = ticket.Id});
                 }
                 catch (Exception)
                 {
@@ -328,7 +326,7 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ProjectId,TicketStatusId,TicketTypeId,TicketPriorityId,OwnerUserId,DeveloperUserId,Title,Description,Created,Updated,Archived")] Ticket ticket)
         {
-                if (id != ticket.Id)
+            if (id != ticket.Id)
             {
                 return NotFound();
             }
@@ -360,7 +358,9 @@ namespace BugTracker.Controllers
                 Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                 await _historyService.AddHistoryAsync(oldTicket, newTicket, user.Id);
 
-                return RedirectToAction(nameof(AllTickets));
+                //Notify Project manager + team members on project of ticket update. 
+
+                return RedirectToAction(nameof(Details), new { Id = ticket.Id });
             }
 
             ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);

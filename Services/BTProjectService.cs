@@ -47,7 +47,7 @@ namespace BugTracker.Services
         public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
         {
             BTUser currentPM = await GetProjectManagerAsync(projectId);
-            if (currentPM != null)
+            if (currentPM is not null)
             {
                 try
                 {
@@ -78,7 +78,7 @@ namespace BugTracker.Services
         public async Task<bool> AddUserToProjectAsync(string userId, int projectId)
         {
             BTUser user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (user != null)
+            if (user is not null)
             {
                 Project project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
                 if (!await IsUserOnProjectAsync(userId, projectId))

@@ -1,34 +1,147 @@
-﻿@model BugTracker.Models.ViewModels.ProjectMembersViewModel
+﻿@using BugTracker.Extensions
+@using BugTracker.Models.Enums
+@using BugTracker.Services.Interfaces
+@using Microsoft.AspNetCore.Identity
+@model BugTracker.Models.ViewModels.ProjectMembersViewModel
+@inject IBTProjectService ProjectService
+@inject UserManager<BTUser> UserManager
+@inject IBTRolesService RolesService
+@{
+    ViewData["Title"] = "Manage Team";
 
-<div class="container">
-    <h2>Assign Members for</h2>
-    <div class="row">
-        <div class="col-md-6">
-            <h3>@Model.Project.Name</h3>
+    BTUser user = await UserManager.GetUserAsync(User);
+    BTUser projectManager = await ProjectService.GetProjectManagerAsync(Model.Project.Id);
 
-            <div class="card">
-                <div class="card-header">
-                    <label asp-for="@Model.Users" class="control-label">Assign team members for Project</label>
-                </div>
-                <div class="card-body">
-                    <form method="post" asp-action="AssignMembers" asp-controller="Projects">
-                        <input hidden asp-for="Project.Id" />
-                        <div class="col-12 mb-3">
-                            <div class="form-group">
-                                <select style="min-height: 100px;" required asp-for="@Model.SelectedUsers" class="form-control" asp-items="@Model.Users" multiple="multiple"></select>
-                            </div>
+    int companyId = User.Identity.GetCompanyId().Value;
+}
+
+
+@section VendorCSS {
+    <link rel="stylesheet" href="~/vendor/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css">
+    <link rel="stylesheet" href="~/vendor/jquery-datatable/dataTables.bootstrap4.min.css">   
+
+
+    <link rel="stylesheet" href="~/vendor/bootstrap-multiselect/bootstrap-multiselect.css">
+    <link rel="stylesheet" href="~/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" href="~/vendor/bootstrap-colorpicker/css/bootstrap-colorpicker.css" />
+    <link rel="stylesheet" href="~/vendor/multi-select/css/multi-select.css">
+    <link rel="stylesheet" href="~/vendor/bootstrap-tagsinput/bootstrap-tagsinput.css">
+    <link rel="stylesheet" href="~/vendor/nouislider/nouislider.min.css" />
+    <link rel="stylesheet" href="~/vendor/select2/select2.css" />
+
+} 
+
+<div class="row clearfix">
+    <div class="col-4">
+        <div class="card">
+            <div class="header mb-0 pb-0">
+                <h2>Project Team</h2>
+
+                <p class='text-muted'>@Model.Project.Members.Count team members</p>
+            </div>
+            <div class="body w_user mt-0 pt-0">
+
+                @if(projectManager is not null)
+                {
+                    @if(projectManager.AvatarFileData is null)
+                    {
+                        <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" class="rounded-circle"  title="@projectManager.FullName"  alt="Default Avatar" />
+                    }
+                    @if(projectManager.AvatarFileData is not null)
+                    {
+                        <img src="data:image/*;base64,@(Convert.ToBase64String(projectManager.AvatarFileData))" class="rounded-circle" title="@projectManager.FullName"  alt="@projectManager.FullName's Avatar" />
+                    }
+
+                        <div class="wid-u-info">
+                            <h5>@projectManager.FullName</h5>
+                            <p class="text-muted m-b-0">@projectManager.Email<br>Project Manager</p>
                         </div>
-                        <div class="form-group">
-                            <div class="col-lg-offset-2 col-lg-10">
-                                <input type="submit" class="btn alert-primary" value="Assign users" />
-                            </div>
-                        </div>
-                    </form>
+                }
+                else
+                {
+                    
+                    <h2>No Project Manager Assigned</h2>                    
+                }
+                <div class="wid-u-info">
+                    <a class="btn btn-sm btn-outline-primary" asp-controller="Projects" asp-action="AssignPM" asp-route-projectId="@Model.Project.Id"><small>Manage PM</small></a>
                 </div>
+                <hr>
+
+                @foreach(BTUser member in Model.Project.Members.Where(m => m.Id != projectManager.Id))
+                {
+                            
+                    <ul class="right_chat list-unstyled mb-0">
+                        <li class="online">
+                            <div class="media">
+                                @if(member.AvatarFileData is null)
+                                {
+                                    <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" class="media-object " style="width:40px;height:40px;"  title="@member.FullName"  alt="Default Avatar" />
+                                }
+                                @if(member.AvatarFileData is not null)
+                                {
+                                    <img src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" class="media-object " style="width:40px;height:40px;" title="@member.FullName"  alt="@member.FullName's Avatar" />
+                                }
+
+                                @{
+                                    IEnumerable<string> memberRoles = await RolesService.GetUserRolesAsync(member);
+                                    string memberRole = memberRoles.FirstOrDefault();
+                                }
+                                
+                                <div class="media-body">
+                                    <span class="name">@member.FullName</span>
+                                    <span class="message">@memberRole</span>
+                                </div>
+                            </div>
+                        </li>
+                        </ul>
+                }
             </div>
         </div>
     </div>
-    <div>
-        <a asp-action="Details" asp-controller="Projects" asp-route-id="@Model.Project.Id">Back to Detail</a>
+    <div class="col-4">
+        <div class="card">
+            <div class="header">
+               <label asp-for="@Model.Users" class="control-label">Manage Developers</label>
+            </div>
+            <div class="body">
+                <div class="row">
+                    <div class="col-6 text-center">
+                        <span>Company Developers</span>
+                    </div>
+                    <div class="col-6 text-center">
+                        <span>On Project</span>
+                    </div>
+                </div>
+                <form asp-action="AssignMembers" asp-controller="Projects" method="post">
+                    <input hidden asp-for="Project.Id" />
+                    <div class="form-group">
+                        <select asp-for="@Model.SelectedUsers" asp-items="@Model.Users" class="ms" id="optgroup" multiple="multiple"></select>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Assign Members" class="btn btn-primary text-white" />
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+    
 </div>
+
+@section scripts{ 
+    <script src="~/bundles/datatablescripts.bundle.js"></script>
+    <script src="~/js/pages/tables/jquery-datatable.js"></script> 
+    
+    <script src="~/vendor/bootstrap-colorpicker/js/bootstrap-colorpicker.js"></script> <!-- Bootstrap Colorpicker Js -->
+    <script src="~/vendor/jquery-inputmask/jquery.inputmask.bundle.js"></script> <!-- Input Mask Plugin Js -->
+    <script src="~/vendor/jquery.maskedinput/jquery.maskedinput.min.js"></script>
+    <script src="~/vendor/multi-select/js/jquery.multi-select.js"></script> <!-- Multi Select Plugin Js -->
+    <script src="~/vendor/bootstrap-multiselect/bootstrap-multiselect.js"></script>
+    <script src="~/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/vendor/bootstrap-tagsinput/bootstrap-tagsinput.js"></script> <!-- Bootstrap Tags Input Plugin Js -->
+    <script src="~/vendor/nouislider/nouislider.js"></script> <!-- noUISlider Plugin Js -->
+
+    <script src="~/vendor/select2/select2.min.js"></script> <!-- Select2 Js -->
+
+    <script src="~/bundles/mainscripts.bundle.js"></script>
+    <script src="~/js/pages/forms/advanced-form-elements.js"></script>
+}

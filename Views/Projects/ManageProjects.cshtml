@@ -7,60 +7,75 @@
 @inject IBTProjectService ProjectService
 
 @{
-    ViewData["Title"] = "All Projects";
-    BTUser btUser = await UserManager.GetUserAsync(User);
+     BTUser btUser = await UserManager.GetUserAsync(User);
+    ViewData["Title"] = "Manage Projects";
+    ViewData["MainMenu"] = "Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section VendorCSS {
+    <link rel="stylesheet" href="~/vendor/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css">
+}
 
-<div class="app-wrapper">
-    <div class="app-content pt-3 p-md-3 p-lg-4">
-	    <div class="container-xl">
-            <div class="row">
-                @foreach(Project project in Model)
-                {
-                    <div class="col-4 mb-3" g-5>
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <div class="card-img-top">
-                                    @if (project.ImageFileData is null)
-                                    {
-                                        <img style="width:35px;height:35px" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-                                    }
-                                    else
-                                    {
-                                        <img  style="width:35px;height:35px;" src="data:image/*;base64,@(Convert.ToBase64String(project.ImageFileData))" alt="Project Picture" />
-					                }
-                                </div>
-                                <h3 class="text-center">
-                                    @project.Name
-                                </h3>
+<div class="row clearfix">
+    @foreach(Project project in Model)
+    {
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2>@project.Name<small>@project.ProjectPriority.Name</small></h2>
+                    <ul class="header-dropdown">
+                        <li class="dropdown">
+                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"></a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li><a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">View</a></li>
+                                <li><a asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">Edit</a></li>
+                                <li><a asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id">Archive</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    <p style="overflow-y:auto;max-height:50px;min-height:50px;">@project.Description</p>
+                    <ul class="list-unstyled team-info m-t-20">
+                        <li class="m-r-15"><small class="text-muted">Team</small></li>
+                        @foreach(BTUser member in project.Members)
+                        {
+                            @if(member.AvatarFileData is null)
+						    {
+							    <li><a asp-action="MemberProfile" asp-controller="Home" asp-route-userId="@member.Id"><img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" style="width:35px;height:35px;" title="@member.FullName"  alt="Default Avatar"></a></li>
+						    }
+						    @if(member.AvatarFileData is not null)
+						    {
+							     <li><a asp-action="MemberProfile" asp-controller="Home" asp-route-userId="@member.Id"><img src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))"  title="@member.FullName"  alt="@member.FullName's Avatar" /></a></li>
+						    }
+                        }
 
-                                <p class="note">@project.Description</p>
-                            
-                                <hr />
-                                <div class="row text-center ">
-                                    <div class="col-12">
-                                        @foreach(BTUser member in project.Members)
-						                {                       
-							                @if(member.AvatarFileData is null)
-							                { 
-								                <img class="rounded-circle shadow-sm" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thin;" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="Default Avatar"/>
-							                }
-							                else
-							                {
-								                <img class="rounded-circle shadow-sm btn-outline-light" style="width:35px;height:35px;margin-left:-15px;outline-color:white;outline-width:thick;" src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))" alt="@member.FullName's avatar'" />
-							                }
-						                }
-                                    </div>
-                                    <div class="col-12 mt-2">
-                                        <a asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@project.Id" class="btn btn-sm btn-primary text-white">Manage Team</a>
-                                    </div>
-                                </div>
-                            </div>
+                        @if(project.Members.Count < 1)
+                        {
+                            <li><span><strong>No Assigned Members</strong></span></li>
+                        }
+
+                        <a asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@project.Id" class="btn btn-sm btn-info float-right">Manage Team</a>
+                    </ul>
+                    <div class="progress progress-xs progress-transparent custom-color-blue">
+                        <div class="progress-bar" data-transitiongoal="87"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-7">
+                            <small>TICKETS: @project.Tickets.Count</small>
                         </div>
                     </div>
-                }
+                </div>
             </div>
         </div>
-    </div>
+    }
 </div>
+
+@section Scripts {
+    <script>
+    $('.progress .progress-bar').progressbar({
+            display_text: 'none'
+    });
+    </script>
+}

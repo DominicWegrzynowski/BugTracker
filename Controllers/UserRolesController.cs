@@ -44,6 +44,7 @@ namespace BugTracker.Controllers
                 viewModel.BTUser = user;
                 IEnumerable<string> selectedRoles = await _rolesService.GetUserRolesAsync(user);
                 viewModel.Roles = new MultiSelectList(await _rolesService.GetRolesAsync(), "Name", "Name", selectedRoles);
+                viewModel.AssignedRoles = await _rolesService.GetUserRolesAsync(user);
 
                 model.Add(viewModel);
             }
@@ -53,25 +54,35 @@ namespace BugTracker.Controllers
         #endregion
 
         #region Manage User Roles (POST)
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel member)
+        public async Task<IActionResult> ManageUserRoles([Bind("BTUser, Roles, SelectedRoles, AssignedRoles")]ManageUserRolesViewModel member)
         {
-            int companyId = User.Identity.GetCompanyId().Value;            
-            BTUser user = (await _companyInfoService.GetAllMembersAsync(companyId)).FirstOrDefault(u => u.Id == member.BTUser.Id);
-            IEnumerable<string> roles = await _rolesService.GetUserRolesAsync(user);
-            string userRole = member.SelectedRoles.FirstOrDefault();
-
-            if(!string.IsNullOrEmpty(userRole))
+            if (ModelState.IsValid)
             {
-                if(await _rolesService.RemoveUserFromRolesASync(user, roles))
-                {
-                    await _rolesService.AddUserToRoleAsync(user, userRole);
-                }
-            }
+                int companyId = User.Identity.GetCompanyId().Value;
 
-            return RedirectToAction(nameof(ManageUserRoles));
+                BTUser btUser = (await _companyInfoService.GetAllMembersAsync(companyId)).FirstOrDefault(u => u.Id == member.BTUser.Id);
+
+                IEnumerable<string> roles = await _rolesService.GetUserRolesAsync(btUser);
+
+                string userRole = member.SelectedRoles.FirstOrDefault();
+
+                if (!string.IsNullOrEmpty(userRole))
+                {
+                    if (await _rolesService.RemoveUserFromRolesASync(btUser, roles))
+                    {
+                        await _rolesService.AddUserToRoleAsync(btUser, userRole);
+                    }
+                }
+
+                return RedirectToAction(nameof(ManageUserRoles));
+            }
+            else
+            {
+                return RedirectToAction(nameof(ManageUserRoles));
+            }
         }
         #endregion
     }

@@ -1,67 +1,107 @@
 ﻿@model IEnumerable<BugTracker.Models.Ticket>
 @using BugTracker.Models.Enums
 
-<div class="col-md-12 col">
-                <div class="mt-5 bg-secondary">
-                    <div class="card m-1 p-2">
-                        <div class="header">
-                            <h2>Unassigned Tickets</h2>
-                        </div>
-                        <div class="body">
-                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
-                                <table class="table table-hover">
-                                    <thead class="">
-                                        <tr>
-                                            <th>Title</th>
-                                            <th>Developer</th>
-                                            <th>Status</th>
-                                            <th>Priority</th>
-                                            <th>Date</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                          @foreach (var ticket in Model.OrderByDescending(d => d.Created))
-                                          {
-                                              <tr>
-                                                  <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" style="color:black"><strong>@ticket.Title</strong></a> </td>
-                                                  <td>
-                                                      @if (ticket.DeveloperUserId != null)
-                                                      {
-                                                          @ticket.DeveloperUser?.FullName
-                                                      }
-                                                      else
-                                                      {
-                                                          if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
-                                                          {
-                                                              <a class="btn btn-xs btn-info" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@ticket.Id">Assign Dev</a>
-                                                          }
+@section VendorCSS {
+    <link rel="stylesheet" href="~/vendor/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css">
+    <link rel="stylesheet" href="~/vendor/jquery-datatable/dataTables.bootstrap4.min.css">
+}
 
-                                                      }
-                                                  </td>
-                                                  @if (ticket.TicketStatus.Name == "New")
-                                                  {
-                                                      <td><span class="badge-success">@ticket.TicketStatus.Name </span></td>
 
-                                                  }
-                                                  else
-                                                  {
-                                                      <td><span class="badge-primary">@ticket.TicketStatus.Name </span></td>
-                                                  }
-                                                  <td><span class="badge-warning">@ticket.TicketPriority.Name </span></td>
-                                                  <td>@ticket.Created.ToString("MM-dd-yyyy")</td>
-                                                  <td>
-                                                      <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
-                                                      <a class="btn btn-sm btn-outline-danger"><i class="fs-5 bi-archive"></i></a>
-                                                  </td>
-                                              </tr>
-                                          }
-                                    </tbody>
-                                </table>
-                            </div>
+<div class="row clearfix mt-2">
+    <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="body">
+                <div class="table-responsive">
+                    <table class="table table-hover js-basic-example dataTable table-custom mb-0">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Developer</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ticket in Model.OrderByDescending(d => d.Created))
+                            {
+                                <tr>
+                                    @*Title*@
+                                    <td><strong>@ticket.Title</strong></td>
 
-                        </div>
-                    </div>
+                                    @*Developeruser*@
+                                    <td>
+                                        @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+                                        {
+                                            <a class="btn btn-xs btn-info" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@ticket.Id">Assign Dev</a>
+                                        }
+                                    </td>
 
+                                    @*Status*@
+                                    @if (ticket.TicketStatus.Name == "New")
+                                    {
+                                        <td><span class="badge badge-success">@ticket.TicketStatus.Name </span></td>
+
+                                    }
+                                    @if (ticket.TicketStatus.Name == "Development")
+                                    {
+                                        <td><span class="badge badge-primary">@ticket.TicketStatus.Name </span></td>
+                                    }
+                                    @if (ticket.TicketStatus.Name == "Testing")
+                                    {
+                                        <td><span class="badge badge-warning">@ticket.TicketStatus.Name </span></td>
+                                    }
+                                    @if (ticket.TicketStatus.Name == "Resolved")
+                                    {
+                                        <td><span class="badge badge-warning">@ticket.TicketStatus.Name </span></td>
+                                    }
+
+
+                                    @*Priority*@
+                                    @if (ticket.TicketPriority.Name == "Low")
+                                    {
+                                        <td class="cell"><span class="badge badge-default">@ticket.TicketPriority.Name</span></td>
+                                    }
+                                    @if (ticket.TicketPriority.Name == "Medium")
+                                    {
+                                        <td class="cell"><span class="badge badge-info">@ticket.TicketPriority.Name</span></td>
+                                    }
+                                    @if (ticket.TicketPriority.Name == "High")
+                                    {
+                                        <td class="cell"><span class="badge badge-warning">@ticket.TicketPriority.Name</span></td>
+                                    }
+                                    @if (ticket.TicketPriority.Name == "Urgent")
+                                    {
+                                        <td class="cell"><span class="badge badge-danger">@ticket.TicketPriority.Name</span></td>
+                                    }
+
+                                    @*Date*@
+                                    <td>@ticket.Created.ToString("MM-dd-yyyy")</td>
+
+                                    @*Action*@
+                                    <td class="cell text-center">
+									    <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-info"><i class="icon-eye"></i></a>
+									    @if(User.IsInRole(nameof(Roles.Admin)))
+									    {
+										    <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-secondary"><i class="icon-pencil"></i></a>
+										    <a class="btn btn-sm btn-outline-danger" asp-controller="Tickets" asp-action="Archive" asp-route-id="@ticket.Id"><i class="fa fa-file-archive-o"></i></a>
+									    }
+								    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
+
             </div>
+        </div>
+
+    </div>
+</div>
+
+
+@section scripts{ 
+    <script src="~/bundles/datatablescripts.bundle.js"></script>
+    <script src="~/js/pages/tables/jquery-datatable.js"></script>
+}

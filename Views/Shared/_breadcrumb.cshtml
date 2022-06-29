@@ -1,0 +1,11 @@
+﻿
+    <breadcrumb class="row">
+        <div class="col-lg-5 col-md-8 col-sm-12">
+            <h2><a href="javascript:history.back();" class="btn btn-xs btn-link btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> @ViewData["Title"]</h2>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Dashboard"><i class="icon-home"></i></a></li>
+               @* <li class="breadcrumb-item">@ViewData["MainMenu"]</li>*@
+                <li class="breadcrumb-item active">@ViewData["Title"]</li>
+            </ul>
+        </div>
+    </breadcrumb>

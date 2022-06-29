@@ -6,6 +6,7 @@ namespace BugTracker.Services.Interfaces
 {
     public interface IBTTicketService
     {
+        public Task<BTUser> GetUserById(string id);
         public Task AddNewTicketAsync(Ticket ticket);
         public Task UpdateTicketAsync(Ticket ticket);
         public Task<Ticket> GetTicketByIdAsync(int ticketId);

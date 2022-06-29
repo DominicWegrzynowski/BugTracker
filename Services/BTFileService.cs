@@ -68,7 +68,7 @@ namespace BugTracker.Services
         public string GetFileIcon(string file)
         {
             string ext = Path.GetExtension(file).Replace(".", "");
-            string fileImage = $"/img/contenttype/{ext}.png";
+            string fileImage = $"/images/contenttype/{ext}.png";
             return fileImage;
         } 
         #endregion

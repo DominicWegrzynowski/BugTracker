@@ -1,36 +1,183 @@
-﻿@model BugTracker.Models.ViewModels.AssignDeveloperViewModel
+﻿@using BugTracker.Models.Enums
+@model BugTracker.Models.ViewModels.AssignDeveloperViewModel
 
-<div class="container">
-    <h2>Assign Members for</h2>
-    <div class="row">
-        <div class="col-md-6">
-            <h3>@Model.Ticket.Title</h3>
-            <a style="font-size: small" asp-action="Details" asp-controller="Projects" asp-route-id="@Model.Ticket.ProjectId">@Model.Ticket.Project.Name</a>
-            <div class="card">
-                <div class="card-header">
-                    <label class="control-label">Assign developers for Ticket</label>
-                </div>
-                <div class="card-body">
-                    <form method="post" asp-action="AssignDeveloper" asp-controller="Tickets">
-                        <input hidden asp-for="Ticket.Id" />
-                        <p>Description: @Model.Ticket.Description</p>
 
-                        <div class="form-group">
-                            <label class="col-form-label">Select Developers</label>
+@{
+     ViewData["Title"] = "Assign Developer";
+}
 
-                            <select required asp-for="DeveloperId" class="form-control" asp-items="Model.Developers">
+@section VendorCSS {
+    <link rel="stylesheet" href="~/vendor/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css">
+    <link rel="stylesheet" href="~/vendor/jquery-datatable/dataTables.bootstrap4.min.css">
+}
+
+
+<div class="row clearfix">
+    <div class="col-6">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="body mt-0">
+                        <form method="post" asp-action="AssignDeveloper" asp-controller="Tickets">
+                            <input hidden asp-for="Ticket.Id" />
+                            <h6>Select Developer</h6>
+                            <select required asp-for="DeveloperId" class="form-control" style="width: 50%;" asp-items="Model.Developers">
                                 <option></option>
                             </select>
-                        </div>
-                        <div class="form-group mt-3">
-                            <input type="submit" value="Assign" class="btn btn-primary"/>
-                        </div>
-                    </form>
+                            <div class="form-group mt-3">
+                                <input type="submit" value="Assign" class="btn btn-outline-warning"/>
+                                <a href="javascript:history.back();" class="btn btn-outline-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="header">
+                        <h2>Current Developer</h2>
+                    </div>
+                    <div class="body">
+                        @if(Model.Ticket.DeveloperUserId is null)
+                        {
+                            <div class="text-center">
+                                <i class="fa fa-user fa-9x" style="font-size:7em;"></i>
+                                <h3>Not Assigned</h3>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center">
+                                @if(Model.Ticket.DeveloperUser.AvatarFileData is null)
+								{
+									<img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" class="rounded-circle" style="width:150px;height:150px;" title="@Model.Ticket.DeveloperUser.FullName"  alt="Default Avatar">
+								}
+								@if(Model.Ticket.DeveloperUser?.AvatarFileData is not null)
+								{
+									<img src="data:image/*;base64,@(Convert.ToBase64String(Model.Ticket.DeveloperUser.AvatarFileData))" class="rounded-circle " style="width:150px;height:150px;" title="@Model.Ticket.DeveloperUser.FullName"  alt="@Model.Ticket.DeveloperUser.FullName's Avatar" />
+								}
+                                <h4>@Model.Ticket.DeveloperUser.FullName</h4>
+                                <p class="text-muted">@Model.Ticket.DeveloperUser.Email</p>
+                                <a asp-action="MemberProfile" asp-controller="Home" asp-route-userId="@Model.Ticket.DeveloperUser.Id" class="btn btn-sm btn-primary">Profile</a>
+
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div>
-        <a asp-action="UnassignedTickets" asp-controller="Tickets">Unassigned Tickets</a>
+    <div class="col-6">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="body">
+                        <h5>@Model.Ticket.Title</h5>
+                        <p>@Html.Raw(Model.Ticket.Description)</p>
+                        @{
+							var start = Model.Ticket.Project.StartDate.DateTime;
+							var end = Model.Ticket.Project.EndDate.DateTime;
+							var today = DateTime.Now;
+							var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
+						}
+                        <p><strong>Project:</strong>  @Model.Ticket.Project.Name</p>
+						<div class="progress progress-transparent custom-color-blue">
+							<div class="progress-bar" data-transitiongoal="87" style="width: @percent%;" aria-valuenow="@percent">
+                                <span class="text-center">@percent%</span>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="body">
+                        <div class="row">
+                            <div class="col-12 pb-4">
+                                <span class="text-muted float-left">Created:</span>
+                                <span class="badge badge-default float-right">@Model.Ticket.Created.ToString("MM/dd/yyyy")</span>
+                            </div>
+                            <div class="col-12 pb-4">
+                                <span class="text-muted float-left">Project Deadline:</span>
+                                <span class="badge badge-default float-right">@Model.Ticket.Project.EndDate.ToString("MM/dd/yyyy")</span>
+                            </div>
+							@*Ticket Type*@
+                            <div class="col-12 pb-4">
+								<span class="text-muted float-left">Type:</span>
+								@if(Model.Ticket.TicketType.Name == nameof(BTTicketType.NewDevelopment))
+								{
+									<span class="badge badge-success float-right">@Model.Ticket.TicketType.Name</span>
+								}
+								@if(Model.Ticket.TicketType.Name == nameof(BTTicketType.ChangeRequest))
+								{
+									<span class="badge badge-default float-right">@Model.Ticket.TicketType.Name</span>
+								}
+								@if(Model.Ticket.TicketType.Name == nameof(BTTicketType.Defect))
+								{
+									<span class="badge badge-danger float-right">@Model.Ticket.TicketType.Name</span>
+								}
+								@if(Model.Ticket.TicketType.Name == nameof(BTTicketType.Enhancement))
+								{
+									<span class="badge badge-primary float-right">@Model.Ticket.TicketType.Name</span>
+								}
+								@if(Model.Ticket.TicketType.Name == nameof(BTTicketType.GeneralTask))
+								{
+									<span class="badge badge-default float-right">@Model.Ticket.TicketType.Name</span>
+								}
+								@if(Model.Ticket.TicketType.Name == nameof(BTTicketType.WorkTask))
+								{
+									<span class="badge badge-default float-right">@Model.Ticket.TicketType.Name</span>
+								}
+                            </div>
+							@*Ticket Priority*@
+                            <div class="col-12 pb-4">
+                                <span class="text-muted float-left">Priority:</span>
+								@if(Model.Ticket.TicketPriority.Name == nameof(BTTicketPriority.Urgent))
+								{
+									<span class="badge badge-danger float-right">@Model.Ticket.TicketPriority.Name</span>
+								}
+								@if(Model.Ticket.TicketPriority.Name == nameof(BTTicketPriority.High))
+								{
+									<span class="badge badge-warning float-right">@Model.Ticket.TicketPriority.Name</span>
+								}
+								@if(Model.Ticket.TicketPriority.Name == nameof(BTTicketPriority.Medium))
+								{
+									<span class="badge badge-success float-right">@Model.Ticket.TicketPriority.Name</span>
+								}
+								@if(Model.Ticket.TicketPriority.Name == nameof(BTTicketPriority.Low))
+								{
+									<span class="badge badge-default float-right">@Model.Ticket.TicketPriority.Name</span>
+								}
+                            </div>
+                            <div class="col-12">
+                                <span class="text-muted float-left">Status:</span>
+                                @if(Model.Ticket.TicketStatus.Name == nameof(BTTicketStatus.Development))
+                                {
+                                    <span class="badge badge-info float-right">Development</span>
+                                }
+                                @if(Model.Ticket.TicketStatus.Name == nameof(BTTicketStatus.New))
+                                {
+                                    <span class="badge badge-success float-right">New</span>
+                                }
+                                @if(Model.Ticket.TicketStatus.Name == nameof(BTTicketStatus.Resolved))
+                                {
+                                    <span class="badge badge-default float-right">Resolved</span>
+                                }
+                                @if(Model.Ticket.TicketStatus.Name == nameof(BTTicketStatus.Testing))
+                                {
+                                    <span class="badge badge-warning float-right">Testing</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+
+@section Scripts {
+    <script src="~/bundles/datatablescripts.bundle.js"></script>
+    <script src="~/js/pages/tables/jquery-datatable.js"></script>
+}

@@ -1,0 +1,154 @@
+﻿@using BugTracker.Models.Enums
+@using BugTracker.Services.Interfaces
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<BTUser> SignInManager
+@inject UserManager<BTUser> UserManager
+@inject IBTRolesService RolesService
+
+@{
+    BTUser user = await UserManager.GetUserAsync(User);
+    IEnumerable<string> roles = await RolesService.GetUserRolesAsync(user);
+    string userRole = roles.FirstOrDefault();
+}
+
+
+<sidebar class="">
+    <div class="user-account">
+        @if (user.AvatarFileData is null)
+        {
+            <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" class="rounded-circle user-photo" alt="Default Avatar">
+        }
+        else
+        {
+            <img src="data:image/*;base64,@(Convert.ToBase64String(user.AvatarFileData))" class="rounded-circle user-photo" alt="@user.FullName's Avatar" /> 
+        }
+        <div class="dropdown">
+            <span>Welcome,</span>
+            <a href="javascript:void(0);" class="dropdown-toggle user-name" data-toggle="dropdown"><strong>@user.FullName</strong></a>
+            <span class="badge badge-primary">@userRole</span>
+            <ul class="dropdown-menu dropdown-menu-right account">
+                <li><a asp-controller="Home" asp-action="MemberProfile" asp-route-userId="@user.Id"><i class="icon-user"></i>My Profile</a></li>
+                <li><a asp-controller="App" asp-action="Inbox"><i class="icon-envelope-open"></i>Messages</a></li>
+                <li><a href="javascript:void(0);"><i class="icon-settings"></i>Settings</a></li>
+                <li class="divider"></li>
+                <li><a href="javascript:document.getElementById('logoutForm').submit();"><i class="icon-power"></i>Logout</a></li>
+                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"></form>
+            </ul>
+        </div>
+    </div>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs">
+        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#menu">Project</a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#setting"><i class="icon-settings"></i></a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content p-l-0 p-r-0">
+        <div class="tab-pane active" id="menu">
+            <nav id="left-sidebar-nav" class="sidebar-nav">
+                <ul id="main-menu" class="metismenu">
+                    @*Dashboard*@
+                    <li class="active">
+                        <a asp-action="Dashboard" asp-controller="Home"><i class="icon-speedometer"></i> <span>Dashboard</span></a>
+                    </li>
+                    @*Notifications*@
+                    <li>
+                        <a asp-action="Notifications" asp-controller="Notifications"><i class="icon-envelope"></i> <span>Notification Inbox</span></a>
+                        
+                    </li>
+                    @*Projects*@
+                    <li>
+                        <a class="has-arrow"><i class="icon-puzzle"></i> <span>Projects</span></a>
+                        <ul>
+                            <li><a asp-action="AllProjects" asp-controller="Projects">All Projects</a></li>
+                            <li><a asp-controller="Projects" asp-action="MyProjects">My Projects</a></li>
+                            @if(User.IsInRole(nameof(Roles.Admin)))
+                            {
+                                <li><a asp-action="Create" asp-controller="Projects">Add Project</a></li>
+                                <li><a asp-action="ManageProjects" asp-controller="Projects">Manage Projects</a></li>
+
+                            }
+                            <li><a asp-controller="Projects" asp-action="ArchivedProjects">Archived Projects</a></li>
+                        </ul>
+                    </li>
+                    @*Tickets*@
+                    <li>
+                        <a  class="has-arrow"><i class="icon-tag"></i> <span>Tickets</span></a>
+                        <ul>
+                            <li><a asp-controller="Tickets" asp-action="AllTickets">All Tickets</a></li>
+                            <li><a asp-controller="Tickets" asp-action="MyTickets">My Tickets</a></li>
+                            @if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+                            {
+                                <li><a asp-controller="Tickets" asp-action="Create">Add Ticket</a></li>
+                                <li><a asp-controller="Tickets" asp-action="UnassignedTickets">Unassigned Tickets</a></li>
+
+                            }
+                            <li><a asp-controller="Tickets" asp-action="ArchivedTickets">Ticket Archive</a></li>
+                        </ul>
+                    </li>
+                    @*Admin/PM*@
+                    <li>
+                        @if(User.IsInRole(nameof(Roles.Admin)))
+                        {
+                            <a class="has-arrow"><i class="icon-diamond"></i> <span>Admin</span></a>
+                            <ul>
+                                <li><a asp-controller="Invites" asp-action="Create"><i class=" icon-user-follow float-left"></i>Company Invite</a></li>
+                                <li><a asp-controller="UserRoles" asp-action="ManageUserRoles"><i class=" icon-user float-left"></i>Manage Roles</a></li>
+                                <li><a asp-controller="Projects" asp-action="">ManageProjects</a></li>
+                            </ul>
+                        }
+                        @if(User.IsInRole(nameof(Roles.ProjectManager)))
+                        {
+                            <a class="has-arrow"><i class="icon-diamond"></i> <span>Project Manager</span></a>
+                            <ul>
+                            <li><a asp-controller="Projects" asp-action="ManageProjects">Manage Projects</a></li>
+                            <li><a asp-controller="Tickets" asp-action="AssignDeveloper">Assign Tickets</a></li>
+                        </ul>
+                        }
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="tab-pane p-l-15 p-r-15" id="Chat">
+            <form>
+                <div class="input-group m-b-20">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="icon-magnifier"></i></span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="Search...">
+                </div>
+            </form>
+            
+        </div>
+        <div class="tab-pane p-l-15 p-r-15" id="setting">
+            <h6>Choose Skin</h6>
+            <ul class="choose-skin list-unstyled">
+                <li data-theme="purple">
+                    <div class="purple"></div>
+                    <span>Purple</span>
+                </li>
+                <li data-theme="blue">
+                    <div class="blue"></div>
+                    <span>Blue</span>
+                </li>
+                <li data-theme="cyan">
+                    <div class="cyan"></div>
+                    <span>Cyan</span>
+                </li>
+                <li data-theme="green">
+                    <div class="green"></div>
+                    <span>Green</span>
+                </li>
+                <li data-theme="orange">
+                    <div class="orange"></div>
+                    <span>Orange</span>
+                </li>
+                <li data-theme="blush">
+                    <div class="blush"></div>
+                    <span>Blush</span>
+                </li>
+            </ul>
+            <hr>
+        </div>
+    </div>
+</sidebar>

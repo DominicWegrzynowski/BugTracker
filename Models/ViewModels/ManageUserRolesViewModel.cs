@@ -11,5 +11,8 @@ namespace BugTracker.Models.ViewModels
         public BTUser BTUser { get; set; }
         public MultiSelectList Roles { get; set; }
         public List<string> SelectedRoles { get; set; }
+        //For a string version of the roles to filter the loop
+        public IEnumerable<string> AssignedRoles { get; set; }
+
     }
 }
