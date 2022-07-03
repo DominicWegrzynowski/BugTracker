@@ -414,6 +414,7 @@ namespace BugTracker.Services
                                      .Include(t => t.DeveloperUser)
                                      .Include(t => t.OwnerUser)
                                      .Include(t => t.Project)
+                                        .ThenInclude(p => p.Members)
                                      .Include(t => t.TicketPriority)
                                      .Include(t => t.TicketStatus)
                                      .Include(t => t.TicketType)

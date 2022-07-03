@@ -36,7 +36,7 @@ namespace BugTracker.Services
                 await _context.AddAsync(notification);
                 await _context.SaveChangesAsync();
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 throw;
             }
@@ -58,7 +58,7 @@ namespace BugTracker.Services
 
                 return notifications;
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 throw;
             }
