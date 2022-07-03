@@ -418,6 +418,7 @@ namespace BugTracker.Services
                                      .Include(t => t.TicketStatus)
                                      .Include(t => t.TicketType)
                                      .Include(t => t.Comments)
+                                        .ThenInclude(c => c.User)
                                      .Include(t => t.Attachments)
                                      .Include(t => t.History)
                                      .FirstOrDefaultAsync(t => t.Id == ticketId);
