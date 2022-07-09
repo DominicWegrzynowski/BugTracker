@@ -62,9 +62,13 @@
                     
                     <h2>No Project Manager Assigned</h2>                    
                 }
-                <div class="wid-u-info">
-                    <a class="btn btn-sm btn-outline-primary" asp-controller="Projects" asp-action="AssignPM" asp-route-projectId="@Model.Project.Id"><small>Manage PM</small></a>
-                </div>
+                @if(User.IsInRole(nameof(Roles.Admin)))
+                {
+                    <div class="wid-u-info">
+                        <a class="btn btn-sm btn-outline-primary" asp-controller="Projects" asp-action="AssignPM" asp-route-projectId="@Model.Project.Id"><small>Manage PM</small></a>
+                    </div>
+                }
+                
                 <hr>
 
                 @foreach(BTUser member in Model.Project.Members.Where(m => m.Id != projectManager.Id))

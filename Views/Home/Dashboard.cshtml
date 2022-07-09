@@ -210,19 +210,19 @@
                 <div class="stats-report text-center">
                     <div class="stat-item">
                         <h5>@nameof(BTProjectPriority.Urgent)</h5>
-                        <b class="col-black">@urgentPercent%</b>
+                        <b class="col-black">@String.Format("{0:0.0}", urgentPercent)%</b>
                     </div>
                     <div class="stat-item">
                         <h5>@nameof(BTProjectPriority.High)</h5>
-                        <b class="col-black">@highPercent%</b>
+                        <b class="col-black">@String.Format("{0:0.0}", highPercent)%</b>
                     </div>
                     <div class="stat-item">
                         <h5>@nameof(BTProjectPriority.Medium)</h5>
-                        <b class="col-black">@mediumPercent%</b>
+                        <b class="col-black">@String.Format("{0:0.0}", mediumPercent)%</b>
                     </div>
                     <div class="stat-item">
                         <h5>@nameof(BTProjectPriority.Low)</h5>
-                        <b class="col-black">@lowPercent%</b>
+                        <b class="col-black">@String.Format("{0:0.0}", lowPercent)%</b>
                     </div>
                 </div>
             </div>

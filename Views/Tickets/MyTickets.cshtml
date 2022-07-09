@@ -18,7 +18,11 @@
 
     //Resolved Tickets
     decimal resolvedTickets = Model.Where(t => t.TicketStatus.Name == "Resolved").Count();
-    decimal resolvedTicketPercentage = Math.Round((resolvedTickets / Model.Count() ) * 100);
+    decimal resolvedTicketPercentage = 0;
+    if(Model.Count() != 0)
+    {
+        resolvedTicketPercentage = Math.Round((resolvedTickets / Model.Count() ) * 100);
+    }
 
     //Pending Tickets 
     decimal pendingTickets = Model.Where(t => t.TicketStatus.Name == "Development" ||
@@ -26,9 +30,12 @@
                                               t.TicketStatus.Name == "New"
     ).Count();
 
-    decimal pendingTicketPercentage = Math.Round((pendingTickets / Model.Count() ) * 100);
+    decimal pendingTicketPercentage = 0;
 
-    
+    if (Model.Count() != 0)
+    {
+        pendingTicketPercentage = Math.Round((pendingTickets / Model.Count() ) * 100);
+    }
 
 }
 
@@ -43,7 +50,14 @@
             <div class="body text-center">
                 <h5 class="m-b-3">Submitted Tickets</h5>
                 <br />
-                <h2 style="font-size: 60px;">@submittedTickets</h2>
+                @if(submittedTickets == 0)
+                {
+                    <h2 style="font-size: 60px;">0</h2>
+                }
+                else
+                {
+                    <h2 style="font-size: 60px;">@submittedTickets</h2>
+                }
                 <br />
             </div>
         </div>
@@ -53,7 +67,14 @@
             <div class="body text-center ">
                 <h5 class="m-b-3">Assigned Tickets</h5>
                 <br />
-                <h2 style="font-size: 60px;">@assignedTickets</h2>
+                @if(assignedTickets == 0)
+                {
+                    <h2 style="font-size: 60px;">0</h2>
+                }
+                else
+                {
+                    <h2 style="font-size: 60px;">@assignedTickets</h2>
+                }
                 <br />
             </div>
         </div>
@@ -62,7 +83,14 @@
         <div class="card">
             <div class="body text-center">
                 <h5 class="m-b-3">Pending Ticket %</h5>
-                <input readonly disabled type="text" class="knob" value="@pendingTicketPercentage" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#0275d8">
+                @if(pendingTicketPercentage == 0)
+                {
+                    <input readonly disabled type="text" class="knob" value="0" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#0275d8">
+                }
+                else
+                {
+                    <input readonly disabled type="text" class="knob" value="@pendingTicketPercentage" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#0275d8">
+                }
             </div>
         </div>
     </div>
@@ -70,7 +98,15 @@
         <div class="card">
             <div class="body text-center">
                 <h5 class="m-b-3">Resolved Ticket %</h5>
-                <input readonly disabled type="text" class="knob" value="@resolvedTicketPercentage" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#5cb85c">
+                @if(resolvedTicketPercentage == 0)
+                {
+                    <input readonly disabled type="text" class="knob" value="0" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#5cb85c">
+
+                }
+                else
+                {
+                    <input readonly disabled type="text" class="knob" value="@resolvedTicketPercentage" data-width="120" data-height="120" data-thickness="0.12" data-fgColor="#5cb85c">
+                }
             </div>
         </div>
     </div>
