@@ -6,5 +6,6 @@ namespace BugTracker.Models.ViewModels
     {
         public Invite Invite { get; set; }
         public SelectList Projects { get; set; }
+        public int? SelectedProjectId { get; set; }
     }
 }

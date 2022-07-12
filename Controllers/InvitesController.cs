@@ -10,6 +10,7 @@ using BugTracker.Models;
 using BugTracker.Models.ViewModels;
 using BugTracker.Services.Interfaces;
 using BugTracker.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
@@ -17,10 +18,12 @@ namespace BugTracker.Controllers
     {
         private readonly IBTProjectService _projectsService;
         private readonly IBTInviteService _inviteService;
-        public InvitesController(IBTProjectService projectsService, IBTInviteService inviteService)
+        private readonly UserManager<BTUser> _userManager;
+        public InvitesController(IBTProjectService projectsService, IBTInviteService inviteService, UserManager<BTUser> userManager)
         {
             _projectsService = projectsService;
             _inviteService = inviteService;
+            _userManager = userManager;
         }
 
         // GET: Invites
@@ -60,11 +63,10 @@ namespace BugTracker.Controllers
 
             try
             {
-                model.Projects = new SelectList(await _projectsService.GetAllProjectsByCompanyAsync(companyId), "Id", "Project");
+                model.Projects = new SelectList(await _projectsService.GetAllProjectsByCompanyAsync(companyId), "Id", "Name");
             }
             catch (Exception)
             {
-
                 throw;
             }
 
@@ -76,19 +78,35 @@ namespace BugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CompanyId,ProjectId,InvitorId,InviteeId,CompanyToken,InviteDate,JoinDate,InviteeEmail,InviteeFirstName,InviteeLastName,IsValid")] Invite invite)
+        public async Task<IActionResult> Create(CreateInviteViewModel model)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    _context.Add(invite);
-            //    await _context.SaveChangesAsync();
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", invite.CompanyId);
-            //ViewData["InviteeId"] = new SelectList(_context.Users, "Id", "Id", invite.InviteeId);
-            //ViewData["InvitorId"] = new SelectList(_context.Users, "Id", "Id", invite.InvitorId);
-            //ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", invite.ProjectId);
-            return View(invite);
+            //original parameter list: [Bind("Id,CompanyId,ProjectId,InvitorId,InviteDate,InviteeEmail,InviteeFirstName,InviteeLastName")] Invite invite
+
+            if (model.Invite is not null && model.SelectedProjectId is not null)
+            {
+                Invite newInvite = new();
+                int companyId = User.Identity.GetCompanyId().Value;
+                BTUser user = await _userManager.GetUserAsync(User);
+
+                newInvite.CompanyId = companyId;
+                newInvite.InviteDate= DateTime.Now;
+                newInvite.InviteeEmail = model.Invite.InviteeEmail;
+                newInvite.InviteeFirstName = model.Invite.InviteeFirstName;
+                newInvite.InviteeLastName = model.Invite.InviteeLastName;
+                newInvite.ProjectId = model.Invite.ProjectId;
+                newInvite.InvitorId = user.Id;
+
+                try
+                {
+                    await _inviteService.AddNewInviteAsync(newInvite);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+                RedirectToAction("Index", "Invites");
+            }
+            return View(model);
         }
 
         // GET: Invites/Edit/5
