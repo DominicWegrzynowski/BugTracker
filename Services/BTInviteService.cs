@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BugTracker.Models;
 using BugTracker.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Services
 {
