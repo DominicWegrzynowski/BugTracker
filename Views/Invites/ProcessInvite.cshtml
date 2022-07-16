@@ -3,19 +3,18 @@
 @{
     ViewData["Title"] = "Welcome to BugTracker";
 	Layout = "~/Views/Shared/_LayoutAuth.cshtml";
+
+
+    
+
 }
 
 <div class="card">
         <div class="body">
-			<h1 class="lead mb-3"><strong>Welcome! to </strong></h1>
-            <h2 class="lead">@Model.Company.Name</h2>
-            <h2 class="lead">@Model.Invitee.FullName</h2>
-
-            <br />
-            <p>@Model.Invitor.FullName has invited you to collaborate on the @Model.Project.Name project.</p>
-            <br />
+			<h1 class="lead mb-3"><strong>Welcome @Model.InviteeFirstName!</strong></h1>
+            <p>@Model.Invitor.FullName has invited you to @Model.Company.Name to collaborate on the @Model.Project.Name project.</p>
             <p>Click the "JOIN" button below to register with the company and begin entering tickets.</p>
-            <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary">Launch BugTracker</a>
+            <a asp-area="Identity" asp-page="/Account/RegisterByInvite" class="btn btn-primary"><i class="icon-login"></i>        Join</a>
         </div>
 </div>
 

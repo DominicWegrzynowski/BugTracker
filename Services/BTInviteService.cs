@@ -122,6 +122,24 @@ namespace BugTracker.Services
         }
         #endregion
 
+        #region Get Invite By Guid
+        public async Task<Invite> GetInviteByGuidAsync(Guid token)
+        {
+            try
+            {
+                return await _context.Invites.Where(i => i.CompanyToken == token)
+                                                 .Include(i => i.Company)
+                                                 .Include(i => i.Invitor)
+                                                 .Include(i => i.Project)
+                                                 .FirstOrDefaultAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        #endregion
+
         #region Validate Invite Code
         public async Task<bool> ValidateInviteCodeAsync(Guid? token)
         {
@@ -148,6 +166,7 @@ namespace BugTracker.Services
 
                     if (validDate)
                     {
+                        invite.IsValid = true;
                         result = invite.IsValid;
                     }
 

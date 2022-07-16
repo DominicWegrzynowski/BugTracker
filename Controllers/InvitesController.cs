@@ -64,14 +64,17 @@ namespace BugTracker.Controllers
             return View();
         }
 
-        public async Task<IActionResult> ProcessInvite(Guid companyToken)
+        [Route("Invites/ProcessInvite/{companyToken:guid}")]
+        public async Task<IActionResult> ProcessInvite(string companyToken)
         {
-            bool isInviteTokenValid = await _inviteService.ValidateInviteCodeAsync(companyToken);
+            Guid companyTokenGuid = new(companyToken);
+
+            bool isInviteTokenValid = await _inviteService.ValidateInviteCodeAsync(companyTokenGuid);
 
             if(isInviteTokenValid)
             {
-                //find a way to get companyId and invite
-                //Pass invite as the model to the view
+                Invite invite = await _inviteService.GetInviteByGuidAsync(companyTokenGuid);
+                return View(invite);
             }
 
             return View();
@@ -127,7 +130,7 @@ namespace BugTracker.Controllers
                     try
                     {
                         string emailAddress = newInvite.InviteeEmail;
-                        string message = $"{ newInvite.Invitor.FullName } has invited you to collaborate on { newInvite.Project.Name }. Accept the invitation here: https://localhost/Invites/ProcessInvite/{ newInvite.CompanyToken }";
+                        string message = $"{ newInvite.Invitor.FullName } has invited you to collaborate on { newInvite.Project.Name }. Accept the invitation here: https://localhost:44344/Invites/ProcessInvite/{ newInvite.CompanyToken }";
                         string emailSubject = $"Invitation to Collaborate";
                         await _emailSender.SendEmailAsync(emailAddress, emailSubject, message);
                     }
