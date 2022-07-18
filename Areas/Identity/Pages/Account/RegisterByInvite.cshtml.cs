@@ -75,10 +75,20 @@ namespace BugTracker.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            //Validate CompanyToken to make to confirm that it is the invitee accessing this page. 
+            
+            //Query invite from database with user data to pass into inputmodel as default values. 
+                //  -Company Name & project name should be view only
+
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            //Keep default values passed from get method if user doesn't change them. 
+            //Assign User to project that they are being invited to work on.
+            //Set the user's company id to the incoming company id
+           
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
