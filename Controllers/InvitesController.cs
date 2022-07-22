@@ -64,6 +64,7 @@ namespace BugTracker.Controllers
             return View();
         }
 
+        [HttpGet]
         [Route("Invites/ProcessInvite/{companyToken:guid}")]
         public async Task<IActionResult> ProcessInvite(string companyToken)
         {
@@ -79,7 +80,6 @@ namespace BugTracker.Controllers
 
             return View();
         }
-
 
         // GET: Invites/Create
         [Authorize(Roles = "Admin")]

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using BugTracker.Services.Interfaces;
 
 namespace BugTracker.Areas.Identity.Pages.Account
 {
@@ -24,24 +25,28 @@ namespace BugTracker.Areas.Identity.Pages.Account
         private readonly UserManager<BTUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IBTInviteService _inviteService;
+        private readonly IBTProjectService _projectService;
+        private readonly IBTCompanyInfoService _companyInfoService;
 
         public RegisterModel(
             UserManager<BTUser> userManager,
             SignInManager<BTUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender, IBTInviteService inviteService, IBTProjectService projectService, IBTCompanyInfoService companyInfoService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _inviteService = inviteService;
+            _projectService = projectService;
+            _companyInfoService = companyInfoService;
         }
 
         [BindProperty]
         public InputModel Input { get; set; }
-
         public string ReturnUrl { get; set; }
-
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
         public class InputModel
@@ -60,6 +65,10 @@ namespace BugTracker.Areas.Identity.Pages.Account
             public string LastName { get; set; }
 
             [Required]
+            [Display(Name ="Company")]
+            public int CompanyId { get; set; }
+
+            [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
@@ -71,33 +80,56 @@ namespace BugTracker.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task OnGetAsync(string id, string returnUrl = null)
         {
-            ReturnUrl = returnUrl;
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            //Validate CompanyToken to make to confirm that it is the invitee accessing this page. 
-            
-            //Query invite from database with user data to pass into inputmodel as default values. 
-                //  -Company Name & project name should be view only
+            Guid companyTokenGuid = new(id);
 
+            bool isInviteTokenValid = await _inviteService.ValidateInviteCodeAsync(companyTokenGuid);
+
+            if(isInviteTokenValid)
+            {
+                Invite invite = await _inviteService.GetInviteByGuidAsync(companyTokenGuid);
+                ViewData["Invite"] = invite;
+            }
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string id, string returnUrl = null)
         {
             //Keep default values passed from get method if user doesn't change them. 
             //Assign User to project that they are being invited to work on.
             //Set the user's company id to the incoming company id
-           
+
+            Guid companyTokenGuid = new(id);
+
+            bool isInviteTokenValid = await _inviteService.ValidateInviteCodeAsync(companyTokenGuid);
+            Invite invite = new();
+            if (isInviteTokenValid)
+            {
+                invite = await _inviteService.GetInviteByGuidAsync(companyTokenGuid);
+                ViewData["Invite"] = invite;
+            }
+
+
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
                 var user = new BTUser { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName };
+
+                try
+                {
+                    user.Company = await _companyInfoService.GetCompanyInfoByIdAsync(invite.CompanyId);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+                
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    _logger.LogInformation("User created a new account with password.");                    
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -111,7 +143,7 @@ namespace BugTracker.Areas.Identity.Pages.Account
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
+                    { 
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                     }
                     else
