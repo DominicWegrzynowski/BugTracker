@@ -7,23 +7,59 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
+using BugTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using BugTracker.Models.Enums;
 
 namespace BugTracker.Controllers
 {
     public class NotificationsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBTNotificationService _notificationService;
+        private readonly UserManager<BTUser> _userManager;
+        private readonly IBTRolesService _rolesService;
 
-        public NotificationsController(ApplicationDbContext context)
+
+        public NotificationsController(ApplicationDbContext context, IBTNotificationService notificationService, UserManager<BTUser> userManager, IBTRolesService rolesService)
         {
             _context = context;
+            _notificationService = notificationService;
+            _userManager = userManager;
+            _rolesService = rolesService;
         }
 
         // GET: Notifications
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Notifications.Include(n => n.Recipient).Include(n => n.Sender).Include(n => n.Ticket);
-            return View(await applicationDbContext.ToListAsync());
+            BTUser user = await _userManager.GetUserAsync(User);
+            IEnumerable<Notification> notifications;
+
+            if (await _rolesService.IsUserInRoleAsync(user, nameof(Roles.Admin)))
+            {
+                try
+                {
+                     notifications = await _notificationService.GetSentNotificationsAsync(user.Id);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+            else 
+            {
+                try
+                {
+                    notifications = await _notificationService.GetReceivedNotificationsAsync(user.Id);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+
+            return View(notifications);
+
         }
 
         // GET: Notifications/Details/5
@@ -63,6 +99,10 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,TicketId,SenderId,RecipientId,Title,Message,Created,Viewed")] Notification notification)
         {
+            await _notificationService.AddNotificationAsync(notification);
+
+
+
             if (ModelState.IsValid)
             {
                 _context.Add(notification);

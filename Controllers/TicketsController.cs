@@ -217,7 +217,7 @@ namespace BugTracker.Controllers
                 //  2. The team members on the project
                 //  3. The owner of the ticket if they aren't already on the project
 
-                //Create developer Notification(THIS WORKS)
+                //Create developer Notification
                 Notification developerNotification = new();
                 developerNotification.Title = "Ticket Assigned";
                 developerNotification.Sender = await _ticketService.GetUserById(user.Id);
@@ -240,7 +240,7 @@ namespace BugTracker.Controllers
 
                 Project project = ticket.Project;
 
-                ////Notification for team members(THIS DOESNT WORK)
+                ////Notification for team members
                 foreach (BTUser member in project.Members.Where(m => m.Id != developerNotification.RecipientId))
                 {
                     Notification memberNotification = new();
