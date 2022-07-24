@@ -11,7 +11,21 @@
     List<Notification> notifications = new();
     for(int i = 0; i < 5; i++)
     {
-        notifications.Add(allNotifications.ElementAt(i));
+        if(allNotifications.Count() > 0)
+        {
+            if(i >= allNotifications.Count())
+            {
+                break;
+            }
+            else
+            {
+                notifications.Add(allNotifications.ElementAt(i));
+            }
+        }
+        else
+        {
+            break;
+        }
     }
 
     static string GetDateString(DateTimeOffset inputDate)
@@ -31,20 +45,30 @@
             return $"{ dateDifference } days ago";
         }
     }
-    
 
-    int notificationsToday = notifications.Where(n => n.Created == DateTime.Today).Count();
+    double notificationsToday = 0;
 
+    if(notifications.Count > 0)
+    {
+        foreach(Notification notification in notifications)
+        {
+            var dateDifference = (DateTime.Today - notification.Created).TotalDays;
+
+            if((int)dateDifference == 0)
+            {
+                notificationsToday++; 
+            }
+        }
+
+    }
 }
-
-
 <navbar class="container-fluid">
     <div class="navbar-btn">
         <button type="button" class="btn-toggle-offcanvas"><i class="lnr lnr-menu fa fa-bars"></i></button>
     </div>
 
     <div class="navbar-brand d-sm-block d-md-none d-lg-block">
-        <a asp-controller="Home" asp-action="Dashboard"><img src="~/images/BugTrackerHeader.svg"  alt="Bug Tracker Logo"  class="pb-0 mb-0"></a>
+        <a asp-controller="Home" asp-action="Dashboard"><img src="~/images/BugTrackerHeader.svg" alt="Bug Tracker Logo" class="pb-0 mb-0"></a>
     </div>
 
     <div class="navbar-right">

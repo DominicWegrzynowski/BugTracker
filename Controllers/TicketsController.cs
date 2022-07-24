@@ -26,7 +26,8 @@ namespace BugTracker.Controllers
         private readonly IBTFileService _fileService;
         private readonly IBTTicketHistoryService _historyService;
         private readonly IBTNotificationService _notificationService;
-        public TicketsController(UserManager<BTUser> userManager, IBTProjectService projectService, IBTLookupService lookupService, IBTTicketService ticketService, IBTFileService fileService, IBTTicketHistoryService historyService, IBTNotificationService notificationService)
+        private readonly IBTRolesService _rolesService;
+        public TicketsController(UserManager<BTUser> userManager, IBTProjectService projectService, IBTLookupService lookupService, IBTTicketService ticketService, IBTFileService fileService, IBTTicketHistoryService historyService, IBTNotificationService notificationService, IBTRolesService rolesService)
         {
             _userManager = userManager;
             _projectService = projectService;
@@ -35,6 +36,7 @@ namespace BugTracker.Controllers
             _fileService = fileService;
             _historyService = historyService;
             _notificationService = notificationService;
+            _rolesService = rolesService;
         }
 
         // GET: MyTickets
@@ -216,7 +218,7 @@ namespace BugTracker.Controllers
                 //  1. The developer assigned
                 //  2. The team members on the project
                 //  3. The owner of the ticket if they aren't already on the project
-
+                //  4. Admin 
                 //Create developer Notification
                 Notification developerNotification = new();
                 developerNotification.Title = "Ticket Assigned";
@@ -283,6 +285,32 @@ namespace BugTracker.Controllers
                         throw;
                     }
                 }
+
+
+                //Notification for Admin
+                if(!User.IsInRole(nameof(Roles.Admin)))
+                {
+                    int companyId = User.Identity.GetCompanyId().Value;
+
+                    Notification adminNotification = new();
+                    adminNotification.Title = "Ticket Assigned";
+                    adminNotification.Sender = await _ticketService.GetUserById(user.Id);
+                    adminNotification.Recipient = (await _rolesService.GetUsersInRoleAsync("Admin", companyId)).FirstOrDefault();
+                    adminNotification.Ticket = newTicket;
+                    adminNotification.Message = $"{ developerNotification.Sender.FullName } has assigned { developerNotification.Recipient.FullName } a ticket: <a href='https://localhost:44344/Tickets/Details/{ adminNotification.Ticket.Id }'>{ adminNotification.Ticket.Title }</a>";
+                    adminNotification.Created = DateTimeOffset.Now;
+
+                    try
+                    {
+                        await _notificationService.SendEmailNotificationAsync(adminNotification, "New Ticket Assigned");
+                        await _notificationService.AddNotificationAsync(adminNotification);
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+
 
                 return RedirectToAction(nameof(Details), "Projects", new { id = newTicket.ProjectId});
             }

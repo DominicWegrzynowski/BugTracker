@@ -381,7 +381,7 @@ namespace BugTracker.Controllers
             return (await _projectService.GetAllProjectsByCompanyAsync(companyId)).Any(t => t.Id == id);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> ManageProjects()
         {
             List<Project> projects = new List<Project>();

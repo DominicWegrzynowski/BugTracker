@@ -35,19 +35,6 @@ namespace BugTracker.Controllers
             BTUser user = await _userManager.GetUserAsync(User);
             IEnumerable<Notification> notifications;
 
-            if (await _rolesService.IsUserInRoleAsync(user, nameof(Roles.Admin)))
-            {
-                try
-                {
-                     notifications = await _notificationService.GetSentNotificationsAsync(user.Id);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-            else 
-            {
                 try
                 {
                     notifications = await _notificationService.GetReceivedNotificationsAsync(user.Id);
@@ -56,7 +43,6 @@ namespace BugTracker.Controllers
                 {
                     throw;
                 }
-            }
 
             return View(notifications);
 
