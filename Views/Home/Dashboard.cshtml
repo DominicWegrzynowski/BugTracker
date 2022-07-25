@@ -104,8 +104,8 @@
         <div class="card overflowhidden">
             <div class="body text-center bg-dark">
                 <div class="p-15 text-light">
-                    <h3>@(Model.Projects.Count() + Model.Tickets.Count() + Model.Members.Count())</h3>
-                    <span>Active Projects</span>
+                    <h3>@Model.Tickets.Where(t => t.DeveloperUser is not null).Count()</h3>
+                    <span>Assigned Tickets</span>
                 </div>
             </div>
         </div>

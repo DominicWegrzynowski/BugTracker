@@ -25,10 +25,11 @@ namespace BugTracker.Controllers
         private readonly IBTProjectService _projectService;
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTCompanyInfoService _companyInfoService;
+        private readonly IBTNotificationService _notificationService;
         public ProjectsController(IBTRolesService rolesService,
                                   IBTLookupService lookupService,
                                   IBTFileService fileService,
-                                  IBTProjectService projectService, UserManager<BTUser> userManager, IBTCompanyInfoService companyInfoService)
+                                  IBTProjectService projectService, UserManager<BTUser> userManager, IBTCompanyInfoService companyInfoService, IBTNotificationService notificationService)
         {
             _rolesService = rolesService;
             _lookupService = lookupService;
@@ -36,6 +37,7 @@ namespace BugTracker.Controllers
             _projectService = projectService;
             _userManager = userManager;
             _companyInfoService = companyInfoService;
+            _notificationService = notificationService;
         }
 
         //GET : Projects/MyProjects
@@ -139,7 +141,6 @@ namespace BugTracker.Controllers
             {
                 List<string> memberIds = (await _projectService.GetAllProjectMembersExceptPMAsync(model.Project.Id))
                                                                .Select(m => m.Id).ToList();
-
                 //Remove current members
                 foreach (string member in memberIds)
                 {
@@ -152,7 +153,80 @@ namespace BugTracker.Controllers
                     await _projectService.AddUserToProjectAsync(member, model.Project.Id);
                 }
 
-                //goto project details
+                //Send Notification to Each member being assigned/removed
+                int companyId = User.Identity.GetCompanyId().Value;
+                BTUser user = await _userManager.GetUserAsync(User);
+                List<BTUser> selectedMembers = new();
+
+                foreach (string selectedUser in model.SelectedUsers)
+                {
+                    BTUser member = await _companyInfoService.GetUserById(selectedUser, companyId);
+
+                    selectedMembers.Add(member);
+
+                    Notification assignedMemberNotification = new();
+                    assignedMemberNotification.Title = "Ticket Assigned";
+                    assignedMemberNotification.Sender = user;
+                    assignedMemberNotification.Recipient = member;
+                    assignedMemberNotification.Message = $"{ assignedMemberNotification.Sender.FullName } has added you to a project: <a href='https://localhost:44344/Projects/Details/{ model.Project.Id }'>{ model.Project.Name }</a>";
+                    assignedMemberNotification.Created = DateTimeOffset.Now;
+
+                    try
+                    {
+                        await _notificationService.AddNotificationAsync(assignedMemberNotification);
+                        await _notificationService.SendEmailNotificationAsync(assignedMemberNotification, "New Ticket Assigned");
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+
+                    //Send if Admin assigned/removed members, notify Project Manager
+                    if (User.IsInRole(nameof(Roles.Admin)))
+                    {
+                        BTUser projectManager = await _projectService.GetProjectManagerAsync(model.Project.Id);
+                        Notification notifyProjectManagerNotification = new();
+                        notifyProjectManagerNotification.Title = "Ticket Assigned";
+                        notifyProjectManagerNotification.Sender = user;
+                        notifyProjectManagerNotification.Recipient = projectManager;
+                        notifyProjectManagerNotification.Message = $"{ notifyProjectManagerNotification.Sender.FullName } has assigned { member.FullName } to a project: <a href='https://localhost:44344/Projects/Details/{ model.Project.Id }'>{ model.Project.Name }</a>";
+
+                        try
+                        {
+                            await _notificationService.AddNotificationAsync(assignedMemberNotification);
+                            await _notificationService.SendEmailNotificationAsync(assignedMemberNotification, "New Ticket Assigned");
+                        }
+                        catch (Exception)
+                        {
+                            throw;
+                        }
+                    }
+
+                    //If Project Manager assigned/removed members, notify admin
+                    if (User.IsInRole(nameof(Roles.ProjectManager)))
+                    {
+                        List<BTUser> admins = await _companyInfoService.GetAdminsByCompanyId(companyId);
+
+                        foreach(BTUser admin in admins)
+                        {
+                            Notification notifyAdminNotification = new();
+                            notifyAdminNotification.Title = "Ticket Assigned";
+                            notifyAdminNotification.Sender = user;
+                            notifyAdminNotification.Recipient = admin;
+                            notifyAdminNotification.Message = $"{ notifyAdminNotification.Sender.FullName } has assigned { member.FullName } to a project: <a href='https://localhost:44344/Projects/Details/{ model.Project.Id }'>{ model.Project.Name }</a>";
+
+                            try
+                            {
+                                await _notificationService.AddNotificationAsync(assignedMemberNotification);
+                                await _notificationService.SendEmailNotificationAsync(assignedMemberNotification, "New Ticket Assigned");
+                            }
+                            catch (Exception)
+                            {
+                                throw;
+                            }
+                        }
+                    }
+                }
                 return RedirectToAction("Details", "Projects", new { id = model.Project.Id });
             }
 
