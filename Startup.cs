@@ -56,7 +56,7 @@ namespace BugTracker
 
             services.AddScoped<IEmailSender, BTEmailService>();
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
-
+            services.Configure<DemoLogin>(Configuration.GetSection("DemoLogin"));
             services.AddControllersWithViews();
         }
 

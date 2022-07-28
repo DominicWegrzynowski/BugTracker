@@ -1,9 +1,6 @@
 ﻿@page
 @model LoginModel
 
-
-
-
 @{
     ViewData["Title"] = "Login";
     ViewData["MainMenu"] = "Login";
@@ -34,17 +31,75 @@
                 <button type="submit" class="btn btn-primary btn-lg btn-block">LOGIN</button>
                 <div class="bottom">
                     <span class="helper-text m-b-10"><i class="fa fa-lock"></i> <a asp-page="./ForgotPassword">Forgot password?</a></span>
-                    <span>Don't have an account? <a asp-page="./Register">Register</a></span>
                 </div>
-                <div class="form-group ">
-                    <hr />
-                    <button type="submit" class="btn btn-primary btn-sm btn-block ">Demo Admin</button>
-                    <button type="submit" class="btn btn-primary btn-sm btn-block ">Demo PM</button>
-                    <button type="submit" class="btn btn-primary btn-sm btn-block ">Demo Dev</button>
-                    <button type="submit" class="btn btn-primary btn-sm btn-block ">Demo New User</button>
-                    <button type="submit" class="btn btn-primary btn-sm btn-block ">Demo Submitter</button>
+
+                <div class="form-group">
+                <hr />
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <button type="submit" class="btn btn-primary btn-sm col-12">Demo Admin</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="submit" class="btn btn-primary btn-sm col-12">Demo PM</button>
+                    </div>
                 </div>
+                <div class="row">
+                    <div class="col-6">
+                        <button type="submit" class="btn btn-primary btn-sm col-12">Demo Developer</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="submit" class="btn btn-primary btn-sm col-12">Demo Submitter</button>
+                    </div>
+                </div>
+            </div>
+
+
             </form>
+
+           @* <div class="form-group">
+                <hr />
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <a href="javascript:document.getElementById('DemoAdminForm').submit();" class="btn btn-primary btn-sm col-12">Demo Admin</a>
+                    </div>
+                    <div class="col-6">
+                        <a href="javascript:document.getElementById('DemoPMForm').submit();" class="btn btn-primary btn-sm col-12">Demo PM</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <a href="javascript:document.getElementById('DemoDevForm').submit();" class="btn btn-primary btn-sm col-12">Demo Developer</a>
+                    </div>
+                    <div class="col-6">
+                        <a href="javascript:document.getElementById('DemoSubForm').submit();" class="btn btn-primary btn-sm col-12">Demo Submitter</a>
+                    </div>
+                </div>
+            </div>*@
+
+            @*<form id="DemoAdminForm" asp-area="Identity" asp-page="Account/Login" asp-route-returnUrl="@Url.Action("Dashboard", "Home", new { area = ""})">
+                <input type="hidden" asp-for="Input.Email" value="demoadmin@bugtracker.com"/>
+                <input type="hidden" asp-for="Input.Password" value="placeholder"/>
+                <input type="hidden" asp-for="Input.RememberMe" value="false"/>
+            </form>
+
+            <form id="DemoPMForm" asp-area="Identity" asp-page="Account/Login" asp-route-returnUrl="@Url.Action("Dashboard", "Home", new { area = ""})">
+                <input type="hidden" asp-for="Input.Email" value="demopm@bugtracker.com"/>
+                <input type="hidden" asp-for="Input.Password" value="placeholder"/>
+                <input type="hidden" asp-for="Input.RememberMe" value="false"/>
+            </form>
+
+            <form id="DemoDevForm" asp-area="Identity" asp-page="Account/Login" asp-route-returnUrl="@Url.Action("Dashboard", "Home", new { area = ""})">
+                <input type="hidden" asp-for="Input.Email" value="demodev@bugtracker.com"/>
+                <input type="hidden" asp-for="Input.Password" value="placeholder"/>
+                <input type="hidden" asp-for="Input.RememberMe" value="false"/>
+            </form>
+
+            <form id="DemoSubForm" asp-area="Identity" asp-page="Account/Login" asp-route-returnUrl="@Url.Action("Dashboard", "Home", new { area = ""})">
+                <input type="hidden" asp-for="Input.Email" value="demosub@bugtracker.com"/>
+                <input type="hidden" asp-for="Input.Password" value="placeholder"/>
+                <input type="hidden" asp-for="Input.RememberMe" value="false"/>
+            </form>*@
+
         </div>
     </div>
 

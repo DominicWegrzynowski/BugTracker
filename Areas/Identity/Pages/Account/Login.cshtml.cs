@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace BugTracker.Areas.Identity.Pages.Account
 {
@@ -21,14 +22,16 @@ namespace BugTracker.Areas.Identity.Pages.Account
         private readonly UserManager<BTUser> _userManager;
         private readonly SignInManager<BTUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IConfiguration _config;
 
-        public LoginModel(SignInManager<BTUser> signInManager, 
+        public LoginModel(SignInManager<BTUser> signInManager,
             ILogger<LoginModel> logger,
-            UserManager<BTUser> userManager)
+            UserManager<BTUser> userManager, IConfiguration config)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _config = config;
         }
 
         [BindProperty]
@@ -80,6 +83,32 @@ namespace BugTracker.Areas.Identity.Pages.Account
         
             if (ModelState.IsValid)
             {
+
+                if(Input.Email == "demoadmin@bugtracker.com")
+                {
+                    Input.Email = _config["DemoAdminUsername"];
+                    Input.Password = _config["DemoAdminPassword"];
+                }
+
+                if (Input.Email == "demopm@bugtracker.com")
+                {
+                    Input.Email = _config["DemoProjectManagerUsername"];
+                    Input.Password = _config["DemoProjectManagerPassword"];
+                }
+
+                if (Input.Email == "demodev@bugtracker.com")
+                {
+                    Input.Email = _config["DemoDeveloperUsername"];
+                    Input.Password = _config["DemoDeveloperPassword"];
+                }
+
+                if (Input.Email == "demosub@bugtracker.com")
+                {
+                    Input.Email = _config["DemoSubmitterUsername"];
+                    Input.Password = _config["DemoSubmitterPassword"];
+                }
+
+
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);

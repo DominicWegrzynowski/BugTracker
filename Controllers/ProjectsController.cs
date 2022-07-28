@@ -133,7 +133,7 @@ namespace BugTracker.Controllers
 
         // POST : Projects/AssignMembers/
         [Authorize(Roles="Admin, ProjectManager")]
-        [HttpPost]
+        [HttpPost]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
         {
