@@ -1,0 +1,66 @@
+﻿@page
+@model DemoLoginModel
+
+@{
+    ViewData["Title"] = "Demo Login";
+    ViewData["MainMenu"] = "Demo Login";
+    Layout = "~/Views/Shared/_LayoutAuth.cshtml";
+}
+
+<div class="card">
+    <div class="header">
+        <p class="lead">Select Demo Role to Login as:</p>
+    </div>
+    <div class="body">
+        <div class="row">
+            <form method="post">
+                <div class="col-12 mb-3 form-group">
+                    <button class="btn btn-primary" type="submit" asp-route-user="admin">
+                        Admin
+                    </button>
+                </div>
+            </form>
+            
+            <form method="post">
+                <div class="col-12 mb-3">
+                    <button class="btn btn-primary form-group" type="submit" asp-route-user="pm">
+                        Project Manager
+                    </button>
+                </div>
+            </form>
+            <form method="post">
+                <div class="col-12 mb-3">
+                    <button class="btn btn-primary form-group" type="submit" asp-route-user="dev">
+                        Developer
+                    </button>
+                </div>
+            </form>
+            <form method="post">
+                <div class="col-12 mb-3">
+                    <button class="btn btn-primary form-group" type="submit" asp-route-user="submitter">
+                        Submitter
+                    </button>
+                </div>
+            </form>
+        </div>
+     
+
+        
+
+    </div>
+</div>
+
+
+
+
+<!--Bootstrap-->        
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/popper.min.js"></script>
+<script src="~/bootstrap/js/bootstrap.min.js"></script>  
+
+
+
+
+
+

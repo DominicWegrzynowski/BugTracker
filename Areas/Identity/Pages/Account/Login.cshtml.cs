@@ -83,32 +83,6 @@ namespace BugTracker.Areas.Identity.Pages.Account
         
             if (ModelState.IsValid)
             {
-
-                if(Input.Email == "demoadmin@bugtracker.com")
-                {
-                    Input.Email = _config["DemoAdminUsername"];
-                    Input.Password = _config["DemoAdminPassword"];
-                }
-
-                if (Input.Email == "demopm@bugtracker.com")
-                {
-                    Input.Email = _config["DemoProjectManagerUsername"];
-                    Input.Password = _config["DemoProjectManagerPassword"];
-                }
-
-                if (Input.Email == "demodev@bugtracker.com")
-                {
-                    Input.Email = _config["DemoDeveloperUsername"];
-                    Input.Password = _config["DemoDeveloperPassword"];
-                }
-
-                if (Input.Email == "demosub@bugtracker.com")
-                {
-                    Input.Email = _config["DemoSubmitterUsername"];
-                    Input.Password = _config["DemoSubmitterPassword"];
-                }
-
-
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
