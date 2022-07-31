@@ -22,13 +22,15 @@ namespace BugTracker.Controllers
         private readonly IBTCompanyInfoService _companyService;
         private readonly IBTProjectService _projectService;
         private readonly IBTRolesService _rolesService;
+        private readonly UserManager<BTUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, IBTCompanyInfoService companyService, IBTProjectService projectService, IBTRolesService rolesService)
+        public HomeController(ILogger<HomeController> logger, IBTCompanyInfoService companyService, IBTProjectService projectService, IBTRolesService rolesService, UserManager<BTUser> userManager)
         {
             _logger = logger;
             _companyService = companyService;
             _projectService = projectService;
             _rolesService = rolesService;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -92,6 +94,37 @@ namespace BugTracker.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> RemoveUsers()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<BTUser> allMembers = await _companyService.GetAllMembersAsync(companyId);
+
+            return View(allMembers);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveUsers(string userId)
+        {
+            if(userId is not null)
+            {
+                int companyId = User.Identity.GetCompanyId().Value;
+                BTUser userToRemove = await _companyService.GetUserById(userId, companyId);
+
+                try
+                {
+                    await _userManager.DeleteAsync(userToRemove);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+            return View();
+        }
+
+
+        [HttpGet]
         public async Task<IActionResult> MemberProfile(string userId)
         {
             int companyId = User.Identity.GetCompanyId().Value; 
@@ -108,73 +141,69 @@ namespace BugTracker.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<JsonResult> GglProjectTickets()
-        {
-            int companyId = User.Identity.GetCompanyId().Value;
-            List<Project> projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
+        //[HttpPost]
+        //public async Task<JsonResult> GglProjectTickets()
+        //{
+        //    int companyId = User.Identity.GetCompanyId().Value;
+        //    List<Project> projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
 
-            List<object> chartData = new();
+        //    List<object> chartData = new();
 
-            chartData.Add(new object[] { "ProjectName", "TicketCount" });
+        //    chartData.Add(new object[] { "ProjectName", "TicketCount" });
 
-            foreach(Project project in projects)
-            {
-                chartData.Add(new object[] { project.Name, project.Tickets.Count() });
-            }
+        //    foreach(Project project in projects)
+        //    {
+        //        chartData.Add(new object[] { project.Name, project.Tickets.Count() });
+        //    }
 
-            return Json(chartData);
-        }
+        //    return Json(chartData);
+        //}
 
-        [HttpPost]
-        public async Task<JsonResult> GglProjectPriority()
-        {
-            int companyId = User.Identity.GetCompanyId().Value;
+        //[HttpPost]
+        //public async Task<JsonResult> GglProjectPriority()
+        //{
+        //    int companyId = User.Identity.GetCompanyId().Value;
 
-            List<Project> projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
+        //    List<Project> projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
 
-            List<object> chartData = new();
-            chartData.Add(new object[] { "Priority", "Count" });
+        //    List<object> chartData = new();
+        //    chartData.Add(new object[] { "Priority", "Count" });
 
-            foreach(string priority in Enum.GetNames(typeof(BTProjectPriority)))
-            {
-                int priorityCount = (await _projectService.GetAllProjectsByPriorityAsync(companyId, priority)).Count();
-                chartData.Add(new object[] { priority, priorityCount });
-            }
+        //    foreach(string priority in Enum.GetNames(typeof(BTProjectPriority)))
+        //    {
+        //        int priorityCount = (await _projectService.GetAllProjectsByPriorityAsync(companyId, priority)).Count();
+        //        chartData.Add(new object[] { priority, priorityCount });
+        //    }
 
-            return Json(chartData);
-        }
+        //    return Json(chartData);
+        //}
 
-        [HttpPost]
-        public async Task<JsonResult> AmCharts()
-        {
-            AmChartData amChartData = new();
-            List<AmItem> amItems = new();
+        //[HttpPost]
+        //public async Task<JsonResult> AmCharts()
+        //{
+        //    AmChartData amChartData = new();
+        //    List<AmItem> amItems = new();
 
-            int company = User.Identity.GetCompanyId().Value;
+        //    int company = User.Identity.GetCompanyId().Value;
 
-            List<Project> projects = (await _companyService.GetAllProjectsAsync(company)).Where(p => p.Archived == false).ToList(); 
+        //    List<Project> projects = (await _companyService.GetAllProjectsAsync(company)).Where(p => p.Archived == false).ToList(); 
 
-            foreach(Project project in projects)
-            {
-                AmItem item = new();
+        //    foreach(Project project in projects)
+        //    {
+        //        AmItem item = new();
 
-                item.Project = project.Name;
-                item.Tickets = project.Tickets.Count;
-                item.Developers = (await _projectService.GetProjectMembersByRoleAsync(project.Id, nameof(Roles.Developer))).Count();
+        //        item.Project = project.Name;
+        //        item.Tickets = project.Tickets.Count;
+        //        item.Developers = (await _projectService.GetProjectMembersByRoleAsync(project.Id, nameof(Roles.Developer))).Count();
 
-                amItems.Add(item);
-            }
+        //        amItems.Add(item);
+        //    }
 
-            amChartData.Data = amItems.ToArray();
+        //    amChartData.Data = amItems.ToArray();
 
-            return Json(amChartData.Data);
-        }
+        //    return Json(amChartData.Data);
+        //}
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

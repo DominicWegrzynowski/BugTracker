@@ -57,10 +57,13 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ManageUserRoles([Bind("BTUser, Roles, SelectedRoles, AssignedRoles")]ManageUserRolesViewModel member)
+        
+        public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel member)
         {
-            if (ModelState.IsValid)
+            if (member.BTUser is not null || member.SelectedRoles is not null)
             {
+
+
                 int companyId = User.Identity.GetCompanyId().Value;
 
                 BTUser btUser = (await _companyInfoService.GetAllMembersAsync(companyId)).FirstOrDefault(u => u.Id == member.BTUser.Id);
@@ -81,7 +84,7 @@ namespace BugTracker.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(ManageUserRoles));
+                return View(member);
             }
         }
         #endregion

@@ -30,13 +30,16 @@
                             <ul class="dropdown-menu dropdown-menu-right">
                                 <li><a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">View</a></li>
                                 <li><a asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">Edit</a></li>
-                                <li><a asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id">Archive</a></li>
+                                @if(User.IsInRole(nameof(Roles.Admin)))
+                                {
+                                    <li><a asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id">Archive</a></li>
+                                }
                             </ul>
                         </li>
                     </ul>
                 </div>
                 <div class="body">
-                    <p style="overflow-y:auto;max-height:50px;min-height:50px;">@project.Description</p>
+                    <div style="overflow-y:auto;max-height:50px;min-height:50px;">@Html.Raw(project.Description)</div>
                     <ul class="list-unstyled team-info m-t-20">
                         <li class="m-r-15"><small class="text-muted">Team</small></li>
                         @foreach(BTUser member in project.Members)

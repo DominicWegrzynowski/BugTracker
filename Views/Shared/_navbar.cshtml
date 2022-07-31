@@ -1,10 +1,74 @@
-﻿<navbar class="container-fluid">
+﻿@using BugTracker.Services.Interfaces
+@using Microsoft.AspNetCore.Identity
+@inject IBTNotificationService NotificationService
+@inject UserManager<BTUser> UserManager
+@{
+    BTUser user = await UserManager.GetUserAsync(User);
+
+    IEnumerable<Notification> allNotifications = await NotificationService.GetReceivedNotificationsAsync(user.Id);
+    allNotifications = allNotifications.Reverse();
+
+    List<Notification> notifications = new();
+    for(int i = 0; i < 5; i++)
+    {
+        if(allNotifications.Count() > 0)
+        {
+            if(i >= allNotifications.Count())
+            {
+                break;
+            }
+            else
+            {
+                notifications.Add(allNotifications.ElementAt(i));
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    static string GetDateString(DateTimeOffset inputDate)
+    {
+        var dateDifference = (DateTime.Today - inputDate.Date).TotalDays;
+
+        if(dateDifference == 0)
+        {
+            return "Today";
+        }
+        else if(dateDifference == 1)
+        {
+            return "Yesterday";
+        }
+        else
+        {
+            return $"{ dateDifference } days ago";
+        }
+    }
+
+    double notificationsToday = 0;
+
+    if(notifications.Count > 0)
+    {
+        foreach(Notification notification in notifications)
+        {
+            var dateDifference = (DateTime.Today - notification.Created).TotalDays;
+
+            if((int)dateDifference == 0)
+            {
+                notificationsToday++; 
+            }
+        }
+
+    }
+}
+<navbar class="container-fluid">
     <div class="navbar-btn">
         <button type="button" class="btn-toggle-offcanvas"><i class="lnr lnr-menu fa fa-bars"></i></button>
     </div>
 
     <div class="navbar-brand d-sm-block d-md-none d-lg-block">
-        <a asp-controller="Home" asp-action="Dashboard"><img src="~/images/BugTrackerHeader.svg"  alt="Bug Tracker Logo"  class="pb-0 mb-0"></a>
+        <a asp-controller="Home" asp-action="Dashboard"><img src="~/images/BugTrackerHeader.svg" alt="Bug Tracker Logo" class="pb-0 mb-0"></a>
     </div>
 
     <div class="navbar-right">
@@ -25,60 +89,24 @@
                         <span class="notification-dot"></span>
                     </a>
                     <ul class="dropdown-menu notifications">
-                        <li class="header"><strong>You have 4 new Notifications</strong></li>
-                        <li>
-                            <a href="javascript:void(0);">
-                                <div class="media">
-                                    <div class="media-left">
-                                        <i class="icon-info text-warning"></i>
+                        <li class="header"><strong>You have @notificationsToday new Notifications</strong></li>
+                        @foreach(Notification notification in notifications)
+                        {
+                            <li>
+                                <a asp-action="Index" asp-controller="Notifications">
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <i class="icon-tag text-warning"></i>
+                                        </div>
+                                        <div class="media-body">
+                                            <p class="text"><strong>@notification.Title</strong></p>
+                                            <span class="timestamp">@notification.Created.ToString("hh:mm tt") @GetDateString(notification.Created)</span>
+                                        </div>
                                     </div>
-                                    <div class="media-body">
-                                        <p class="text">Campaign <strong>Holiday Sale</strong> is nearly reach budget limit.</p>
-                                        <span class="timestamp">10:00 AM Today</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);">
-                                <div class="media">
-                                    <div class="media-left">
-                                        <i class="icon-like text-success"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <p class="text">Your New Campaign <strong>Holiday Sale</strong> is approved.</p>
-                                        <span class="timestamp">11:30 AM Today</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);">
-                                <div class="media">
-                                    <div class="media-left">
-                                        <i class="icon-pie-chart text-info"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <p class="text">Website visits from Twitter is 27% higher than last week.</p>
-                                        <span class="timestamp">04:00 PM Today</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);">
-                                <div class="media">
-                                    <div class="media-left">
-                                        <i class="icon-info text-danger"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <p class="text">Error on website analytics configurations</p>
-                                        <span class="timestamp">Yesterday</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="footer"><a href="javascript:void(0);" class="more">See all notifications</a></li>
+                                </a>
+                            </li>
+                        }
+                        <li class="footer"><a asp-action="Index" asp-controller="Notifications" class="more">See all notifications</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">

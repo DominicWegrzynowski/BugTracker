@@ -48,8 +48,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
-
                             @foreach(var member in Model.Where(m => !m.AssignedRoles.Contains(nameof(Roles.Admin))))
                             {
                                 <tr>
@@ -84,9 +82,10 @@
                                             -hidden variables in form?
                                     *@
                                     <form method="post" asp-action="ManageUserRoles" asp-controller="UserRoles">
-                                        <input hidden asp-for="@member.BTUser" />
-                                        <input hidden asp-for="@member.Roles" />
-                                        <input hidden asp-for="@member.AssignedRoles" />
+                                        
+                                        <input type="hidden" asp-for="@member.BTUser.Id" />
+                                        <input type="hidden" asp-for="@member.Roles" />
+                                        <input type="hidden" asp-for="@member.AssignedRoles" />
                                         <td>
                                             <select asp-for="@member.SelectedRoles" asp-items="@member.Roles" id="multiselect1" class="multiselect multiselect-custom" multiple="multiple">
                                                 

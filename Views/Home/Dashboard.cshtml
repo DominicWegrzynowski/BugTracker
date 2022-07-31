@@ -10,12 +10,16 @@
 @inject IBTRolesService RolesService
 @inject IBTProjectService ProjectService
 @inject IBTCompanyInfoService CompanyInfoService
+@inject IBTNotificationService NotificationService
 @{
     ViewData["Title"] = "Dashboard";
     BTUser user = await UserManager.GetUserAsync(User);
     int companyId = User.Identity.GetCompanyId().Value;
 
     Company company = await CompanyInfoService.GetCompanyInfoByIdAsync(companyId);
+
+    List<Notification> notificationsList = await NotificationService.GetReceivedNotificationsAsync(user.Id);
+    int notificationCount = notificationsList.Count;
 
     int allUsers = (await UserManager.GetUsersInRoleAsync(nameof(Roles.Admin))).Count +
                    (await UserManager.GetUsersInRoleAsync(nameof(Roles.ProjectManager))).Count +
@@ -100,8 +104,8 @@
         <div class="card overflowhidden">
             <div class="body text-center bg-dark">
                 <div class="p-15 text-light">
-                    <h3>@(Model.Projects.Count() + Model.Tickets.Count() + Model.Members.Count())</h3>
-                    <span>Active Projects</span>
+                    <h3>@Model.Tickets.Where(t => t.DeveloperUser is not null).Count()</h3>
+                    <span>Assigned Tickets</span>
                 </div>
             </div>
         </div>
@@ -175,7 +179,7 @@
                         <i class="fa fa-ticket text-muted"></i> Tickets
                     </div>
                     <div class="list-group-item">
-                        <span class="badge badge-danger">0</span>
+                        <span class="badge badge-danger">@notificationCount</span>
                         <i class="fa fa-bell text-muted"></i> Notifications
                     </div>
                 </div>

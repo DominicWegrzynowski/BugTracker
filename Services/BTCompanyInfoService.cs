@@ -1,7 +1,9 @@
 ﻿using BugTracker.Data;
 using BugTracker.Models;
+using BugTracker.Models.Enums;
 using BugTracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,12 +14,56 @@ namespace BugTracker.Services
     {
         #region Fields
         private readonly ApplicationDbContext _context;
+        private readonly IBTRolesService _rolesService;
         #endregion
 
         #region Constructor
-        public BTCompanyInfoService(ApplicationDbContext context)
+        public BTCompanyInfoService(ApplicationDbContext context, IBTRolesService rolesService)
         {
             _context = context;
+            _rolesService = rolesService;
+        }
+        #endregion
+
+        #region Get Admin(s) 
+        public async Task<List<BTUser>> GetAdminsByCompanyId(int companyId)
+        {
+            List<BTUser> admins = new();
+            
+            foreach(var user in _context.Users)
+            {
+                if(user.CompanyId == companyId)
+                {
+                    try
+                    {
+                        if(await _rolesService.IsUserInRoleAsync(user, nameof(Roles.Admin)))
+                        {
+                            admins.Add(user);   
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            return admins;
+        }
+
+        #endregion
+
+        #region Get User By Id
+        public async Task<BTUser> GetUserById(string id, int companyId)
+        {
+            try
+            {
+                return await _context.Users.Where(u => u.Id == id && u.CompanyId == companyId).FirstOrDefaultAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         #endregion
 
@@ -82,7 +128,7 @@ namespace BugTracker.Services
                                        .FirstOrDefaultAsync(c => c.Id == companyId);
             }
             return result;
-        } 
+        }
         #endregion
     }
 }

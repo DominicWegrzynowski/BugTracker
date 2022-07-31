@@ -11,6 +11,7 @@ namespace BugTracker.Services.Interfaces
         Task<bool> AnyInviteAsync(Guid token, string email, int companyId);
         Task<Invite> GetInviteAsync(int inviteId, int companyId);
         Task<Invite> GetInviteAsync(Guid token, string email, int companyId);
+        Task<Invite> GetInviteByGuidAsync(Guid token);
         Task<bool> ValidateInviteCodeAsync(Guid? token);
     }
 }

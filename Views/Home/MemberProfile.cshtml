@@ -46,7 +46,7 @@
                     <span class="badge badge-info">@role</span>
                     <br />
                     <small class="text-muted">Email address:</small>
-                    <p>@Model.Email</p>
+                    <p><a href="mailto:@Model.Email">@Model.Email</a></p>
                     <small class="text-muted">Mobile: </small>
                     @if(Model.PhoneNumber is null)
                     {
@@ -72,7 +72,7 @@
                 </div>
                 <div class="body">
                     <p style="overflow-y:auto;max-height:100px;min-height:100px;">@project.Description</p>
-                    <ul class="list-unstyled team-info m-t-20">
+                    <ul class="list-unstyled team-info">
                         <li class="m-r-15"><small class="text-muted">Team</small></li>
                         @foreach(BTUser member in project.Members)
                         {
@@ -82,7 +82,7 @@
 						    }
 						    @if(member.AvatarFileData is not null)
 						    {
-							        <li><a asp-action="MemberProfile" asp-controller="Home" asp-route-userId="@member.Id"><img src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))"  title="@member.FullName"  alt="@member.FullName's Avatar" /></a></li>
+							    <li><a asp-action="MemberProfile" asp-controller="Home" asp-route-userId="@member.Id"><img src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarFileData))"  title="@member.FullName"  alt="@member.FullName's Avatar" /></a></li>
 						    }
                         }
 
@@ -90,14 +90,23 @@
                         {
                             <li><span><strong>No Assigned Members</strong></span></li>
                         }
-
-                        <a asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@project.Id" class="btn btn-sm btn-info float-right">Manage Team</a>
+                        
+                        @if(User.IsInRole("Admin"))
+                        {
+                            <a asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@project.Id" class="btn btn-sm btn-info float-right">Manage Team</a>
+                        }
                     </ul>
                     <div class="progress progress-xs progress-transparent custom-color-blue">
-                        <div class="progress-bar" data-transitiongoal="87"></div>
+                        @{
+							var start = project.StartDate.DateTime;
+							var end = project.EndDate.DateTime;
+							var today = DateTime.Now;
+							var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
+						}
+                        <div class="progress-bar" data-transitiongoal="87" style="width: @percent%;" aria-valuenow="@percent"></div>
                     </div>
                     <div class="row">
-                        <div class="col-7">
+                        <div class="col-7 mt-2">
                             <small>TICKETS: @project.Tickets.Count</small>
                         </div>
                     </div>

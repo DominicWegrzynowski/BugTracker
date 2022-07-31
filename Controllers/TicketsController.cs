@@ -26,7 +26,8 @@ namespace BugTracker.Controllers
         private readonly IBTFileService _fileService;
         private readonly IBTTicketHistoryService _historyService;
         private readonly IBTNotificationService _notificationService;
-        public TicketsController(UserManager<BTUser> userManager, IBTProjectService projectService, IBTLookupService lookupService, IBTTicketService ticketService, IBTFileService fileService, IBTTicketHistoryService historyService, IBTNotificationService notificationService)
+        private readonly IBTRolesService _rolesService;
+        public TicketsController(UserManager<BTUser> userManager, IBTProjectService projectService, IBTLookupService lookupService, IBTTicketService ticketService, IBTFileService fileService, IBTTicketHistoryService historyService, IBTNotificationService notificationService, IBTRolesService rolesService)
         {
             _userManager = userManager;
             _projectService = projectService;
@@ -35,6 +36,7 @@ namespace BugTracker.Controllers
             _fileService = fileService;
             _historyService = historyService;
             _notificationService = notificationService;
+            _rolesService = rolesService;
         }
 
         // GET: MyTickets
@@ -216,78 +218,99 @@ namespace BugTracker.Controllers
                 //  1. The developer assigned
                 //  2. The team members on the project
                 //  3. The owner of the ticket if they aren't already on the project
+                //  4. Admin 
+                //Create developer Notification
+                Notification developerNotification = new();
+                developerNotification.Title = "Ticket Assigned";
+                developerNotification.Sender = await _ticketService.GetUserById(user.Id);
+                developerNotification.Recipient = await _ticketService.GetUserById(model.DeveloperId);
+                developerNotification.Ticket = newTicket;
+                developerNotification.Message = $"{ developerNotification.Sender.FullName } has assigned you a new Ticket: <a href='https://localhost:44344/Tickets/Details/{ developerNotification.Ticket.Id }'>{ developerNotification.Ticket.Title }</a>";
+                developerNotification.Created = DateTimeOffset.Now;
 
-                //Create developer Notification(THIS WORKS)
-                //Notification developerNotification = new();
-                //developerNotification.Title = "Ticket Assigned";
-                //developerNotification.SenderId = user.Id;
-                //developerNotification.RecipientId = model.DeveloperId;
-                //developerNotification.Sender = await _ticketService.GetUserById(developerNotification.SenderId);
-                //developerNotification.Recipient = await _ticketService.GetUserById(developerNotification.RecipientId);
-                //developerNotification.TicketId = newTicket.Id;
-                //developerNotification.Ticket = newTicket;
-                //developerNotification.Message = $"{ developerNotification.Sender.FullName } has assigned you a new Ticket: <a href='https://bugtrackerdw.herokuapp.com/Tickets/Details/{ developerNotification.Ticket.Id }'>{ developerNotification.Ticket.Title }</a>";
-                //developerNotification.Created = DateTimeOffset.Now;
+                try
+                {
+                    await _notificationService.AddNotificationAsync(developerNotification);
+                    await _notificationService.SendEmailNotificationAsync(developerNotification, "New Ticket Assigned");
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
 
-                //try
-                //{
-                //    await _notificationService.SendEmailNotificationAsync(developerNotification, "New Ticket Assigned");
-                //    await _notificationService.AddNotificationAsync(developerNotification);
-                //}
-                //catch (Exception)
-                //{
-                //    throw;
-                //}
+                Ticket ticket = await _ticketService.GetTicketByIdAsync(model.Ticket.Id);
 
-                ////Notification for team members(THIS DOESNT WORK)
-                //foreach (BTUser member in model.Ticket.Project.Members.Where(m => m.Id != developerNotification.RecipientId))
-                //{
-                //    Notification memberNotification = new();
-                //    memberNotification.Title = "Ticket Assigned to a Team Member";
-                //    memberNotification.SenderId = user.Id;
-                //    memberNotification.RecipientId = model.DeveloperId;
-                //    memberNotification.Sender = await _ticketService.GetUserById(memberNotification.SenderId);
-                //    memberNotification.Recipient = await _ticketService.GetUserById(memberNotification.RecipientId);
-                //    memberNotification.TicketId = newTicket.Id;
-                //    memberNotification.Ticket = newTicket;
-                //    memberNotification.Message = $"{ memberNotification.Sender.FullName } has assigned { memberNotification.Recipient.FullName } a new Ticket: <a href='https://bugtrackerdw.herokuapp.com/Tickets/Details/{ memberNotification.Ticket.Id }'>{ memberNotification.Ticket.Title }</a>";
-                //    memberNotification.Created = DateTimeOffset.Now;
+                Project project = ticket.Project;
 
-                //    try
-                //    {
-                //        await _notificationService.SendEmailNotificationAsync(memberNotification, "New Ticket Assigned");
-                //        await _notificationService.AddNotificationAsync(memberNotification);
-                //    }
-                //    catch (Exception)
-                //    {
-                //        throw;
-                //    }
-                //}
+                ////Notification for team members
+                foreach (BTUser member in project.Members.Where(m => m.Id != developerNotification.RecipientId))
+                {
+                    Notification memberNotification = new();
+                    memberNotification.Title = $"Ticket Assigned to a Team Member on { project.Name }";
+                    memberNotification.Sender = await _ticketService.GetUserById(user.Id);
+                    memberNotification.Recipient = await _ticketService.GetUserById(member.Id);
+                    memberNotification.Ticket = newTicket;
+                    memberNotification.Message = $"{ memberNotification.Sender.FullName } has assigned { (await _ticketService.GetUserById(model.DeveloperId)).FullName } a new Ticket: <a href='https://localhost:44344/Tickets/Details/{ memberNotification.Ticket.Id }'>{ memberNotification.Ticket.Title }</a>";
+                    memberNotification.Created = DateTimeOffset.Now;
+
+                    try
+                    {
+                        await _notificationService.AddNotificationAsync(memberNotification);
+                        await _notificationService.SendEmailNotificationAsync(memberNotification, "New Ticket Assigned");
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
 
                 //Notification for ticket creator
-                //if(newTicket.OwnerUserId == user.Id)
-                //{
-                //    Notification creatorNotification = new();
-                //    creatorNotification.Title = "Ticket Assigned";
-                //    creatorNotification.SenderId = user.Id;
-                //    creatorNotification.RecipientId = model.DeveloperId;
-                //    creatorNotification.Sender = await _ticketService.GetUserById(creatorNotification.SenderId);
-                //    creatorNotification.Recipient = await _ticketService.GetUserById(creatorNotification.RecipientId);
-                //    creatorNotification.TicketId = newTicket.Id;
-                //    creatorNotification.Ticket = newTicket;
-                //    creatorNotification.Message = $"{ developerNotification.Sender.FullName } has assigned you a new Ticket: <a href='https://bugtrackerdw.herokuapp.com/Tickets/Details/{ creatorNotification.Ticket.Id }'>{ creatorNotification.Ticket.Title }</a>";
-                //    creatorNotification.Created = DateTimeOffset.Now;
+                if (newTicket.OwnerUserId == user.Id && newTicket.OwnerUserId != model.DeveloperId)
+                {
+                    Notification creatorNotification = new();
+                    creatorNotification.Title = "Ticket Assigned";
+                    creatorNotification.Sender = await _ticketService.GetUserById(user.Id);
+                    creatorNotification.Recipient = await _ticketService.GetUserById(newTicket.OwnerUserId);
+                    creatorNotification.Ticket = newTicket;
+                    creatorNotification.Message = $"{ developerNotification.Sender.FullName } has assigned your ticket: <a href='https://localhost:44344/Tickets/Details/{ creatorNotification.Ticket.Id }'>{ creatorNotification.Ticket.Title }</a>";
+                    creatorNotification.Created = DateTimeOffset.Now;
 
-                //    try
-                //    {
-                //        await _notificationService.SendEmailNotificationAsync(creatorNotification, "New Ticket Assigned");
-                //        await _notificationService.AddNotificationAsync(creatorNotification);
-                //    }
-                //    catch (Exception)
-                //    {
-                //        throw;
-                //    }
-                //}
+                    try
+                    {
+                        await _notificationService.SendEmailNotificationAsync(creatorNotification, "New Ticket Assigned");
+                        await _notificationService.AddNotificationAsync(creatorNotification);
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+
+
+                //Notification for Admin
+                if(!User.IsInRole(nameof(Roles.Admin)))
+                {
+                    int companyId = User.Identity.GetCompanyId().Value;
+
+                    Notification adminNotification = new();
+                    adminNotification.Title = "Ticket Assigned";
+                    adminNotification.Sender = await _ticketService.GetUserById(user.Id);
+                    adminNotification.Recipient = (await _rolesService.GetUsersInRoleAsync("Admin", companyId)).FirstOrDefault();
+                    adminNotification.Ticket = newTicket;
+                    adminNotification.Message = $"{ developerNotification.Sender.FullName } has assigned { developerNotification.Recipient.FullName } a ticket: <a href='https://localhost:44344/Tickets/Details/{ adminNotification.Ticket.Id }'>{ adminNotification.Ticket.Title }</a>";
+                    adminNotification.Created = DateTimeOffset.Now;
+
+                    try
+                    {
+                        await _notificationService.SendEmailNotificationAsync(adminNotification, "New Ticket Assigned");
+                        await _notificationService.AddNotificationAsync(adminNotification);
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+
 
                 return RedirectToAction(nameof(Details), "Projects", new { id = newTicket.ProjectId});
             }
