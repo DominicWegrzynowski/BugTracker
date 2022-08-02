@@ -596,7 +596,7 @@ namespace BugTracker.Data
                 FirstName = "Demo",
                 LastName = "Admin",
                 EmailConfirmed = true,
-                CompanyId = company2Id
+                CompanyId = company1Id
             };
             try
             {
