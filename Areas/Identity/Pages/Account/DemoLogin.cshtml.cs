@@ -53,26 +53,26 @@ namespace BugTracker.Areas.Identity.Pages.Account
         
             if(user == "admin")
             {
-                email = _config["DemoLogin:DemoAdminUsername"];
-                password = _config["DemoLogin:DemoAdminPassword"];
+                email = _config["DemoAdminUsername"];
+                password = _config["DemoAdminPassword"];
             }
 
             if (user == "pm")
             {
-                email = _config["DemoLogin:DemoProjectManagerUsername"];
-                password = _config["DemoLogin:DemoProjectManagerPassword"];
+                email = _config["DemoProjectManagerUsername"];
+                password = _config["DemoProjectManagerPassword"];
             }
 
             if (user == "dev")
             {
-                email = _config["DemoLogin:DemoDeveloperUsername"];
-                password = _config["DemoLogin:DemoDeveloperPassword"];
+                email = _config["DemoDeveloperUsername"];
+                password = _config["DemoDeveloperPassword"];
             }
 
             if (user == "submitter")
             {
-                email = _config["DemoLogin:DemoSubmitterUsername"];
-                password = _config["DemoLogin:DemoSubmitterPassword"];
+                email = _config["DemoSubmitterUsername"];
+                password = _config["DemoSubmitterPassword"];
             }
 
             var result = await _signInManager.PasswordSignInAsync(email, password, false, lockoutOnFailure: false);
