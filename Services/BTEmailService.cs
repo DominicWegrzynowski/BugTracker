@@ -10,20 +10,20 @@ using MimeKit;
 using System.Net.Mail;
 using MailKit.Security;
 using MailKit.Net.Smtp;
-
+using Microsoft.Extensions.Configuration;
 
 namespace BugTracker.Services
 {
     public class BTEmailService : IEmailSender
     {
         #region Fields
-        private readonly MailSettings _mailSettings;
+        private readonly IConfiguration _config;
         #endregion
 
         #region Constructor
-        public BTEmailService(IOptions<MailSettings> mailSettings)
+        public BTEmailService(IConfiguration config)
         {
-            _mailSettings = mailSettings.Value;
+            _config = config;
         }
         #endregion
 
@@ -32,7 +32,7 @@ namespace BugTracker.Services
         {
             MimeMessage email = new();
 
-            email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
+            email.Sender = MailboxAddress.Parse(_config["Mail"]);
             email.To.Add(MailboxAddress.Parse(emailTo));
             email.Subject = subject;
 
@@ -46,8 +46,8 @@ namespace BugTracker.Services
             try
             {
                 using var smtp = new MailKit.Net.Smtp.SmtpClient();
-                smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
-                smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
+                smtp.Connect(_config["Host"], int.Parse(_config["Port"]), SecureSocketOptions.StartTls);
+                smtp.Authenticate(_config["Mail"], _config["Password"]);
 
                 await smtp.SendAsync(email);
 

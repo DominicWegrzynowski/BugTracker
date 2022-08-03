@@ -55,7 +55,7 @@ namespace BugTracker
             services.AddScoped<IBTLookupService, BTLookupService>();
 
             services.AddScoped<IEmailSender, BTEmailService>();
-            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            //services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddControllersWithViews();
         }
 

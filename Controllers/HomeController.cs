@@ -93,35 +93,35 @@ namespace BugTracker.Controllers
 
         }
 
-        [HttpGet]
-        public async Task<IActionResult> RemoveUsers()
-        {
-            int companyId = User.Identity.GetCompanyId().Value;
+        //[HttpGet]
+        //public async Task<IActionResult> RemoveUsers()
+        //{
+        //    int companyId = User.Identity.GetCompanyId().Value;
 
-            List<BTUser> allMembers = await _companyService.GetAllMembersAsync(companyId);
+        //    List<BTUser> allMembers = await _companyService.GetAllMembersAsync(companyId);
 
-            return View(allMembers);
-        }
+        //    return View(allMembers);
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> RemoveUsers(string userId)
-        {
-            if(userId is not null)
-            {
-                int companyId = User.Identity.GetCompanyId().Value;
-                BTUser userToRemove = await _companyService.GetUserById(userId, companyId);
+        //[HttpPost]
+        //public async Task<IActionResult> RemoveUsers(string userId)
+        //{
+        //    if(userId is not null)
+        //    {
+        //        int companyId = User.Identity.GetCompanyId().Value;
+        //        BTUser userToRemove = await _companyService.GetUserById(userId, companyId);
 
-                try
-                {
-                    await _userManager.DeleteAsync(userToRemove);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-            return View();
-        }
+        //        try
+        //        {
+        //            await _userManager.DeleteAsync(userToRemove);
+        //        }
+        //        catch (Exception)
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //    return View();
+        //}
 
 
         [HttpGet]
