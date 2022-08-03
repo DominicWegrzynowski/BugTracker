@@ -130,7 +130,7 @@ namespace BugTracker.Controllers
                     try
                     {
                         string emailAddress = newInvite.InviteeEmail;
-                        string message = $"{ newInvite.Invitor.FullName } has invited you to collaborate on { newInvite.Project.Name }. Accept the invitation here: https://localhost:44344/Invites/ProcessInvite/{ newInvite.CompanyToken }";
+                        string message = $"{ newInvite.Invitor.FullName } has invited you to collaborate on { newInvite.Project.Name }. Accept the invitation here: https://bugtrackerdw.herokuapp.com/Invites/ProcessInvite/{ newInvite.CompanyToken }";
                         string emailSubject = $"Invitation to Collaborate";
                         await _emailSender.SendEmailAsync(emailAddress, emailSubject, message);
                     }

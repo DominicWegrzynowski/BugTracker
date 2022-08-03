@@ -168,7 +168,7 @@ namespace BugTracker.Controllers
                     assignedMemberNotification.Title = "Ticket Assigned";
                     assignedMemberNotification.Sender = user;
                     assignedMemberNotification.Recipient = member;
-                    assignedMemberNotification.Message = $"{ assignedMemberNotification.Sender.FullName } has added you to a project: <a href='https://localhost:44344/Projects/Details/{ model.Project.Id }'>{ model.Project.Name }</a>";
+                    assignedMemberNotification.Message = $"{ assignedMemberNotification.Sender.FullName } has added you to a project: <a href='https://bugtrackerdw.herokuapp.com/Projects/Details/{ model.Project.Id }'>{ model.Project.Name }</a>";
                     assignedMemberNotification.Created = DateTimeOffset.Now;
 
                     try
@@ -189,7 +189,7 @@ namespace BugTracker.Controllers
                         notifyProjectManagerNotification.Title = "Ticket Assigned";
                         notifyProjectManagerNotification.Sender = user;
                         notifyProjectManagerNotification.Recipient = projectManager;
-                        notifyProjectManagerNotification.Message = $"{ notifyProjectManagerNotification.Sender.FullName } has assigned { member.FullName } to a project: <a href='https://localhost:44344/Projects/Details/{ model.Project.Id }'>{ model.Project.Name }</a>";
+                        notifyProjectManagerNotification.Message = $"{ notifyProjectManagerNotification.Sender.FullName } has assigned { member.FullName } to a project: <a href='https://bugtrackerdw.herokuapp.com/Projects/Details/{ model.Project.Id }'>{ model.Project.Name }</a>";
 
                         try
                         {
@@ -213,7 +213,7 @@ namespace BugTracker.Controllers
                             notifyAdminNotification.Title = "Ticket Assigned";
                             notifyAdminNotification.Sender = user;
                             notifyAdminNotification.Recipient = admin;
-                            notifyAdminNotification.Message = $"{ notifyAdminNotification.Sender.FullName } has assigned { member.FullName } to a project: <a href='https://localhost:44344/Projects/Details/{ model.Project.Id }'>{ model.Project.Name }</a>";
+                            notifyAdminNotification.Message = $"{ notifyAdminNotification.Sender.FullName } has assigned { member.FullName } to a project: <a href='https://bugtrackerdw.herokuapp.com/Projects/Details/{ model.Project.Id }'>{ model.Project.Name }</a>";
 
                             try
                             {

@@ -225,7 +225,7 @@ namespace BugTracker.Controllers
                 developerNotification.Sender = await _ticketService.GetUserById(user.Id);
                 developerNotification.Recipient = await _ticketService.GetUserById(model.DeveloperId);
                 developerNotification.Ticket = newTicket;
-                developerNotification.Message = $"{ developerNotification.Sender.FullName } has assigned you a new Ticket: <a href='https://localhost:44344/Tickets/Details/{ developerNotification.Ticket.Id }'>{ developerNotification.Ticket.Title }</a>";
+                developerNotification.Message = $"{ developerNotification.Sender.FullName } has assigned you a new Ticket: <a href='https://bugtrackerdw.herokuapp.com/Tickets/Details/{ developerNotification.Ticket.Id }'>{ developerNotification.Ticket.Title }</a>";
                 developerNotification.Created = DateTimeOffset.Now;
 
                 try
@@ -272,7 +272,7 @@ namespace BugTracker.Controllers
                     creatorNotification.Sender = await _ticketService.GetUserById(user.Id);
                     creatorNotification.Recipient = await _ticketService.GetUserById(newTicket.OwnerUserId);
                     creatorNotification.Ticket = newTicket;
-                    creatorNotification.Message = $"{ developerNotification.Sender.FullName } has assigned your ticket: <a href='https://localhost:44344/Tickets/Details/{ creatorNotification.Ticket.Id }'>{ creatorNotification.Ticket.Title }</a>";
+                    creatorNotification.Message = $"{ developerNotification.Sender.FullName } has assigned your ticket: <a href='https://bugtrackerdw.herokuapp.com/Tickets/Details/{ creatorNotification.Ticket.Id }'>{ creatorNotification.Ticket.Title }</a>";
                     creatorNotification.Created = DateTimeOffset.Now;
 
                     try
