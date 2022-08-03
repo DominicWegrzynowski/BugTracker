@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using BugTracker.Services.Interfaces;
+using BugTracker.Models.Enums;
 
 namespace BugTracker.Areas.Identity.Pages.Account
 {
@@ -120,6 +121,7 @@ namespace BugTracker.Areas.Identity.Pages.Account
                 try
                 {
                     user.Company = await _companyInfoService.GetCompanyInfoByIdAsync(invite.CompanyId);
+                    await _userManager.AddToRoleAsync(user, nameof(Roles.Developer));
                 }
                 catch (Exception)
                 {

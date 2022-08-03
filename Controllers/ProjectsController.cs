@@ -161,7 +161,7 @@ namespace BugTracker.Controllers
                 foreach (string selectedUser in model.SelectedUsers)
                 {
                     BTUser member = await _companyInfoService.GetUserById(selectedUser, companyId);
-
+                    
                     selectedMembers.Add(member);
 
                     Notification assignedMemberNotification = new();
