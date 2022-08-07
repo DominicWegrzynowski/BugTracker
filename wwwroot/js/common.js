@@ -42,7 +42,7 @@ function skinChanger() {
 	    var $body = $('body');
 	    var $this = $(this);
 
-		debugger;
+		
 	    var existTheme = $('.choose-skin li.active').data('theme');
 	    $('.choose-skin li').removeClass('active');
 	    $body.removeClass('theme-' + existTheme);
@@ -55,7 +55,7 @@ function skinChanger() {
 
 // set Mode From Session
 function setModeFromSession() {
-	debugger;
+	
 	var mode = sessionStorage.getItem('lucidThemeMode');
 	var $logo = $('.img-responsive.logo');
 
