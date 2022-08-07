@@ -103,3 +103,16 @@ function Jknob() {
         }
     });
 }
+
+
+function activateSidebar() {
+    var element = document.getElementById("mainBody");
+
+    if (element.classList.contains("offcanvas-active")) {
+        element.classList.remove("offcanvas-active");
+    }
+    else {
+        element.classList.add("offcanvas-active");
+    }
+    
+}
