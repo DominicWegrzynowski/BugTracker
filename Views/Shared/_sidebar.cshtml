@@ -28,7 +28,6 @@
             <span class="badge badge-primary">@userRole</span>
             <ul class="dropdown-menu dropdown-menu-right account">
                 <li><a asp-controller="Home" asp-action="MemberProfile" asp-route-userId="@user.Id"><i class="icon-user"></i>My Profile</a></li>
-                <li><a asp-controller="App" asp-action="Inbox"><i class="icon-envelope-open"></i>Messages</a></li>
                 <li><a href="javascript:document.getElementById('settingsForm').submit();"><i class="icon-settings"></i>Settings</a></li>
                 <li class="divider"></li>
                 <li><a href="javascript:document.getElementById('logoutForm').submit();"><i class="icon-power"></i>Logout</a></li>

@@ -113,14 +113,11 @@
                     <a href="javascript:void(0);" class="dropdown-toggle icon-menu" data-toggle="dropdown"><i class="icon-equalizer"></i></a>
                     <ul class="dropdown-menu user-menu menu-icon">
                         <li class="menu-heading">ACCOUNT SETTINGS</li>
-                        <li><a href="javascript:void(0);"><i class="icon-note"></i> <span>Basic</span></a></li>
-                        <li><a href="javascript:void(0);"><i class="icon-equalizer"></i> <span>Preferences</span></a></li>
-                        <li><a href="javascript:void(0);"><i class="icon-lock"></i> <span>Privacy</span></a></li>
-                        <li><a href="javascript:void(0);"><i class="icon-bell"></i> <span>Notifications</span></a></li>
-                        <li class="menu-heading">BILLING</li>
-                        <li><a href="javascript:void(0);"><i class="icon-credit-card"></i> <span>Payments</span></a></li>
-                        <li><a href="javascript:void(0);"><i class="icon-printer"></i> <span>Invoices</span></a></li>
-                        <li><a href="javascript:void(0);"><i class="icon-refresh"></i> <span>Renewals</span></a></li>
+                        <li><a asp-area="Identity" asp-page="/Account/Manage/Index" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"><i class="icon-note"></i> <span>Manage Profile</span></a></li>
+                        <li><a asp-area="Identity" asp-page="/Account/Manage/Email" asp-route-returnUrl="@Url.Action("Email", "Home", new { area = "" })"><i class="icon-envelope"></i> <span>Email</span></a></li>
+                        <li><a asp-area="Identity" asp-page="/Account/Manage/ChangePassword" asp-route-returnUrl="@Url.Action("ChangePassword", "Home", new { area = "" })"><i class="icon-lock"></i> <span>Change Password</span></a></li>
+                        <li><a asp-area="Identity" asp-page="/Account/Manage/TwoFactorAuthentication" asp-route-returnUrl="@Url.Action("TwoFactorAuthentication", "Home", new { area = "" })"><i class="icon-check"></i> <span>2F Authentication</span></a></li>
+                        <li><a asp-area="Identity" asp-page="/Account/Manage/PersonalData" asp-route-returnUrl="@Url.Action("PersonalData", "Home", new { area = "" })"><i class="icon-folder"></i> <span>Personal Data</span></a></li>
                     </ul>
                 </li>
                 <li>
