@@ -215,7 +215,7 @@ $(document).ready(function() {
 
 	$(window).on('load resize', function() {
 		if($(window).innerWidth() < 420) {
-			$('.navbar-brand BugTrackerHeader.svg').attr('src', '../../images/logo-icon.svg');
+			$('.navbar-brand BugTrackerHeader.svg').attr('src', '../../images/BugTrackerHeader.svg');
 		} else {
 			$('.navbar-brand logo-icon.svg').attr('src', '../../images/BugTrackerHeader.svg');
 		}

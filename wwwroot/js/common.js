@@ -210,9 +210,9 @@ $(document).ready(function() {
 
 	$(window).on('load resize', function() {
 		if($(window).innerWidth() < 420) {
-			$('.navbar-brand logo.svg').attr('src', '../../images/logo-icon.svg');
+			$('.navbar-brand logo.svg').attr('src', '../../images/BugTrackerHeader.svg');
 		} else {
-			$('.navbar-brand logo-icon.svg').attr('src', '../../images/logo.svg');
+			$('.navbar-brand logo-icon.svg').attr('src', '../../images/BugTrackerHeader.svg');
 		}
 	});
 
