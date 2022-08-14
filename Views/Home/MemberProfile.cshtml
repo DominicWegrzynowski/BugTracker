@@ -71,7 +71,7 @@
                     <h2>@project.Name<small>@project.ProjectPriority.Name</small></h2>
                 </div>
                 <div class="body">
-                    <p style="overflow-y:auto;max-height:100px;min-height:100px;">@project.Description</p>
+                    <p style="overflow-y:auto;max-height:100px;min-height:100px;">@Html.Raw(project.Description)</p>
                     <ul class="list-unstyled team-info">
                         <li class="m-r-15"><small class="text-muted">Team</small></li>
                         @foreach(BTUser member in project.Members)
