@@ -33,6 +33,7 @@ namespace BugTracker.Controllers
             _userManager = userManager;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
