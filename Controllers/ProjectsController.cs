@@ -152,6 +152,7 @@ namespace BugTracker.Controllers
                 {
                     await _projectService.AddUserToProjectAsync(member, model.Project.Id);
                 }
+
                 return RedirectToAction("Details", "Projects", new { id = model.Project.Id });
             }
 

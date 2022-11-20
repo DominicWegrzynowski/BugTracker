@@ -28,7 +28,6 @@
             <span class="badge badge-primary">@userRole</span>
             <ul class="dropdown-menu dropdown-menu-right account">
                 <li><a asp-controller="Home" asp-action="MemberProfile" asp-route-userId="@user.Id"><i class="icon-user"></i>My Profile</a></li>
-                <li><a asp-controller="App" asp-action="Inbox"><i class="icon-envelope-open"></i>Messages</a></li>
                 <li><a href="javascript:document.getElementById('settingsForm').submit();"><i class="icon-settings"></i>Settings</a></li>
                 <li class="divider"></li>
                 <li><a href="javascript:document.getElementById('logoutForm').submit();"><i class="icon-power"></i>Logout</a></li>
@@ -96,7 +95,7 @@
                             <ul>
                                 <li><a asp-controller="Invites" asp-action="Create"><i class=" icon-user-follow float-left"></i>Company Invite</a></li>
                                 <li><a asp-controller="UserRoles" asp-action="ManageUserRoles"><i class=" icon-user float-left"></i>Manage Roles</a></li>
-                                <li><a asp-controller="Projects" asp-action="">ManageProjects</a></li>
+                                <li><a asp-controller="Projects" asp-action="ManageProjects">Manage Projects</a></li>
                             </ul>
                         }
                         @if(User.IsInRole(nameof(Roles.ProjectManager)))
@@ -104,7 +103,6 @@
                             <a class="has-arrow"><i class="icon-diamond"></i> <span>Project Manager</span></a>
                             <ul>
                             <li><a asp-controller="Projects" asp-action="ManageProjects">Manage Projects</a></li>
-                            <li><a asp-controller="Tickets" asp-action="AssignDeveloper">Assign Tickets</a></li>
                         </ul>
                         }
                     </li>

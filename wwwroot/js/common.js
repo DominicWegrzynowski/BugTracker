@@ -42,11 +42,12 @@ function skinChanger() {
 		var $body = $('body');
 		var $this = $(this);
 
-		debugger;
-		var existTheme = $('.choose-skin li.active').data('theme');
-		$('.choose-skin li').removeClass('active');
-		$body.removeClass('theme-' + existTheme);
-		$this.addClass('active');
+		
+	    var existTheme = $('.choose-skin li.active').data('theme');
+	    $('.choose-skin li').removeClass('active');
+	    $body.removeClass('theme-' + existTheme);
+	    $this.addClass('active');
+
 		$body.addClass('theme-' + $this.data('theme'));
 
 		sessionStorage.setItem("lucidTheme", $this.data('theme'));
@@ -55,7 +56,7 @@ function skinChanger() {
 
 // set Mode From Session
 function setModeFromSession() {
-	debugger;
+	
 	var mode = sessionStorage.getItem('lucidThemeMode');
 	var $logo = $('.img-responsive.logo');
 	var $iotAppliences = $('.iot-appliances-widget');
@@ -231,11 +232,12 @@ $(document).ready(function () {
 		}
 	});
 
-	$(window).on('load resize', function () {
-		if ($(window).innerWidth() < 420) {
-			$('.navbar-brand logo.svg').attr('src', '../../images/logo-icon.svg');
+
+	$(window).on('load resize', function() {
+		if($(window).innerWidth() < 420) {
+			$('.navbar-brand logo.svg').attr('src', '../../images/BugTrackerHeader.svg');
 		} else {
-			$('.navbar-brand logo-icon.svg').attr('src', '../../images/logo.svg');
+			$('.navbar-brand logo-icon.svg').attr('src', '../../images/BugTrackerHeader.svg');
 		}
 	});
 
