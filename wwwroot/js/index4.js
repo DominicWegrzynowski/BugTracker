@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
     "use strict";
     MorrisBarChart();
 
@@ -53,79 +53,79 @@ function MorrisBarChart() {
     });
 }
 
-$(function() {
-	"use strict";
-	var mapData = {
-			"US": 298,			
-            "AU": 760,
-            "CA": 870,
-			"IN": 2000000,
-			"GB": 120,
-		};
-	
-	if( $('#world-map-markers2').length > 0 ){
-		$('#world-map-markers2').vectorMap(
-		{
-			map: 'world_mill_en',
-			backgroundColor: 'transparent',
-			borderColor: '#fff',
-			borderOpacity: 0.25,
-			borderWidth: 0,
-			color: '#e6e6e6',
-			regionStyle : {
-				initial : {
-				  fill : '#ececec'
-				}
-			  },
+$(function () {
+    "use strict";
+    var mapData = {
+        "US": 298,
+        "AU": 760,
+        "CA": 870,
+        "IN": 2000000,
+        "GB": 120,
+    };
 
-			markerStyle: {
-                initial: {
-                            r: 5,
-                            'fill': '#fff',
-                            'fill-opacity':1,
-                            'stroke': '#000',
-                            'stroke-width' : 1,
-                            'stroke-opacity': 0.4
-                        },
+    if ($('#world-map-markers2').length > 0) {
+        $('#world-map-markers2').vectorMap(
+            {
+                map: 'world_mill_en',
+                backgroundColor: 'transparent',
+                borderColor: '#fff',
+                borderOpacity: 0.25,
+                borderWidth: 0,
+                color: '#e6e6e6',
+                regionStyle: {
+                    initial: {
+                        fill: '#ececec'
+                    }
                 },
-		   
-            markers: [
-                { latLng: [37.09,-95.71], name: 'America' },                
-                { latLng: [-25.27, 133.77], name: 'Australia' },
-                { latLng: [56.13,-106.34], name: 'Canada' },
-                { latLng: [20.59,78.96], name: 'India' },
-                { latLng: [55.37,-3.43], name: 'United Kingdom' },
-            ],
 
-			series: {
-				regions: [{
-					values: {
-						"US": '#339af6',						
-						"AU": '#02b5b2',
-						"IN": '#f1a627',
-                        "GB": '#445771',
-                        "CA": '#68bb35',
-					},
-					attribute: 'fill'
-				}]
-			},
-			hoverOpacity: null,
-			normalizeFunction: 'linear',
-			zoomOnScroll: false,
-			scaleColors: ['#000000', '#000000'],
-			selectedColor: '#000000',
-			selectedRegions: [],
-			enableZoom: false,
-			hoverColor: '#fff',
-		});
+                markerStyle: {
+                    initial: {
+                        r: 5,
+                        'fill': '#fff',
+                        'fill-opacity': 1,
+                        'stroke': '#000',
+                        'stroke-width': 1,
+                        'stroke-opacity': 0.4
+                    },
+                },
+
+                markers: [
+                    { latLng: [37.09, -95.71], name: 'America' },
+                    { latLng: [-25.27, 133.77], name: 'Australia' },
+                    { latLng: [56.13, -106.34], name: 'Canada' },
+                    { latLng: [20.59, 78.96], name: 'India' },
+                    { latLng: [55.37, -3.43], name: 'United Kingdom' },
+                ],
+
+                series: {
+                    regions: [{
+                        values: {
+                            "US": '#339af6',
+                            "AU": '#02b5b2',
+                            "IN": '#f1a627',
+                            "GB": '#445771',
+                            "CA": '#68bb35',
+                        },
+                        attribute: 'fill'
+                    }]
+                },
+                hoverOpacity: null,
+                normalizeFunction: 'linear',
+                zoomOnScroll: false,
+                scaleColors: ['#000000', '#000000'],
+                selectedColor: '#000000',
+                selectedRegions: [],
+                enableZoom: false,
+                hoverColor: '#fff',
+            });
     }
 });
 
 
 $('.knob2').knob({
-    'format' : function (value) {
+    'format': function (value) {
         return value + '%';
-     }
+    }
 });
 
 $('.sparkline-pie').sparkline('html', {
@@ -138,4 +138,3 @@ $('.sparkline-pie').sparkline('html', {
 });
 
 $('.sparkbar').sparkline('html', { type: 'bar' });
-
