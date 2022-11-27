@@ -10,24 +10,22 @@
 <!doctype html>
 <html lang="en">
 
-    <head>
-        <title>@ViewData["Title"] - BugTracker</title>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-        <meta name="description" content="BugTracker">
-        <meta name="author" content="Dominic Wegrzynowski">
+<head>
+    <title>@ViewData["Title"] - BugTracker</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="description" content="BugTracker">
+    <meta name="author" content="WrapTheme, design by: ThemeMakker.com">
     
     
-        <!-- VENDOR CSS -->
-        <link rel="stylesheet" href="~/vendor/bootstrap/css/bootstrap.min.css">
-        <link rel="stylesheet" href="~/vendor/font-awesome/css/font-awesome.min.css">
-        @RenderSection("VendorCSS", required: false)
-        <!-- MAIN CSS -->
-        <link rel="stylesheet" href="~/css/lucid.min.css">
-    </head>
+    <!-- VENDOR CSS -->
+    <link rel="stylesheet" href="~/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/vendor/font-awesome/css/font-awesome.min.css">
+    @RenderSection("VendorCSS", required: false)
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="~/css/lucid.min.css">
 
-    <body>
 
 </head>
 
@@ -38,41 +36,32 @@
         <div class="loader">
             <div class="m-t-30"><img src="~/images/BugTrackerNoText.svg" width="48" height="48" alt="BugTracker"></div>
             <p>Please wait...</p>
->>>>>>> main
         </div>
-        <!-- Overlay For Sidebars -->
+    </div>
+    <!-- Overlay For Sidebars -->
 
-        <div id="wrapper">
+    <div id="wrapper">
 
-            <nav class="navbar navbar-fixed-top">
-                <partial name="_navbar" />
-            </nav>
+        <nav class="navbar navbar-fixed-top">
+            <partial name="_navbar" />
+        </nav>
 
-            <div id="left-sidebar" class="sidebar">
-                <partial name="_sidebar" />
-            </div>
+        <div id="left-sidebar" class="sidebar">
+            <partial name="_sidebar" />
+        </div>
 
-            <div id="main-content">
-                <div class="container-fluid">
-                    <div class="block-header">
-                        <partial name="_breadcrumb" />
-                    </div>
-                    @RenderBody()
+        <div id="main-content">
+            <div class="container-fluid">
+                <div class="block-header">
+                    <partial name="_breadcrumb" />
                 </div>
+                @RenderBody()
             </div>
-
         </div>
-        <!-- Javascript -->
 
-        <script src="~/bundles/libscripts.bundle.js"></script>
-        <script src="~/bundles/vendorscripts.bundle.js"></script>
+    </div>
+    <!-- Javascript -->
 
-<<<<<<< development
-        <script src="~/bundles/mainscripts.bundle.js"></script>
-
-        @RenderSection("Scripts", required: false)
-    </body>
-=======
     <script src="~/bundles/libscripts.bundle.js"></script>
     <script src="~/bundles/vendorscripts.bundle.js"></script>
     <script src="~/bundles/mainscripts.bundle.js"></script>
@@ -80,5 +69,4 @@
     
     @RenderSection("Scripts", required: false)
 </body>
->>>>>>> main
 </html>
