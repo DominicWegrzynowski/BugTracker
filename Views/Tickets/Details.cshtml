@@ -299,7 +299,7 @@
 							@foreach (TicketHistory history in Model.History)
 							{
 								<div class="timeline-item blue" date-is="@history.Created.ToString("dd MMM yyyy")">
-									<h5>@history.Description</h5>
+									<h5>@Html.Raw(history.Description)</h5>
 									<span>By: <a asp-action="MemberProfile" asp-controller="Home" asp-route-userId="@history.UserId" title="@history.User.FullName">@history.User.FullName</a></span>
 									@if (history.Description.Contains("New Ticket Created"))
 									{
