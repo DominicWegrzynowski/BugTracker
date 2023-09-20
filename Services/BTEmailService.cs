@@ -46,8 +46,8 @@ namespace BugTracker.Services
             try
             {
                 using var smtp = new MailKit.Net.Smtp.SmtpClient();
-                smtp.Connect(_config["Host"], int.Parse(_config["Port"]), SecureSocketOptions.StartTls);
-                smtp.Authenticate(_config["Mail"], _config["Password"]);
+                smtp.Connect(_config["MailHost"], int.Parse(_config["MailPort"]), SecureSocketOptions.StartTls);
+                smtp.Authenticate(_config["Mail"], _config["MailPassword"]);
 
                 await smtp.SendAsync(email);
 
