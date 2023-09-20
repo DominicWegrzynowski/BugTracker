@@ -4,6 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>aspnet-BugTracker-052C8177-EA1E-4ABF-AFC9-ACCC165E48BB</UserSecretsId>
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
+	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
