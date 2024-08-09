@@ -122,6 +122,7 @@ namespace BugTracker.Controllers
                 newInvite.InviteeLastName = model.Invite.InviteeLastName;
                 newInvite.Project = await _projectsService.GetProjectByIdAsync(model.SelectedProjectId, companyId);
                 newInvite.Invitor = user;
+                newInvite.InviteeId = user.Id;
                 newInvite.CompanyToken = Guid.NewGuid();
                 try
                 {
@@ -144,7 +145,7 @@ namespace BugTracker.Controllers
                 {
                     throw;
                 }
-                RedirectToAction("Index", "Invites");
+                RedirectToAction("Dashboard", "Home");
             }
             return View(model);
         }
