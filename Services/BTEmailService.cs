@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.Extensions.Options;
-using BugTracker.Models;
 using MimeKit;
-using System.Net.Mail;
 using MailKit.Security;
-using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 
 namespace BugTracker.Services
@@ -46,12 +39,10 @@ namespace BugTracker.Services
             try
             {
                 using var smtp = new MailKit.Net.Smtp.SmtpClient();
-                smtp.Connect(_config["MailHost"], int.Parse(_config["MailPort"]), SecureSocketOptions.StartTls);
-                smtp.Authenticate(_config["Mail"], _config["MailPassword"]);
-
+                await smtp.ConnectAsync(_config["MailHost"], int.Parse(_config["MailPort"]), SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(_config["Mail"], _config["MailPassword"]);
                 await smtp.SendAsync(email);
-
-                smtp.Disconnect(true);
+                await smtp.DisconnectAsync(true);
             }
             catch (Exception)
             {
