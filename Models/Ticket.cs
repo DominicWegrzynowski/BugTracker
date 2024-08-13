@@ -56,8 +56,11 @@ namespace BugTracker.Models
         //Navigation Properties
         //the virtual keyword allows for lazy loading and change tracking in entity framework
         public virtual Project Project { get; set; }
+        [DisplayName("Ticket Type")]
         public virtual TicketType TicketType { get; set; }
+        [DisplayName("Ticket Priority")]
         public virtual TicketPriority TicketPriority { get; set; }
+        [DisplayName("Ticket Status")]
         public virtual TicketStatus TicketStatus { get; set; }
         public virtual BTUser OwnerUser { get; set; }
         public virtual BTUser DeveloperUser { get; set; }
