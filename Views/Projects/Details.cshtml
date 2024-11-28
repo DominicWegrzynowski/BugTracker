@@ -44,13 +44,15 @@
                                 <span class="text-center">@percent%</span>
 							</div>
 						</div>
-
-                        @if(User.IsInRole(nameof(Roles.Admin)) || projectManager.Id == user.Id)
-						{
-							<br />
-							<a class="btn btn-sm btn-outline-warning" asp-action="Edit" asp-controller="Projects" asp-route-id="@Model.Id">Edit Project</a>
-							<a class="btn btn-sm btn-outline-danger"  asp-action="Archive" asp-controller="Projects" asp-route-id="@Model.Id">Archive Project</a>
-						}
+                        @if(projectManager is not null)
+                        {
+                            @if (User.IsInRole(nameof(Roles.Admin)) || projectManager.Id == user.Id)
+                            {
+                                <br />
+                                <a class="btn btn-sm btn-outline-warning" asp-action="Edit" asp-controller="Projects" asp-route-id="@Model.Id">Edit Project</a>
+                                <a class="btn btn-sm btn-outline-danger" asp-action="Archive" asp-controller="Projects" asp-route-id="@Model.Id">Archive Project</a>
+                            }
+                        }
                     </div>
                 </div>
             </div>
